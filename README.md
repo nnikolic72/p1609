@@ -19,6 +19,11 @@ heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.test --app square
 heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.prod --app squaresensor-prod
 heroku config:set SECRET_KEY="jdsjdsdhsjdh"
 
+// Needed to set on squaresensor heroku
+heroku config:set CLIENT_ID="" --app squaresensor-dev
+heroku config:set CLIENT_SECRET="" --app squaresensor-dev
+heroku config:set INSTAGRAM_REDIRECT_URI="" --app squaresensor-dev
+
 //Heroku check for problems
 heroku run "python manage.py check" --app squaresensor-dev
 
@@ -42,3 +47,9 @@ git rm -r --cached .idea
 -> update .gitignore
 git commit -m "some text"
 git push
+
+// PyCrypto Windows install
+easy_install http://www.voidspace.org.uk/downloads/pycrypto26/pycrypto-2.6.win32-py2.7.exe
+
+// Microsoft compiler for Python 2.7
+http://www.microsoft.com/en-us/download/details.aspx?id=44266
