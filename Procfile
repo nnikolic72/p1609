@@ -1,0 +1,1 @@
+web: gunicorn squaresensor.wsgi --log-file -
