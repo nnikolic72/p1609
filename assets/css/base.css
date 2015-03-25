@@ -1,0 +1,34 @@
+.color-primary-0 { color: #D38047 }	/* Main Primary color */
+.color-primary-1 { color: #FFC8A3 }
+.color-primary-2 { color: #F5A873 }
+.color-primary-3 { color: #B56026 }
+.color-primary-4 { color: #8F410D }
+
+.color-secondary-1-0 { color: #D3A047 }	/* Main Secondary color (1) */
+.color-secondary-1-1 { color: #FFDEA3 }
+.color-secondary-1-2 { color: #F5C673 }
+.color-secondary-1-3 { color: #B58126 }
+.color-secondary-1-4 { color: #8F600D }
+
+.color-secondary-2-0 { color: #CA4454 }	/* Main Secondary color (2) */
+.color-secondary-2-1 { color: #F89EA9 }
+.color-secondary-2-2 { color: #EB6F7D }
+.color-secondary-2-3 { color: #AD2535 }
+.color-secondary-2-4 { color: #890C1B }
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 700;
+}
