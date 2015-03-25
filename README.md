@@ -15,8 +15,8 @@ heroku logs
 
 //Heroku environment settings
 heroku config:set S3_KEY=8N029N81
-heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.devheroku --app squaresensor-dev
-heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.prodheroku --app squaresensor-prod
+heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.test --app squaresensor-dev
+heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.prod --app squaresensor-prod
 heroku config:set SECRET_KEY="jdsjdsdhsjdh"
 
 //Heroku check for problems
