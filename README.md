@@ -42,5 +42,3 @@ git rm -r --cached .idea
 -> update .gitignore
 git commit -m "some text"
 git push
-//abcd
-====

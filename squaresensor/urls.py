@@ -1,10 +1,24 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from dajaxice.core import dajaxice_autodiscover, dajaxice_config
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.http import HttpResponseRedirect
+
+from squaresensor.settings.base import STATIC_URL
+
+dajaxice_autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'squaresensor.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+    url(r'^i18n/', include('django.conf.urls.i18n')),  # go to /i18n/setlang/
+    url(r'^favicon.ico/$', lambda x: HttpResponseRedirect(STATIC_URL+'ico/favicon.ico')), #google chrome favicon fix
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin1609/', include(admin.site.urls)),
+    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
+    url(r'', include('social_auth.urls')),
+
+    url(r'^', include('lander.urls', namespace='lander')),
+    url(r'^members/', include('members.urls', namespace='members')),
+
 )
+
+urlpatterns += staticfiles_urlpatterns()

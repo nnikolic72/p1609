@@ -1,0 +1,34 @@
+{% extends 'bootstrap3/bootstrap3.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block bootstrap3_title %}{% block title %}{% endblock title %}{% endblock bootstrap3_title%}
+
+{% block bootstrap3_extra_head %}
+{% block css %}
+    <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet">
+{% endblock css %}
+{% endblock bootstrap3_extra_head %}
+
+{% block bootstrap3_extra_script %}
+{% block script %}
+    <script src="{{ STATIC_URL }}js/base.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+{% endblock %}
+
+{% bootstrap_messages %}
+
+{% block bootstrap3_content %}
+{% block navbar %}
+{% endblock navbar %}
+
+{% block content %}
+{% endblock content %}
+
+{% block statusbar %}
+{% endblock statusbar %}
+
+{% endblock bootstrap3_content %}
+
