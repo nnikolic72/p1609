@@ -21,7 +21,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-3 text-center">
                     <div align="center">
-                    <img class="img-responsive" src="{{ STATIC_URL }}img/ss-black-small_300.png">
+                        <img class="img-responsive" src="{{ STATIC_URL }}img/ss-black-small_300.png">
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-9 text-center">
@@ -35,7 +35,7 @@
     </div>
 
 
-    <div class="lander-section-1">
+    <div class="lander-section-1" id="signup">
         <div class="row">
             <div class="col-xs-12 text-center">
                 {% if request.user.is_authenticated %}
@@ -76,7 +76,7 @@
                 <p>Just select which galleries you wish our technology to filter and you will see only the best photos from that gallery.</p>
 
                 <p class="text-center"><b>Skip the noise and reclaim your valuable time.</b></p>
-                <hr>
+                <br><br>
 
             </div>
             <div class="col-xs-12 col-md-4 text-justify">
@@ -89,7 +89,7 @@
                 <p>By discovering new photographers you will get a new inspiration.</p>
 
                 <p class="text-center"><b>Don't let Instagram to become boring<br>Find new awesomeness!</b></p>
-                <hr>
+                <br><br>
             </div>
             <div class="col-xs-12 col-md-4 text-justify">
                 <div align="center">
@@ -101,7 +101,15 @@
                 <p>By letting us know your photographic interests - you let us suggest your new Instagram friends. And it's completely automatic!</p>
 
                 <p class="text-center"><b>Discover the endless well of new Instagram friends!</b></p>
-                <hr>
+                <br><br>
+
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <a href="#signup" class="btn btn-lg btn-default">Sign Up</a>
             </div>
         </div>
     </div>
