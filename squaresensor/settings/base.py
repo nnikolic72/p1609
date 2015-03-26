@@ -145,7 +145,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.user.update_user_details',
 )
 
-LOGIN_URL = '/members/login'
+LOGIN_URL = '/'
 LOGOUT_URL = '/members/logout'
 LOGIN_REDIRECT_URL = '/members/dashboard'
 

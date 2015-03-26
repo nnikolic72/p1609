@@ -1,3 +1,4 @@
+from __future__ import division
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -45,6 +46,9 @@ class MemberDashboardView(TemplateView):
     template_name = 'members/dashboard.html'
 
     def get(self, request, *args, **kwargs):
+
+
+
         logged_member = None
         profile_photo_url = None
 
@@ -61,10 +65,23 @@ class MemberDashboardView(TemplateView):
         except ObjectDoesNotExist:
             logged_member = None
 
+        # Limit calculation --------------------------------------------------------------
+        x_ratelimit_remaining, x_ratelimit  = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # Limit calculation --------------------------------------------------------------
+
         return render(request,
                       self.template_name,
                       dict(logged_member=logged_member,
                            profile_photo_url=profile_photo_url,
+                           x_ratelimit_remaining=x_ratelimit_remaining,
+                           x_ratelimit=x_ratelimit,
+                           x_limit_pct=x_limit_pct
                            )
         )
 

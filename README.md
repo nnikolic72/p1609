@@ -53,3 +53,12 @@ easy_install http://www.voidspace.org.uk/downloads/pycrypto26/pycrypto-2.6.win32
 
 // Microsoft compiler for Python 2.7
 http://www.microsoft.com/en-us/download/details.aspx?id=44266
+
+// Instggram scopes
+basic
+comments
+relationships
+likes
+
+// django-import-export
+File must be saved in encoding "UTF-8 without BOM"

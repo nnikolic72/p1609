@@ -7,28 +7,109 @@
 {% block bootstrap3_title %}{% block title %}{% endblock title %}{% endblock bootstrap3_title%}
 
 {% block bootstrap3_extra_head %}
-{% block css %}
-    <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet">
-{% endblock css %}
+    {% block css %}
+        <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet">
+    {% endblock css %}
 {% endblock bootstrap3_extra_head %}
 
 {% block bootstrap3_extra_script %}
-{% block script %}
-    <script src="{{ STATIC_URL }}js/base.js" type="text/javascript" charset="utf-8"></script>
-{% endblock script %}
+    {% block script %}
+        <script src="{{ STATIC_URL }}js/base.js" type="text/javascript" charset="utf-8"></script>
+    {% endblock script %}
 {% endblock %}
 
 {% bootstrap_messages %}
 
 {% block bootstrap3_content %}
-{% block navbar %}
-{% endblock navbar %}
+    {% block navbar %}
+        <nav class="navbar navbar-default navbar-fixed-top squaresensor-top-navbar">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Squaresensor</a>
+                </div>
 
-{% block content %}
-{% endblock content %}
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse color-primary-1" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active">
+                        <li><a href="{% url 'members:dashboard' %}">Home</a></li>
+                        <li><a href="#">{% trans 'Smart Feed' %}</a></li>
+                        <li><a href="#">{% trans 'Find Friends' %}</a></li>
+                        <li><a href="#">{% trans 'Inspiring Artists' %}</a></li>
 
-{% block statusbar %}
-{% endblock statusbar %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans 'Browse' %} <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">{% trans 'Find IG User' %}</a></li>
+                                <li><a href="#">{% trans 'Categories' %}</a></li>
+                                <li><a href="#">{% trans 'Styles' %}</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+
+                    {% if request.user.is_authenticated %}
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My account <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#">{% trans 'Import IG Followings' %}</a></li>
+                                    <li><a href="#">{% trans 'Preferences' %}</a></li>
+                                    <li><a href="#">{% trans 'Information' %}</a></li>
+
+                                    <li class="divider"></li>
+                                    <li><a href="{% url 'members:logout' %}">{% trans 'Logout' %}</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    {% endif %}
+
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+    {% endblock navbar %}
+
+    <div class="page-header">
+        <div class="container">
+            <h1 class="squaresensor-page-title">{% block page-title %}{% endblock page-title %}</h1>
+        </div>
+    </div>
+
+    <div class="container squaresensor-content-panel">
+    <div class="row">
+        <div class="col-xs-12 col-md-8 squaresensor-sub-panel center-block">
+
+            <!-- Main content-->
+            {% block content %}
+            {% endblock content %}
+        </div>
+
+        <div class="col-xs-12 col-md-4 squaresensor-sub-panel center-block">
+            {% block aside %}
+            {% endblock aside %}
+        </div>
+    </div>
+
+    {% block statusbar %}
+        <div class="navbar-xs">
+            <div class="navbar-primary">
+                <nav class="navbar navbar-default navbar-fixed-bottom">
+                    <div class="container">
+                        <button class="btn btn-sm statusbar-text">LTM <span class="badge">{{ logged_member.likes_in_last_minute }}</span></button>
+                        <button class="btn btn-sm statusbar-text">CTM <span class="badge">{{ logged_member.comments_in_last_minute }}</span></button>
+                        <button class="btn btn-sm statusbar-text">IG limit used <span class="badge">{{ x_limit_pct }}%</span></button>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    {% endblock statusbar %}
 
 {% endblock bootstrap3_content %}
 
