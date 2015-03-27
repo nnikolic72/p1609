@@ -33,6 +33,21 @@ class LanderHomePageView2(SuccessMessageMixin, AjaxTemplateMixin, FormView):
     success_url = reverse_lazy('lander:signupemail')
     success_message = "Way to go!"
 
+    def get(self, request, *args, **kwargs):
+        """
+        Serve GET request
+        """
+        x=1
+        if request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('members:dashboard'))
+        else:
+            return render(request, self.template_name,
+                          dict(form=SignUpForm(),
+                               is_app_live=IS_APP_LIVE,
+
+                               )
+            )
+
 
 # Create your views here.
 class LanderHomePageView(TemplateView):
@@ -45,13 +60,14 @@ class LanderHomePageView(TemplateView):
         """
         Serve GET request
         """
-
+        x=1
         if request.user.is_authenticated():
             return HttpResponseRedirect(reverse('members:dashboard'))
         else:
             return render(request, self.template_name,
                           dict(form=SignUpForm(),
                                is_app_live=IS_APP_LIVE,
+
                                )
             )
 
