@@ -43,7 +43,7 @@
                     <a class="button btn-lg btn-success" href="{% url 'members:logout' %}">My Dashboard</a>
                     <a class="button btn-lg btn-error" href="{% url 'members:logout' %}">Logout</a>
                 {% else %}
-                    <p>Is app live: {{ is_app_live }}</p>
+
                     {% if is_app_live == '1' %}
                         <div class="row" style="margin: 20px;">
                             <div class="col-xs-12 col-sm-offset-3 col-sm-6 ">
