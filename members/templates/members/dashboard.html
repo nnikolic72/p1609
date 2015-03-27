@@ -70,7 +70,9 @@
             <div class="squaresensor-section-header">
                 <h4>{% trans 'Fine Photos' %}</h4>
 
-                <a href="{% url 'photos:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}"><button class="btn btn-lg btn-default">{% trans 'My all time best photos' %}</button></a>
+                <a href="{% url 'photos:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}">
+                    <button class="btn btn-lg btn-default" style="margin: 10px;">{% trans 'My all time best photos' %}</button>
+                </a>
             </div>
         </div>
     </div>

@@ -113,7 +113,10 @@ class UsersBestPhotosView(TemplateView):
         mode = kwargs['p_mode']
 
         squaresensor_user, queryset = self.find_squaresensor_user(instagram_user_name)
-
+        for q in queryset:
+            q.to_be_processed_for_basic_info = True
+            q.to_be_processed_for_photos = True
+            q.save()
 
         # Common for all members views ===================================================
         try:
@@ -146,7 +149,7 @@ class UsersBestPhotosView(TemplateView):
         if self.is_following:
             l_photos_queryset = Photo.objects.filter(following_id=squaresensor_user).order_by('-photo_rating')
 
-        if (not l_photos_queryset) or (mode == 'refresh'):
+        if (l_photos_queryset.count() == 0) or (mode == 'refresh'):
             l_token = logged_member.get_member_token(request)
             instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
             instagram_session.init_instagram_API()
@@ -154,6 +157,9 @@ class UsersBestPhotosView(TemplateView):
 
             ig_utils = InstagramUserAdminUtils()
             ig_utils.process_instagram_user(request, queryset)
+
+            if (l_photos_queryset.count() > 0):
+                ig_utils.process_photos_by_instagram_api(request, l_photos_queryset)
 
             if self.is_member:
                 l_photos_queryset = Photo.objects.filter(member_id=squaresensor_user).order_by('-photo_rating')
@@ -167,8 +173,7 @@ class UsersBestPhotosView(TemplateView):
             if self.is_following:
                 l_photos_queryset = Photo.objects.filter(following_id=squaresensor_user).order_by('-photo_rating')
 
-            if l_photos_queryset:
-                ig_utils.process_photos_by_instagram_api(request, l_photos_queryset)
+
 
         # Limit calculation --------------------------------------------------------------
         x_ratelimit_remaining, x_ratelimit = logged_member.refresh_api_limits(request)
