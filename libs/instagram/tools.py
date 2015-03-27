@@ -1117,7 +1117,7 @@ class InstagramUserAdminUtils():
 
                 if settings.DEBUG == True:
                     '''reduce number of photos to search'''
-                    self.l_search_last_photos = 50
+                    self.l_search_last_photos = 200
 
                 l_best_photos = BestPhotos(obj.instagram_user_id, self.l_find_top_n_photos,
                                            self.l_search_last_photos, ig_session
