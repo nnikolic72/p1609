@@ -14,16 +14,6 @@ from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdmi
 
 from .models import Photo
 
-from squaresensor.settings.base import (
-    INSPIRING_USERS_FIND_TOP_N_PHOTOS,
-    INSPIRING_USERS_SEARCH_N_PHOTOS,
-    FOLLOWINGS_FIND_TOP_N_PHOTOS,
-    FOLLOWINGS_SEARCH_N_PHOTOS,
-    FRIENDS_FIND_TOP_N_PHOTOS,
-    FRIENDS_SEARCH_N_PHOTOS,
-    MEMBERS_FIND_TOP_N_PHOTOS,
-    MEMBERS_SEARCH_N_PHOTOS,
-)
 
 from instagramuser.models import Follower, Following, InspiringUser
 from members.models import Member
@@ -157,6 +147,18 @@ class UsersBestPhotosView(TemplateView):
 
             ig_utils = InstagramUserAdminUtils()
             ig_utils.process_instagram_user(request, queryset)
+
+            if self.is_member:
+                l_photos_queryset = Photo.objects.filter(member_id=squaresensor_user).order_by('-photo_rating')
+
+            if self.is_inspiring:
+                l_photos_queryset = Photo.objects.filter(inspiring_user_id=squaresensor_user).order_by('-photo_rating')
+
+            if self.is_follower:
+                l_photos_queryset = Photo.objects.filter(follower_id=squaresensor_user).order_by('-photo_rating')
+
+            if self.is_following:
+                l_photos_queryset = Photo.objects.filter(following_id=squaresensor_user).order_by('-photo_rating')
 
             if (l_photos_queryset.count() > 0):
                 ig_utils.process_photos_by_instagram_api(request, l_photos_queryset)
