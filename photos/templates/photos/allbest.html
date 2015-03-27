@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+{% block title %}@{{ logged_member.instagram_user_name }} {% trans 'All Time Best Photos' %}{% endblock title %}
+{% block page-title %}@{{ logged_member.instagram_user_name }} {% trans 'All Time Best Photos' %}{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/photos.allbest.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/photos.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="row">
+        {% for photo in photos %}
+            {% include 'photos/single_thumbnail_photo.html' %}
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <a class="btn btn-default" href="{% url 'photos:alltimebest' p_username=logged_member.instagram_user_name p_mode='refresh' %}" >{% trans 'Refresh' %}</a>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

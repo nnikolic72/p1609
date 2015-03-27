@@ -384,7 +384,7 @@ class FollowingAdmin(admin.ModelAdmin):
     list_display = (
         'instagram_user_name',
         'is_user_active',
-        'followed_by_n_goodusers',
+        'followed_by_n_inspiring_users',
         'number_of_media',
         'number_of_followers', 'number_of_followings',
         'to_be_processed_for_basic_info', 'to_be_processed_for_photos'
@@ -405,7 +405,7 @@ class FollowingAdmin(admin.ModelAdmin):
 
     search_fields = ('instagram_user_name', )
 
-    readonly_fields = ('user_type', 'followed_by_n_goodusers',)
+    readonly_fields = ('user_type', 'followed_by_n_inspiring_users',)
 
     actions = (process_following,
                set_followings_process_true,

@@ -48,7 +48,6 @@ class MemberDashboardView(TemplateView):
     def get(self, request, *args, **kwargs):
 
 
-
         logged_member = None
         profile_photo_url = None
 
@@ -66,7 +65,7 @@ class MemberDashboardView(TemplateView):
             logged_member = None
 
         # Limit calculation --------------------------------------------------------------
-        x_ratelimit_remaining, x_ratelimit  = logged_member.get_api_limits()
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
         x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
         if x_ratelimit != 0:

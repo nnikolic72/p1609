@@ -55,3 +55,5 @@ class Photo(models.Model):
                                          )
     last_update_date = models.DateTimeField('Photo last update date', auto_now=True,
                                             )
+
+    ordering = ('-photo_rating',)

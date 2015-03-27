@@ -18,6 +18,7 @@ urlpatterns = patterns('',
 
     url(r'^', include('lander.urls', namespace='lander')),
     url(r'^members/', include('members.urls', namespace='members')),
+    url(r'^photos/', include('photos.urls', namespace='photos') ),
 
 )
 

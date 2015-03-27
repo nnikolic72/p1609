@@ -1,3 +1,4 @@
+from __future__ import division
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
 from django.core.urlresolvers import reverse, reverse_lazy

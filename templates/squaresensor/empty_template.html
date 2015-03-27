@@ -3,7 +3,9 @@
 {% load dajaxice_templatetags %}
 {% load i18n %}
 
+
 {% block title %}{% trans 'Welcome to Squaresensor - Instagram web browser wit intelligence' %}{% endblock title %}
+{% block page-title %}{% trans 'Welcome to Squaresensor - Instagram web browser wit intelligence' %}{% endblock page-title %}
 
 {% block css %}
     {{ block.super }}
@@ -16,5 +18,9 @@
 {% endblock script %}
 
 {% block content %}
-
+    {{ block.super }}
 {% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}
