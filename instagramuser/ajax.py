@@ -29,7 +29,7 @@ def analyze_user(req, form):
 
     if add_user_form.is_valid():
         instagram_user_name = add_user_form.cleaned_data[u'instagram_user_name']
-        instagram_user_name = instagram_user_name.lower()
+        instagram_user_name = instagram_user_name.lower().strip()
 
         # Common for all members views ===================================================
         try:
@@ -50,16 +50,16 @@ def analyze_user(req, form):
         # END Limit calculation ----------------------------------------------------------
         # END Common for all members views ===============================================
 
-        inspiring_user = InspiringUser.objects.filter(django_user__username=instagram_user_name).count()
+        inspiring_user_cnt = InspiringUser.objects.filter(instagram_user_name=instagram_user_name).count()
 
-        if inspiring_user:
+        if inspiring_user_cnt > 0:
             return json.dumps({
                 'photos': None,
                 'already_exists': 1,
                 'error': 1,
                 'error_message': 'Inspiring artist already exists in our database.',
                 'categories': None,
-                'attributes': None,
+                'attributes': None
                 }
             )
         else:
@@ -68,41 +68,55 @@ def analyze_user(req, form):
             instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
             instagram_session.init_instagram_API()
             user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
-
-            ig_utils = InstagramUserAdminUtils()
-            inspiring_user = InspiringUser(instagram_user_name=instagram_user_name,
-                                           to_be_processed_for_basic_info=True,
-                                           to_be_processed_for_photos=True)
-            if inspiring_user:
-                inspiring_user.save()
-                queryset = InspiringUser.objects.filter(instagram_user_name=instagram_user_name)
-                if queryset:
-                    ig_utils.process_instagram_user(req, queryset)
-                    l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
-
-                    if l_photos_queryset.count() > 0:
-                        ig_utils.process_photos_by_instagram_api(req, l_photos_queryset)
+            if user_search:
+                ig_utils = InstagramUserAdminUtils()
+                inspiring_user = InspiringUser(instagram_user_name=instagram_user_name,
+                                               to_be_processed_for_basic_info=True,
+                                               to_be_processed_for_photos=True)
+                if inspiring_user:
+                    inspiring_user.save()
+                    queryset = InspiringUser.objects.filter(instagram_user_name=instagram_user_name)
+                    if queryset.count() > 0:
+                        ig_utils.process_instagram_user(req, queryset)
                         l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
 
-                        l_categories = Category.objects.all()
-                        l_attributes = Attribute.objects.all()
-            else:
-                return json.dumps({
-                    'photos': None,
-                    'already_exists': 0,
-                    'error': 1,
-                    'error_message': 'Can not add Inspiring user in the database at this time.',
-                    'categories': None,
-                    'attributes': None,
-                    }
-                )
+                        if l_photos_queryset.count() > 0:
+                            ig_utils.process_photos_by_instagram_api(req, l_photos_queryset)
+                            l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
+
+                            l_categories = Category.objects.all()
+                            l_attributes = Attribute.objects.all()
+
+                            category_list = []
+                            for cat in l_categories:
+                                category_list.extend([cat.title])
+
+                            attribute_list = []
+                            for att in l_attributes:
+                                attribute_list.extend([att.title])
+
+
+                            photo_list = []
+                            for photo in l_photos_queryset:
+                                photo_list.extend([photo.instagram_low_resolution_URL])
+
+                else:
+                    return json.dumps({
+                        'photos': None,
+                        'already_exists': 0,
+                        'error': 1,
+                        'error_message': 'Can not add Inspiring user in the database at this time.',
+                        'categories': None,
+                        'attributes': None
+                        }
+                    )
 
     return json.dumps({
-        'photos': l_photos_queryset,
+        'photos': photo_list,
         'already_exists': 0,
         'error': 0,
         'error_message': '',
-        'categories': l_categories,
-        'attributes': l_attributes,
+        'categories': category_list,
+        'attributes': attribute_list
         }
     )

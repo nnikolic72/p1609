@@ -1100,8 +1100,8 @@ class InstagramUserAdminUtils():
             '''Analyze photos of this user'''
             if obj.to_be_processed_for_photos == True:
                 if obj.user_type == 'inspiring':
-                    self.l_find_top_n_photos = settings.GOODUSERS_FIND_TOP_N_PHOTOS
-                    self.l_search_last_photos = settings.GOODUSERS_SEARCH_N_PHOTOS
+                    self.l_find_top_n_photos = settings.INSPIRING_USERS_FIND_TOP_N_PHOTOS
+                    self.l_search_last_photos = settings.INSPIRING_USERS_SEARCH_N_PHOTOS
 
                 if obj.user_type == 'friend':
                     self.l_find_top_n_photos = settings.FRIENDS_FIND_TOP_N_PHOTOS
@@ -1131,8 +1131,8 @@ class InstagramUserAdminUtils():
                 obj.save()
 
                 '''Delete old best photos for this user'''
-                if obj.user_type == 'gooduser':
-                    Photo.objects.filter(good_user_id=obj.pk).delete()
+                if obj.user_type == 'inspiring':
+                    Photo.objects.filter(inspiring_user_id=obj.pk).delete()
                 if obj.user_type == 'friend':
                     Photo.objects.filter(friend_id=obj.pk).delete()
                 if obj.user_type == 'member':
@@ -1144,7 +1144,7 @@ class InstagramUserAdminUtils():
                 if l_top_photos:
                     for val in l_top_photos:
                         if obj.user_type == 'inspiring':
-                            rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], good_user_id=obj)
+                            rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], inspiring_user_id=obj)
                         if obj.user_type == 'friend':
                             rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], friend_id=obj)
                         if obj.user_type == 'member':
