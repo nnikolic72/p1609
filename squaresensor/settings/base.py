@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 """
 Django settings for squaresensor project.
 
@@ -14,6 +15,8 @@ import re
 import os
 from unipath import Path
 from ConfigParser import ConfigParser
+import djcelery
+djcelery.setup_loader()
 
 PROJECT_DIR = Path(__file__).ancestor(3)
 BASE_DIR = PROJECT_DIR.child('squaresensor')
@@ -34,28 +37,71 @@ try:
 except:
     INSTAGRAM_CLIENT_ID = None
 if not INSTAGRAM_CLIENT_ID:
-    INSTAGRAM_CLIENT_ID = config.get('instagram', 'CLIENT_ID')
+    try:
+        INSTAGRAM_CLIENT_ID = config.get('instagram', 'CLIENT_ID')
+    except:
+        INSTAGRAM_CLIENT_ID = None
 
 try:
     INSTAGRAM_CLIENT_SECRET = os.environ['CLIENT_SECRET']
 except:
     INSTAGRAM_CLIENT_SECRET = None
 if not INSTAGRAM_CLIENT_SECRET:
-    INSTAGRAM_CLIENT_SECRET = config.get('instagram', 'CLIENT_SECRET')
+    try:
+        INSTAGRAM_CLIENT_SECRET = config.get('instagram', 'CLIENT_SECRET')
+    except:
+        INSTAGRAM_CLIENT_SECRET = None
 
 try:
     INSTAGRAM_REDIRECT_URI = os.environ['INSTAGRAM_REDIRECT_URI']
 except:
     INSTAGRAM_REDIRECT_URI = None
 if not INSTAGRAM_REDIRECT_URI:
-    INSTAGRAM_REDIRECT_URI = config.get('instagram', 'INSTAGRAM_REDIRECT_URI')
+    try:
+        INSTAGRAM_REDIRECT_URI = config.get('instagram', 'INSTAGRAM_REDIRECT_URI')
+    except:
+        INSTAGRAM_REDIRECT_URI = None
 
 try:
     INSTAGRAM_SECRET_KEY = os.environ['INSTAGRAM_SECRET_KEY']
 except:
     INSTAGRAM_SECRET_KEY = None
 if not INSTAGRAM_SECRET_KEY:
-    INSTAGRAM_SECRET_KEY = config.get('instagram', 'INSTAGRAM_SECRET_KEY')
+    try:
+        INSTAGRAM_SECRET_KEY = config.get('instagram', 'INSTAGRAM_SECRET_KEY')
+    except:
+        INSTAGRAM_SECRET_KEY = None
+
+try:
+    INSTAGRAM_SECRET_KEY = os.environ['INSTAGRAM_SECRET_KEY']
+except:
+    INSTAGRAM_SECRET_KEY = None
+if not INSTAGRAM_SECRET_KEY:
+    try:
+        INSTAGRAM_SECRET_KEY = config.get('instagram', 'INSTAGRAM_SECRET_KEY')
+    except:
+        INSTAGRAM_SECRET_KEY = None
+
+# RabbitMQ URI
+try:
+    BROKER_URL = os.environ['BROKER_URL']
+except:
+    BROKER_URL = None
+if not BROKER_URL:
+    try:
+        BROKER_URL = config.get('rabbitmq', 'BROKER_URL')
+    except:
+        BROKER_URL = None
+
+try:
+    IS_APP_LIVE = os.environ['IS_APP_LIVE']
+except:
+    IS_APP_LIVE = None
+if not IS_APP_LIVE:
+    try:
+        IS_APP_LIVE = config.get('squaresensor', 'IS_APP_LIVE')
+    except:
+        IS_APP_LIVE = None
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -75,6 +121,8 @@ INSTALLED_APPS = (
     'import_export',
     'bootstrap3',
     'social_auth',
+    'djcelery',
+    'crispy_forms',
 
     'lander',
     'instagramuser',
@@ -98,6 +146,13 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'squaresensor.urls'
 
 WSGI_APPLICATION = 'squaresensor.wsgi.application'
+
+
+#Celery configurations
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
 
 
 # Templates
@@ -129,10 +184,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.contrib.instagram.InstagramBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
 
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',
@@ -212,8 +263,9 @@ MESSAGE_TAGS = {
             messages.ERROR: 'alert-danger error'
 }
 
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-# Squaresensor globals
+# Squaresensor globals -------------------------------------------------------
 
 
 #GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-14845987-3'

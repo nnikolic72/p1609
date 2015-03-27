@@ -18,6 +18,7 @@ heroku config:set S3_KEY=8N029N81
 heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.test --app squaresensor-dev
 heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.prod --app squaresensor-prod
 heroku config:set SECRET_KEY="jdsjdsdhsjdh"
+heroku config:set IS_APP_LIVE=1 --app squaresensor-dev
 
 // Needed to set on squaresensor heroku
 heroku config:set CLIENT_ID="" --app squaresensor-dev
@@ -38,6 +39,9 @@ set DJANGO_SETTINGS_MODULE=squaresensor.settings.local
 //Heroku maintenace mode
 heroku maintenance:on --app squaresensor-prod
 heroku maintenance:off --app squaresensor-prod
+
+// heroku Postgress database backup
+heroku pg:backups capture --app squaresensor-prod
 
 // requirements.txt - Heroku
 1. Add this string without quotes to the end of requrements.txt. "-r requirements_heroku.txt" 2. Convert requirements.txt file in Notepad++ to Encoding > Encode in ANSI
@@ -62,3 +66,7 @@ likes
 
 // django-import-export
 File must be saved in encoding "UTF-8 without BOM"
+
+// RabbitMQ defaults
+4369 (epmd), 25672 (Erlang distribution)
+BROKER_URL = 'amqp://guest:guest@localhost:5672//'

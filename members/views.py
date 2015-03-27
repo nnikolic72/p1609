@@ -102,8 +102,5 @@ class MemberLogoutView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         auth_logout(request)
-        return render(request,
-                      self.template_name,
-                      dict(
-                      )
-        )
+
+        return HttpResponseRedirect(reverse('lander:index'))
