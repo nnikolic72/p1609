@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 import re
 import os
+from os import environ
 from unipath import Path
 from ConfigParser import ConfigParser
 import djcelery
@@ -94,7 +95,7 @@ if not BROKER_URL:
         BROKER_URL = None
 
 try:
-    IS_APP_LIVE = os.environ['IS_APP_LIVE']
+    IS_APP_LIVE = environ.get('IS_APP_LIVE')
 except:
     IS_APP_LIVE = None
 if not IS_APP_LIVE:
