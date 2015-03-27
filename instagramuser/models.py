@@ -3,6 +3,11 @@ from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
 
+from categories.models import Category
+from attributes.models import Attribute
+
+
+
 
 # Create your models here.
 class InstagramUser(models.Model):
@@ -168,10 +173,26 @@ class InstagramUser(models.Model):
         ordering = ('instagram_user_name',)
 
 
+class InspiringUserBelongsToCategory(models.Model):
+    instagram_user = models.ForeignKey('InspiringUser')
+    category = models.ForeignKey(Category)
+    frequency = models.IntegerField(default=0, null=False, blank=False)
+    weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+
+class InspiringUserBelongsToAttribute(models.Model):
+    instagram_user = models.ForeignKey('InspiringUser')
+    attribute = models.ForeignKey(Attribute)
+    frequency = models.IntegerField(default=0, null=False, blank=False)
+    weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+
 class InspiringUser(InstagramUser):
     """
     Model to hold inspiring user data
     """
+    categories = models.ManyToManyField(Category, through='InspiringUserBelongsToCategory', null=True, blank=True)
+    attributes = models.ManyToManyField(Attribute, through='InspiringUserBelongsToAttribute', null=True, blank=True)
 
     user_type = models.CharField(editable=False, default='inspiring', max_length=50)
     is_potential_friend = models.BooleanField(default=False, null=False, blank=False)
@@ -225,10 +246,27 @@ class InspiringUserRaw(models.Model):
         verbose_name_plural = 'Inspiring Users Raw'
 
 
+class FollowerBelongsToCategory(models.Model):
+    instagram_user = models.ForeignKey('Follower')
+    category = models.ForeignKey(Category)
+    frequency = models.IntegerField(default=0, null=False, blank=False)
+    weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+
+class FollowerBelongsToAttribute(models.Model):
+    instagram_user = models.ForeignKey('Follower')
+    attribute = models.ForeignKey(Attribute)
+    frequency = models.IntegerField(default=0, null=False, blank=False)
+    weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+
 class Follower(InstagramUser):
     """
 
     """
+    categories = models.ManyToManyField(Category, through='FollowerBelongsToCategory', null=True, blank=True)
+    attributes = models.ManyToManyField(Attribute, through='FollowerBelongsToAttribute', null=True, blank=True)
+
     user_type = models.CharField(editable=False, default='follower', max_length=50)
     is_potential_friend = models.BooleanField(default=False, null=False, blank=False)
     inspiringuser = models.ManyToManyField('instagramuser.InspiringUser', null=True, blank=True)
@@ -239,10 +277,27 @@ class Follower(InstagramUser):
         verbose_name_plural = _('Followers')
 
 
+class FollowingBelongsToCategory(models.Model):
+    instagram_user = models.ForeignKey('Following')
+    category = models.ForeignKey(Category)
+    frequency = models.IntegerField(default=0, null=False, blank=False)
+    weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+
+class FollowingBelongsToAttribute(models.Model):
+    instagram_user = models.ForeignKey('Following')
+    attribute = models.ForeignKey(Attribute)
+    frequency = models.IntegerField(default=0, null=False, blank=False)
+    weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+
 class Following(InstagramUser):
     """
 
     """
+    categories = models.ManyToManyField(Category, through='FollowingBelongsToCategory', null=True, blank=True)
+    attributes = models.ManyToManyField(Attribute, through='FollowingBelongsToAttribute', null=True, blank=True)
+
     user_type = models.CharField(editable=False, default='following', max_length=50)
     is_potential_friend = models.BooleanField(default=False, null=False, blank=False)
     def followed_by_n_goodusers(self):

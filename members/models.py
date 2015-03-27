@@ -8,6 +8,22 @@ from social_auth.db.django_models import UserSocialAuth
 from instagramuser.models import InstagramUser
 # Create your models here.
 from libs.instagram.tools import InstagramSession
+from categories.models import Category
+from attributes.models import Attribute
+
+
+class MemberBelongsToCategory(models.Model):
+    instagram_user = models.ForeignKey('Member')
+    category = models.ForeignKey(Category)
+    frequency = models.IntegerField(default=0, null=False, blank=False)
+    weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+
+class MemberBelongsToAttribute(models.Model):
+    instagram_user = models.ForeignKey('Member')
+    attribute = models.ForeignKey(Attribute)
+    frequency = models.IntegerField(default=0, null=False, blank=False)
+    weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
 
 class Member(InstagramUser):
@@ -47,6 +63,9 @@ class Member(InstagramUser):
         return self.ig_api_limit_remaining, self.ig_api_limit_max
 
     user_type = models.CharField(editable=False, default='member', max_length=50)
+
+    categories = models.ManyToManyField(Category, through='MemberBelongsToCategory', null=True, blank=True)
+    attributes = models.ManyToManyField(Attribute, through='MemberBelongsToAttribute', null=True, blank=True)
 
     django_user = models.OneToOneField(User, null=False, blank=False,
                                        verbose_name=_('Django user'),
