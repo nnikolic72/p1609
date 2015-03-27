@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+{% block title %}{{ logged_member.instagram_user_name }} - {% trans 'Dashboard' %}{% endblock title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/members.dashboard.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/members.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+
+
+{% block page-title %}{% trans 'Dashboard' %} <small>@{{ logged_member.instagram_user_name }}</small>{% endblock page-title %}
+
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <div class="squaresensor-section-header">
+                <h4>{% trans 'My Instagram stats' %}</h4>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-3 center-block" align="center">
+
+            <img class="img-responsive img-rounded squaresensor-normal-profile-pic" src="{{ logged_member.instagram_profile_picture_URL }}">
+        </div>
+        <div class="col-xs-12 col-sm-9">
+            <div class="text-center">
+                <span class="btn btn-primary" style="margin-bottom: 5px;">Posts <span class="badge">{{ logged_member.number_of_media }}</span></span>
+
+                <span class="btn btn-primary" style="margin-bottom: 5px;">Followers <span class="badge">{{ logged_member.number_of_followers }}</span></span>
+
+                <span class="btn btn-primary" style="margin-bottom: 5px;">Follows <span class="badge">{{ logged_member.number_of_followings }}</span></span>
+            </div>
+            <br>
+            <p><b>{% trans 'Name' %}:</b> {{ logged_member.instagram_user_full_name }}</p>
+            <p class="text-justify"><b>{% trans 'Bio' %}:</b> {{ logged_member.instagram_user_bio }}</p>
+            <p><b>{% trans 'Web Site' %}:</b> <a href="{{ logged_member.instagram_user_website_URL }}">{{ logged_member.instagram_user_website_URL }}</a></p>
+            <p><a class="btn btn-sm btn-default" href="{{ logged_member.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a></p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <div class="squaresensor-section-header">
+                <h4>{% trans 'Activity' %}</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <div class="squaresensor-section-header">
+                <h4>{% trans 'Suggested Friends' %}</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <div class="squaresensor-section-header">
+                <h4>{% trans 'Fine Photos' %}</h4>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block aside %}
+    <h5>{% trans 'Aside' %}</h5>
+    <p>Text</p><p>Text</p><p>Text</p><p>Text</p><p>Text</p><p>Text</p><p>Text</p><p>Text</p><p>Text</p><p>Text</p>
+{% endblock aside %}
+
+

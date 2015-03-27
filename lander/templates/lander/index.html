@@ -1,0 +1,125 @@
+{% extends 'lander_base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans 'Welcome to Squaresensor - Instagram web browser with intelligence' %}{% endblock title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/lander.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/lander.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    <div class="jumbotron lander-heading">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-3 text-center">
+                    <div align="center">
+                        <img class="img-responsive" src="{{ STATIC_URL }}img/ss-black-small_300.png">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-9 text-center">
+                    <h1>{% trans 'Squaresensor' %}</h1><br>
+                    <h4>{% trans "The breakthrough Instagram app, with a smart sense of the web's best!" %}</h4>
+                    <br>
+                    <h2>{% trans 'COMING SOON' %}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="lander-section-1" id="signup">
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                {% if request.user.is_authenticated %}
+                    <a class="button btn-lg btn-success" href="{% url 'members:logout' %}">My Dashboard</a>
+                    <a class="button btn-lg btn-error" href="{% url 'members:logout' %}">Logout</a>
+                {% else %}
+
+                    {% if is_app_live == '1' %}
+                        <div class="row" style="margin: 20px;">
+                            <div class="col-xs-12 col-sm-offset-3 col-sm-6 ">
+                                <a class="button btn-lg btn-success"
+
+                                   href="{% url 'socialauth_begin' 'instagram' %}"
+                                        >{% trans 'Login with Instagram' %}</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="row" style="margin: 20px;">
+                        <div class="col-xs-12 col-sm-offset-3 col-sm-6">
+                            <h5>Discover the web app that fine tunes Instagram to YOUR lifestyle, and enjoy your pictures the way YOU prefer!</h5>
+                            <hr>
+                            <h4>Sign up here<br><small>Leave your e-mail address so we can let you know when we open!</small></h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-offset-3 col-sm-6">
+                            {% include 'lander/index_inner.html' %}
+                        </div>
+                    </div>
+
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class=" lander-section-2">
+        <div class="row">
+            <div class="col-xs-12 col-md-4 text-justify">
+                <div align="center">
+                    <img src="{{ STATIC_URL }}img/01_small.jpg" class="img-responsive img-thumbnail">
+                </div>
+                <h4 class="text-center">Browse only the best photos</h4>
+                <p>Let our advanced technology eliminate the pain of going through all the photos in your Instagram feed.</p>
+
+                <p>Just select which galleries you wish our technology to filter and you will see only the best photos from that gallery.</p>
+
+                <p class="text-center"><b>Skip the noise and reclaim your valuable time.</b></p>
+                <br><br>
+
+            </div>
+            <div class="col-xs-12 col-md-4 text-justify">
+                <div align="center">
+                    <img src="{{ STATIC_URL }}img/02_small.jpg" class="img-responsive img-thumbnail">
+                </div>
+                <h4 class="text-center">Discover talented photographers</h4>
+                <p>We have a big database of hand picked talented photographers - and we let you use it for free.</p>
+
+                <p>By discovering new photographers you will get a new inspiration.</p>
+
+                <p class="text-center"><b>Don't let Instagram to become boring<br>Find new awesomeness!</b></p>
+                <br><br>
+            </div>
+            <div class="col-xs-12 col-md-4 text-justify">
+                <div align="center">
+                    <img src="{{ STATIC_URL }}img/03_small.jpg" class="img-responsive img-thumbnail">
+                </div>
+                <h4 class="text-center">Find new friends</h4>
+                <p>Our advanced technology discover Instagram users that are similar to you.</p>
+
+                <p>By letting us know your photographic interests - you let us suggest your new Instagram friends. And it's completely automatic!</p>
+
+                <p class="text-center"><b>Discover the endless well of new Instagram friends!</b></p>
+                <br><br>
+
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <a href="#signup" class="btn btn-lg btn-default">Sign Up</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

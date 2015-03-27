@@ -1,0 +1,20 @@
+.lander-heading {
+    background-color: #558C89;
+    color: #ECECEA;
+    text-shadow: 3px 3px 4px rgb(58, 58, 58);
+    margin: 0px;
+}
+
+.lander-section-1 {
+    background-color: #ffffff;
+    color: #000000;
+    text-shadow: 1px 1px 3px rgba(150, 150, 150, 1);
+    padding: 40px;
+}
+
+.lander-section-2 {
+    background-color: #74AFAD;
+    color: #ffffff;
+    text-shadow: 1px 1px 3px rgba(150, 150, 150, 1);
+    padding: 40px;
+}
