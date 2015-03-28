@@ -5,7 +5,7 @@ __author__ = 'n.nikolic'
 from .views import UsersBestPhotosView
 
 urlpatterns = patterns('',
-                       url(r'^all-time-best/(?P<p_mode>.+)/(?P<p_username>.+)/$', UsersBestPhotosView.as_view(),
+                       url(r'^all-time-best/(?P<p_mode>[a-z]+)/(?P<p_username>[_a-zA-Z\d\.]+)/$', UsersBestPhotosView.as_view(),
                            name='alltimebest'
                            ),
                        )

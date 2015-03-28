@@ -161,103 +161,103 @@ def save_attributes_and_categories(req, form, p_photo_id):
 
 
 
-            # update attributes section -------------------------------------------------------------------------------
-            if checkbox.find('attributes') != -1:
-                # attribute checkbox is on
-                l_ids = checkbox[11:]
-                l_photo_id_pos = l_ids.find('_')
-                l_photo_id = l_ids[:l_photo_id_pos]
-                l_attribute_id = l_ids[l_photo_id_pos+1:]
+        # update attributes section -------------------------------------------------------------------------------
+        if checkbox.find('attributes') != -1:
+            # attribute checkbox is on
+            l_ids = checkbox[11:]
+            l_photo_id_pos = l_ids.find('_')
+            l_photo_id = l_ids[:l_photo_id_pos]
+            l_attribute_id = l_ids[l_photo_id_pos+1:]
 
-                try:
-                    l_attribute = Attribute.objects.get(id=l_attribute_id)
-                except ObjectDoesNotExist:
-                    l_attribute = None
-                except:
-                    raise
+            try:
+                l_attribute = Attribute.objects.get(id=l_attribute_id)
+            except ObjectDoesNotExist:
+                l_attribute = None
+            except:
+                raise
 
-                if l_attribute:
-                    photo.photo_attribute.add(l_attribute)
+            if l_attribute:
+                photo.photo_attribute.add(l_attribute)
 
-                    if photo.member_id:
-                        l_member = photo.member_id
-                        try:
-                            l_member_attribute_already_added = MemberBelongsToAttribute.objects.get(
-                                instagram_user=l_member,
-                                attribute=l_attribute,
-                                )
-                            l_member_attribute_already_added.frequency += 1
-                            l_member_attribute_already_added.save()
-                        except ObjectDoesNotExist:
-                            l_member_attribute_already_added = None
+                if photo.member_id:
+                    l_member = photo.member_id
+                    try:
+                        l_member_attribute_already_added = MemberBelongsToAttribute.objects.get(
+                            instagram_user=l_member,
+                            attribute=l_attribute,
+                            )
+                        l_member_attribute_already_added.frequency += 1
+                        l_member_attribute_already_added.save()
+                    except ObjectDoesNotExist:
+                        l_member_attribute_already_added = None
 
-                        if not l_member_attribute_already_added:
-                            l_member_attribute = MemberBelongsToAttribute(
-                                instagram_user=l_member,
-                                attribute=l_attribute,
-                                frequency=1
-                                )
-                            l_member_attribute.save()
+                    if not l_member_attribute_already_added:
+                        l_member_attribute = MemberBelongsToAttribute(
+                            instagram_user=l_member,
+                            attribute=l_attribute,
+                            frequency=1
+                            )
+                        l_member_attribute.save()
 
-                    if photo.following_id:
-                        l_following = photo.following_id
-                        try:
-                            l_following_attribute_already_added = FollowingBelongsToAttribute.objects.get(
-                                instagram_user=l_following,
-                                attribute=l_attribute,
-                                )
-                            l_following_attribute_already_added.frequency += 1
-                            l_following_attribute_already_added.save()
-                        except ObjectDoesNotExist:
-                            l_following_attribute_already_added = None
+                if photo.following_id:
+                    l_following = photo.following_id
+                    try:
+                        l_following_attribute_already_added = FollowingBelongsToAttribute.objects.get(
+                            instagram_user=l_following,
+                            attribute=l_attribute,
+                            )
+                        l_following_attribute_already_added.frequency += 1
+                        l_following_attribute_already_added.save()
+                    except ObjectDoesNotExist:
+                        l_following_attribute_already_added = None
 
-                        if not l_following_attribute_already_added:
-                            l_following_attribute = FollowingBelongsToAttribute(
-                                instagram_user=l_following,
-                                attribute=l_attribute,
-                                frequency=1
-                                )
-                            l_following_attribute.save()
+                    if not l_following_attribute_already_added:
+                        l_following_attribute = FollowingBelongsToAttribute(
+                            instagram_user=l_following,
+                            attribute=l_attribute,
+                            frequency=1
+                            )
+                        l_following_attribute.save()
 
-                    if photo.friend_id:
-                        l_follower = photo.friend_id
-                        try:
-                            l_follower_attribute_already_added = FollowerBelongsToAttribute.objects.get(
-                                instagram_user=l_follower,
-                                attribute=l_attribute,
-                                )
-                            l_follower_attribute_already_added.frequency += 1
-                            l_follower_attribute_already_added.save()
-                        except ObjectDoesNotExist:
-                            l_follower_attribute_already_added = None
+                if photo.friend_id:
+                    l_follower = photo.friend_id
+                    try:
+                        l_follower_attribute_already_added = FollowerBelongsToAttribute.objects.get(
+                            instagram_user=l_follower,
+                            attribute=l_attribute,
+                            )
+                        l_follower_attribute_already_added.frequency += 1
+                        l_follower_attribute_already_added.save()
+                    except ObjectDoesNotExist:
+                        l_follower_attribute_already_added = None
 
-                        if not l_follower_attribute_already_added:
-                            l_follower_attribute = FollowerBelongsToAttribute(
-                                instagram_user=l_follower,
-                                attribute=l_attribute,
-                                frequency=1
-                                )
-                            l_follower_attribute.save()
+                    if not l_follower_attribute_already_added:
+                        l_follower_attribute = FollowerBelongsToAttribute(
+                            instagram_user=l_follower,
+                            attribute=l_attribute,
+                            frequency=1
+                            )
+                        l_follower_attribute.save()
 
-                    if photo.inspiring_user_id:
-                        l_inspiring_user = photo.inspiring_user_id
-                        try:
-                            l_inspiring_user_attribute_already_added = InspiringUserBelongsToAttribute.objects.get(
-                                instagram_user=l_inspiring_user,
-                                attribute=l_attribute,
-                                )
-                            l_inspiring_user_attribute_already_added.frequency += 1
-                            l_inspiring_user_attribute_already_added.save()
-                        except ObjectDoesNotExist:
-                            l_inspiring_user_attribute_already_added = None
+                if photo.inspiring_user_id:
+                    l_inspiring_user = photo.inspiring_user_id
+                    try:
+                        l_inspiring_user_attribute_already_added = InspiringUserBelongsToAttribute.objects.get(
+                            instagram_user=l_inspiring_user,
+                            attribute=l_attribute,
+                            )
+                        l_inspiring_user_attribute_already_added.frequency += 1
+                        l_inspiring_user_attribute_already_added.save()
+                    except ObjectDoesNotExist:
+                        l_inspiring_user_attribute_already_added = None
 
-                        if not l_inspiring_user_attribute_already_added:
-                            l_inspiring_user_attribute = InspiringUserBelongsToAttribute(
-                                instagram_user=l_inspiring_user,
-                                attribute=l_attribute,
-                                frequency=1
-                                )
-                            l_inspiring_user_attribute.save()
+                    if not l_inspiring_user_attribute_already_added:
+                        l_inspiring_user_attribute = InspiringUserBelongsToAttribute(
+                            instagram_user=l_inspiring_user,
+                            attribute=l_attribute,
+                            frequency=1
+                            )
+                        l_inspiring_user_attribute.save()
 
     l_modal_name = '#myModal_%s' % (p_photo_id)
 

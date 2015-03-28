@@ -8,14 +8,14 @@ urlpatterns = patterns('',
                        url(r'^add/$', AddInspiringUserView.as_view(),
                            name='addinspiring'
                            ),
-                       url(r'^add/(?P<p_username>.+)/$', AddInspiringUserByNameView.as_view(),
+                       url(r'^add/(?P<p_username>[_a-zA-Z\d\.]+)/$', AddInspiringUserByNameView.as_view(),
                            name='addinspiringname'
                            ),
 
                        url(r'^$', InspiringUserIndexView.as_view(),
                            name='index_inspiring_artists'
                        ),
-                       url(r'^(?P<p_inspiring_user_id>.+)/$', InspiringUserNameView.as_view(),
+                       url(r'^(?P<p_inspiring_user_id>[0-9]+)/$', InspiringUserNameView.as_view(),
                            name='inspiring_user'
                        ),
                        )

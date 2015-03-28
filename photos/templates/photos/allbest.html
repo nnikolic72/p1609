@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block title %}@{{ photo_owner.instagram_user_name }} {% trans 'All Time Best Photos' %}{% endblock title %}
-{% block page-title %}@{{ photo_owner.instagram_user_name }} {% trans 'All Time Best Photos' %}{% endblock page-title %}
+{% block page-title %}@{{ photo_owner.instagram_user_name }} <small>{% trans 'All Time Best Photos' %}</small>{% endblock page-title %}
 
 {% block css %}
     {{ block.super }}
@@ -25,7 +25,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12 text-center">
-            <a class="btn btn-default" href="{% url 'photos:alltimebest' p_username=logged_member.instagram_user_name p_mode='refresh' %}" >{% trans 'Refresh' %}</a>
+            <a class="btn btn-default" href="{% url 'photos:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}" >{% trans 'Refresh' %}</a>
         </div>
     </div>
 {% endblock content %}

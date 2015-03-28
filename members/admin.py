@@ -184,7 +184,19 @@ class MemberAdmin(admin.ModelAdmin):
                                             ]
         }
         ),
-
+       ('Maths', {'fields': ['poly_order',
+                              'poly_theta_0',
+                              'poly_theta_1',
+                              'poly_theta_2',
+                              'poly_theta_3',
+                              'poly_theta_4',
+                              'poly_min_days',
+                              'poly_max_days',
+                              'poly_min_likes',
+                              'poly_max_likes',
+        ]
+        }
+        ),
         ('Member Processing Information', {'fields': ['last_processed_for_basic_info_date',
                                                       'times_processed_for_basic_info',
                                                       'to_be_processed_for_basic_info',

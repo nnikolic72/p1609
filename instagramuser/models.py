@@ -90,6 +90,18 @@ class InstagramUser(models.Model):
                                           help_text=_('Number of Instagram posts')
     )
 
+    poly_theta_0 = models.FloatField(default=0, null=True, blank=True)
+    poly_theta_1 = models.FloatField(default=0, null=True, blank=True)
+    poly_theta_2 = models.FloatField(default=0, null=True, blank=True)
+    poly_theta_3 = models.FloatField(default=0, null=True, blank=True)
+    poly_theta_4 = models.FloatField(default=0, null=True, blank=True)
+    poly_min_days = models.IntegerField(default=0, null=True, blank=True)
+    poly_max_days = models.IntegerField(default=0, null=True, blank=True)
+    poly_min_likes = models.IntegerField(default=0, null=True, blank=True)
+    poly_max_likes = models.IntegerField(default=0, null=True, blank=True)
+
+    poly_order = models.IntegerField(default=2, null=True, blank=True)
+
     '''Number of times Instagram user is processed for basic info'''
     times_processed_for_basic_info = models.IntegerField(
         _('Number of times Instagram user was processed for basic info'),

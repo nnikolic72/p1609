@@ -428,7 +428,7 @@ class BestPhotos:
                     break
                 l_cnt += 1
 
-        return l_polynomial_result
+        return l_polynomial_result, l_max_days, l_min_days, l_max_likes, l_min_likes
 
 
 class BestFollowers():
@@ -1125,7 +1125,16 @@ class InstagramUserAdminUtils():
                 l_best_photos.get_instagram_photos()
                 l_top_photos = None
                 if l_best_photos.l_user_has_photos:
-                    l_best_photos.get_top_photos()
+                    l_polynom, l_max_days, l_min_days, l_max_likes, l_min_likes = l_best_photos.get_top_photos()
+                    if l_polynom.order == 2:
+                        obj.poly_theta_2 = l_polynom.coeffs[0]
+                        obj.poly_theta_1 = l_polynom.coeffs[1]
+                        obj.poly_theta_0 = l_polynom.coeffs[2]
+                        obj.poly_min_days = l_min_days
+                        obj.poly_max_days = l_max_days
+                        obj.poly_min_likes = l_min_likes
+                        obj.poly_max_likes = l_max_likes
+                        obj.poly_order = 2
                     l_top_photos = l_best_photos.top_photos_list
                     obj.times_processed_for_photos = obj.times_processed_for_photos + 1
                 obj.save()
@@ -1133,7 +1142,7 @@ class InstagramUserAdminUtils():
                 '''Delete old best photos for this user'''
                 if obj.user_type == 'inspiring':
                     Photo.objects.filter(inspiring_user_id=obj.pk).delete()
-                if obj.user_type == 'friend':
+                if obj.user_type == 'follower':
                     Photo.objects.filter(friend_id=obj.pk).delete()
                 if obj.user_type == 'member':
                     Photo.objects.filter(member_id=obj.pk).delete()
@@ -1145,7 +1154,7 @@ class InstagramUserAdminUtils():
                     for val in l_top_photos:
                         if obj.user_type == 'inspiring':
                             rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], inspiring_user_id=obj)
-                        if obj.user_type == 'friend':
+                        if obj.user_type == 'follower':
                             rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], friend_id=obj)
                         if obj.user_type == 'member':
                             rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], member_id=obj)
