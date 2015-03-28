@@ -15,6 +15,7 @@
 {% block bootstrap3_extra_script %}
     {% block script %}
         {% dajaxice_js_import %}
+        <script src="{{ STATIC_URL }}js/vendor/jquery.ba-serializeobject.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="{{ STATIC_URL }}js/base.js" type="text/javascript" charset="utf-8"></script>
     {% endblock script %}
 {% endblock %}
@@ -43,13 +44,13 @@
                         <li><a href="{% url 'members:dashboard' %}">Home</a></li>
                         <li><a href="#">{% trans 'Smart Feed' %}</a></li>
                         <li><a href="#">{% trans 'Find Friends' %}</a></li>
-                        <li><a href="#">{% trans 'Inspiring Artists' %}</a></li>
+                        <li><a href="{% url 'instagramuser:index_inspiring_artists' %}">{% trans 'Inspiring Artists' %}</a></li>
 
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans 'Browse' %} <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="#">{% trans 'Find IG User' %}</a></li>
-                                <li><a href="#">{% trans 'Categories' %}</a></li>
+                                <li><a href="{% url 'categories:index' %}">{% trans 'Categories' %}</a></li>
                                 <li><a href="#">{% trans 'Styles' %}</a></li>
                             </ul>
                         </li>
@@ -94,6 +95,7 @@
 
         <div class="col-xs-12 col-md-4 squaresensor-sub-panel center-block">
             {% block aside %}
+                <p>Reklame u base.html</p>
             {% endblock aside %}
         </div>
     </div>

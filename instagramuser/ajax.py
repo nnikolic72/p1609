@@ -1,19 +1,21 @@
+import json
+
 from django.http import HttpResponseNotFound
+from django.template.loader import render_to_string
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import ugettext as _
+
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils
+from dajaxice.decorators import dajaxice_register
+
 from members.models import Member
 from photos.models import Photo
 from categories.models import Category
 from attributes.models import Attribute
-
-__author__ = 'n.nikolic'
-import json
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext as _
-
-from dajaxice.decorators import dajaxice_register
-
 from .forms import AddInspiringUserForm
 from instagramuser.models import InspiringUser
+
+__author__ = 'n.nikolic'
 
 @dajaxice_register
 def analyze_user(req, form):
@@ -26,14 +28,19 @@ def analyze_user(req, form):
 
     add_user_form = AddInspiringUserForm(form)
     l_photos_queryset = None
+    show_describe_button = False
 
     if add_user_form.is_valid():
         instagram_user_name = add_user_form.cleaned_data[u'instagram_user_name']
         instagram_user_name = instagram_user_name.lower().strip()
 
         # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
         try:
             logged_member = Member.objects.get(django_user__username=req.user)
+            if logged_member.is_editor(req):
+                show_describe_button = True
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -54,12 +61,10 @@ def analyze_user(req, form):
 
         if inspiring_user_cnt > 0:
             return json.dumps({
-                'photos': None,
                 'already_exists': 1,
                 'error': 1,
                 'error_message': 'Inspiring artist already exists in our database.',
-                'categories': None,
-                'attributes': None
+                'html_text': 'Inspiring artist already exists in our database.',
                 }
             )
         else:
@@ -68,7 +73,7 @@ def analyze_user(req, form):
             instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
             instagram_session.init_instagram_API()
             user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
-            if user_search:
+            if len(user_search) > 0:
                 ig_utils = InstagramUserAdminUtils()
                 inspiring_user = InspiringUser(instagram_user_name=instagram_user_name,
                                                to_be_processed_for_basic_info=True,
@@ -84,39 +89,41 @@ def analyze_user(req, form):
                             ig_utils.process_photos_by_instagram_api(req, l_photos_queryset)
                             l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
 
-                            l_categories = Category.objects.all()
-                            l_attributes = Attribute.objects.all()
 
-                            category_list = []
-                            for cat in l_categories:
-                                category_list.extend([cat.title])
-
-                            attribute_list = []
-                            for att in l_attributes:
-                                attribute_list.extend([att.title])
-
-
-                            photo_list = []
-                            for photo in l_photos_queryset:
-                                photo_list.extend([photo.instagram_low_resolution_URL])
 
                 else:
                     return json.dumps({
-                        'photos': None,
+
                         'already_exists': 0,
                         'error': 1,
                         'error_message': 'Can not add Inspiring user in the database at this time.',
-                        'categories': None,
-                        'attributes': None
+                        'html_text': '<p>Can not add Inspiring user in the database at this time.</p>'
                         }
                     )
+            else:
+                return json.dumps({
+
+                    'already_exists': 0,
+                    'error': 1,
+                    'error_message': 'Instagram user does not exist.',
+                    'html_text': 'Instagram user does not exist.',
+                    }
+                )
+
+
+    html_text = render_to_string('photos/photo_gallery.html',
+                                 dict(
+                                     photos=l_photos_queryset,
+                                     show_describe_button=show_describe_button,
+                                     l_categories=l_categories,
+                                     l_attributes=l_categories,
+                                 )
+    )
 
     return json.dumps({
-        'photos': photo_list,
         'already_exists': 0,
         'error': 0,
         'error_message': '',
-        'categories': category_list,
-        'attributes': attribute_list
+        'html_text': html_text
         }
     )

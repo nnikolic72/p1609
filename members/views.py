@@ -93,7 +93,8 @@ class MemberDashboardView(TemplateView):
 
         return render(request,
                       self.template_name,
-                      dict(logged_member=logged_member,
+                      dict(photo_owner=logged_member,
+                           logged_member=logged_member,
                            profile_photo_url=profile_photo_url,
                            x_ratelimit_remaining=x_ratelimit_remaining,
                            x_ratelimit=x_ratelimit,

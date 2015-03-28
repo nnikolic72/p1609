@@ -5,6 +5,14 @@ from libs.instagram.tools import InstagramUserAdminUtils
 
 from models import InspiringUser, InspiringUserRaw, Follower, Following
 
+
+class CategoryInspiringUserInlineAdmin(admin.TabularInline):
+    model = InspiringUser.categories.through
+
+
+class AttributeInspiringUserInlineAdmin(admin.TabularInline):
+    model = InspiringUser.attributes.through
+
 # Register your models here.
 class InspiringUserAdmin(admin.ModelAdmin):
     '''Definition of Admin interface for GoodUsers model'''
@@ -113,7 +121,7 @@ class InspiringUserAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_inspiringusers_process_followings_false.short_description = 'Set "To Be Processed for Friends" to "No"'
 
-
+    inlines = (CategoryInspiringUserInlineAdmin, AttributeInspiringUserInlineAdmin,)
 
     '''Determine what is displayed when GoodUser is displayed as a list'''
     list_display = ('instagram_user_name',
@@ -266,6 +274,14 @@ class InspiringUserRawAdmin(admin.ModelAdmin):
         ]
 
 
+class CategoryFollowingInlineAdmin(admin.TabularInline):
+    model = Following.categories.through
+
+
+class AttributeFollowingInlineAdmin(admin.TabularInline):
+    model = Following.attributes.through
+
+
 class FollowingAdmin(admin.ModelAdmin):
     '''Definition of Admin interface for Following model'''
 
@@ -305,13 +321,6 @@ class FollowingAdmin(admin.ModelAdmin):
         message = admin_utils.set_instagram_users_process_false(request, queryset)
         self.message_user(request, message)
     set_followings_process_false.short_description = 'Set "To Be Processed for basic info" -> No'
-
-
-
-
-
-
-
 
     def set_followings_process_photos_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
@@ -380,6 +389,7 @@ class FollowingAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_followings_process_followings_false.short_description = 'Set "To Be Processed for Friends" to "No"'
 
+    inlines = (CategoryFollowingInlineAdmin, AttributeFollowingInlineAdmin,)
 
     list_display = (
         'instagram_user_name',
@@ -442,6 +452,15 @@ class FollowingAdmin(admin.ModelAdmin):
         }
         ),
         ]
+
+
+
+class CategoryFollowerInlineAdmin(admin.TabularInline):
+    model = Follower.categories.through
+
+
+class AttributeFollowerInlineAdmin(admin.TabularInline):
+    model = Follower.attributes.through
 
 
 class FollowerAdmin(admin.ModelAdmin):
@@ -556,7 +575,7 @@ class FollowerAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_friends_process_followings_false.short_description = 'Set "To Be Processed for Friends" to "No"'
 
-
+    inlines = (CategoryFollowerInlineAdmin, AttributeFollowerInlineAdmin,)
 
     list_display = (
                     'instagram_user_name', 'is_user_active', 'number_of_media',

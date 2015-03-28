@@ -6,7 +6,7 @@
 
 
 {% block title %}{% trans 'Add new inspiring Instagram user' %}{% endblock title %}
-{% block page-title %}{% trans 'New inspiring Instagram user' %}{% endblock page-title %}
+{% block page-title %}{% trans 'New' %} <small>{% trans 'inspiring Instagram user' %}</small>{% endblock page-title %}
 
 {% block css %}
     {{ block.super }}
@@ -15,8 +15,8 @@
 
 {% block script %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}js/vendor/jquery.ba-serializeobject.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{ STATIC_URL }}js/instagramuser.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/photos.js" type="text/javascript" charset="utf-8"></script>
 {% endblock script %}
 
 {% block content %}
@@ -25,8 +25,8 @@
     <div class="container-fluid">
         <form id="username" class="form-horizontal" action="#" method="post" role="form">
             {% crispy form %}
-            <button type="button" class="btn btn-submit col-xs-offset-5 col-xs-2" onclick="analyze_user();">
-                <div id="analyze_button">{% trans 'Analyze' %}</div>
+            <button type="button" id="searchSubmit" class="btn btn-submit col-xs-offset-5 col-xs-2" onclick="analyze_user();">
+                <div id="analyze_button"><span id="analyze_text">{% trans 'Analyze' %}</span><span id="spinner" style="display: none;"><img src="{{ STATIC_URL }}img/ajax_loader-small.gif"/></span></div>
             </button>
         </form>
     </div>

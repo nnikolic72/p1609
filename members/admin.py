@@ -12,6 +12,12 @@ from .models import (
 )
 
 
+class CategoryInlineAdmin(admin.TabularInline):
+    model = Member.categories.through
+
+class AttributeInlineAdmin(admin.TabularInline):
+    model = Member.attributes.through
+
 class MemberAdmin(admin.ModelAdmin):
     def process_member(self, request, queryset):
         '''Action -> Do what is needed to process a Members with Instagram API
@@ -113,6 +119,8 @@ class MemberAdmin(admin.ModelAdmin):
         message = admin_utils.set_instagram_users_process_friends_false(request, queryset)
         self.message_user(request, message)
     set_members_process_followings_false.short_description = 'Set "To Be Processed for Friends" to "No"'
+
+    inlines = (CategoryInlineAdmin, AttributeInlineAdmin,)
 
     # Register your models here.
     list_display = ('django_user', 'instagram_user_name',

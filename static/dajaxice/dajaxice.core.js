@@ -20,6 +20,19 @@ var Dajaxice = {
     
 ,
     
+    photos: {
+    
+    save_attributes_and_categories: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.save_attributes_and_categories', 'POST', callback_function, argv, custom_settings);
+    }
+
+
+    
+    
+    }
+    
+,
+    
 
     get_cookie: function(name)
     {

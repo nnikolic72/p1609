@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from social_auth.db.django_models import UserSocialAuth
 
 from instagramuser.models import InstagramUser
@@ -61,6 +61,23 @@ class Member(InstagramUser):
         Returns current Instagram API limits without calling IG API
         """
         return self.ig_api_limit_remaining, self.ig_api_limit_max
+
+    def is_editor(self, req):
+        """
+        Checks if member is in "Inspiring User Editor" group
+        """
+        l_is_editor = False
+        try:
+            groups_memberships = req.user.groups.all()
+            describe_group = Group.objects.get(name='Inspiring User Editor')
+            if describe_group in groups_memberships:
+                l_is_editor = True
+        except ObjectDoesNotExist:
+            pass
+        except:
+            raise
+
+        return l_is_editor
 
     user_type = models.CharField(editable=False, default='member', max_length=50)
 

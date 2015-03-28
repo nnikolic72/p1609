@@ -1,4 +1,6 @@
-<div class="col-xs-12 col-sm-6 col-md-4">
+{% load i18n %}
+
+<div class="col-xs-12 col-sm-6">
     <div class="panel panel-heading">
         <div align="center">
             <img class="img-responsive img-thumbnail" src="{{ photo.instagram_low_resolution_URL }}"
@@ -6,22 +8,86 @@
         </div>
 
 
-        <div class="panel panel-body">
-            <div class="col-xs-6 text-left">
-                <button class="btn btn-xs">
+        <div class="panel panel-body squaresensor-image-panel-body">
+
+            <div class="col-xs-4 text-left">
+                <button class="btn btn-xs squaresensor-image-button">
                     <small><span class="glyphicon glyphicon-heart-empty"></span>
                         <div class="badge">{{ photo.instagram_likes }}</div></small>
                 </button>
             </div>
-
-            <div class="col-xs-6 text-right">
-                <button class="btn btn-xs">
+            <div class="col-xs-4 text-center">
+                {%  if show_describe_button %}
+                    <button class="btn btn-xs squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
+                        <small><span class="glyphicon glyphicon-list-alt"></span>
+                        </small>
+                    </button>
+                {% endif %}
+            </div>
+            <div class="col-xs-4 text-right">
+                <button class="btn btn-xs squaresensor-image-button">
                     <small><span class="glyphicon glyphicon-comment"></span>
                         <div class="badge">{{ photo.instagram_comments }}</div></small>
                 </button>
             </div>
         </div>
     </div>
+</div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="myModal_{{ photo.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">{% trans 'Describe this photo' %}</h4>
+                </div>
+                <div class="modal-body">
+                    <div align="center">
+                        <img class="img-responsive img-thumbnail" src="{{ photo.instagram_thumbnail_URL }}">
+                    </div>
+                    <form action="" method="POST" id="category_selection_form_{{ photo.id }}">
+                        {% if categories %}
+                            <div class="row">
+                                <h5 class="text-center">{% trans 'Select Categories' %}</h5>
+                                <div class="col-xs-12 text-justify">
+                                    <div class="btn-group" data-toggle="buttons">
+                                        {% for category in categories %}
+                                            <label class="btn btn-default btn-xs" title="{{ category.description }}">
+                                                <input name="categories_{{ photo.id }}_{{ category.id }}" type="checkbox" autocomplete="off"> {{ category.title }}
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p>{% trans 'No categories defined.' %}</p>
+                        {% endif %}
+                        {% if attributes %}
+                            <div class="row">
+                                <h5 class="text-center">{% trans 'Select Styles' %}</h5>
+                                <div class="col-xs-12 ">
+                                    <div class="btn-group btn-group-xs" data-toggle="buttons">
+                                        {% for attribute in attributes %}
+                                            <label class="btn btn-default btn-xs" title="{{ attribute.description }}">
+                                                <input name="attributes_{{ photo.id }}_{{ attribute.id }}" type="checkbox" autocomplete="off"> {{ attribute.title }}
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p>{% trans 'No styles defined.' %}</p>
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Discard' %}</button>
+                    <button type="button" class="btn btn-primary" onclick="save_attributes_and_categories({{ photo.id }});">{% trans 'Save' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
