@@ -1456,6 +1456,7 @@ class InstagramComments():
     instagram_photo_id = None
     comments = None
     instagram_session = None
+    l_instagram_media = None
 
     def __init__(self, p_photo_id, p_instagram_session):
         self.instagram_photo_id = p_photo_id
@@ -1473,8 +1474,8 @@ class InstagramComments():
         try:
             if self.instagram_session:
                 l_media_comments = self.instagram_session.api.media_comments(media_id=self.instagram_photo_id)
-                l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
-                l_instagram_thumbnail_url = l_instagram_media.get_thumbnail_url()
+                self.l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
+                l_instagram_thumbnail_url = self.l_instagram_media.get_thumbnail_url()
 
         except InstagramAPIError as e:
             logging.exception("init_instagram_API: ERR-00110 Instagram API Error %s : %s" % (e.status_code, e.error_message))
@@ -1515,3 +1516,21 @@ class InstagramComments():
             raise
 
         return l_return
+
+    def get_comments_count(self):
+        try:
+            self.l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
+            l_comment_count = self.l_instagram_media.comment_count
+        except InstagramAPIError as e:
+            logging.exception("init_instagram_API: ERR-00110 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            #self.message_user(request, buf, level=messages.WARNING)
+
+        except InstagramClientError as e:
+            logging.exception("init_instagram_API: ERR-00111 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
+            #self.message_user(request, buf, level=messages.WARNING)
+
+        except:
+            logging.exception("init_instagram_API: ERR-00112 Unexpected error: ")
+            raise
+
+        return l_comment_count

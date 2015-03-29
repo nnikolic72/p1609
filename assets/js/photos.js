@@ -52,6 +52,15 @@ function load_instagram_comments(p_photo_id) {
 function send_instagram_comment_callback(data) {
     alert('send_instagram_comment_callback');
     var p_photo_id = data.p_photo_id;
+    var x_limit_pct = data.x_limit_pct;
+    var comments_per_minute = data.comments_per_minute;
+
+    $('#iglu').html(x_limit_pct);
+    $('#cpm').html(comments_per_minute);
+    // var l_comments_count = data.l_comments_count;
+
+    var instagram_comments_text_id = '#instagram_comments_text_' + p_photo_id;
+    $(instagram_comments_text_id).html(l_comments_count);
     //show_comments_modal(p_photo_id); //hides
 }
 

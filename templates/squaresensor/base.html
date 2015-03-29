@@ -112,9 +112,9 @@
                 <nav class="navbar navbar-default navbar-fixed-bottom">
                     <div class="container">
                         <button class="btn btn-xs statusbar-text"><span class="glyphicon glyphicon-step-backward" onclick="back_button();"></span></button>
-                        <button class="btn btn-xs statusbar-text">LTM <span class="badge">{{ logged_member.likes_in_last_minute }}</span></button>
-                        <button class="btn btn-xs statusbar-text">CTM <span class="badge">{{ logged_member.comments_in_last_minute }}</span></button>
-                        <button class="btn btn-xs statusbar-text">IGLU <span class="badge">{{ x_limit_pct }}%</span></button>
+                        <button class="btn btn-xs statusbar-text">LTM <span class="badge" id="ltm">{{ logged_member.likes_in_last_minute }}</span></button>
+                        <button class="btn btn-xs statusbar-text">CTM <span class="badge" id="ctm">{{ logged_member.comments_in_last_minute }}</span></button>
+                        <button class="btn btn-xs statusbar-text">IGLU <span class="badge" id="iglu">{{ x_limit_pct }}%</span></button>
                     </div>
                 </nav>
             </div>

@@ -289,7 +289,7 @@ def load_instagram_comments(req, p_photo_id):
                                      comments=l_comments,
                                      p_photo_id=p_photo_id,
                                      instagram_thumbnail_url=instagram_thumbnail_url,
-    )
+                                     )
     )
 
     return json.dumps({
@@ -348,17 +348,16 @@ def send_instagram_comment(req, form, p_photo_id):
 
     l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
     l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+    l_comments_count = l_instagram_comments.get_comments_count()
+
+    #Todo check comments per minute
+    comments_per_minute = 0
 
     return json.dumps(
-        dict(
-            p_photo_id=p_photo_id,
-
-            show_describe_button=show_describe_button,
-            logged_member=logged_member,
-            x_ratelimit_remaining=x_ratelimit_remaining,
-            x_ratelimit=x_ratelimit,
-            x_limit_pct=x_limit_pct,
-            categories=l_categories,
-            attributes=l_attributes,
-        )
+        dict(p_photo_id=p_photo_id, l_comments_count=l_comments_count,
+             x_ratelimit_remaining=x_ratelimit_remaining,
+             x_ratelimit=x_ratelimit,
+             x_limit_pct=x_limit_pct,
+             comments_per_minute=comments_per_minute,
+             )
     )
