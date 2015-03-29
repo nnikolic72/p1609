@@ -9,6 +9,8 @@ from django.contrib.auth import logout as auth_logout
 # Create your views here.
 from django.views.generic import TemplateView
 from social_auth.db.django_models import UserSocialAuth
+from attributes.models import Attribute
+from categories.models import Category
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils
 
 from .models import Member
@@ -56,6 +58,7 @@ class MemberDashboardView(TemplateView):
 
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
             #instagram_user = Member.objects.get(django_user__username=request.user)
             queryset = Member.objects.filter(django_user__username=request.user)
 
@@ -76,6 +79,9 @@ class MemberDashboardView(TemplateView):
             profile_photo_url = None
             if logged_member.instagram_profile_picture_URL:
                 profile_photo_url = logged_member.instagram_profile_picture_URL
+
+            l_categories = Category.objects.all()
+            l_attributes = Attribute.objects.all()
 
         except ObjectDoesNotExist:
             logged_member = None
@@ -98,7 +104,10 @@ class MemberDashboardView(TemplateView):
                            profile_photo_url=profile_photo_url,
                            x_ratelimit_remaining=x_ratelimit_remaining,
                            x_ratelimit=x_ratelimit,
-                           x_limit_pct=x_limit_pct
+                           x_limit_pct=x_limit_pct,
+                           categories=l_categories,
+                           attributes=l_attributes,
+                           show_describe_button=show_describe_button,
                            )
         )
 

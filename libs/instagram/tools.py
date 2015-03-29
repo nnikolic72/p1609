@@ -185,7 +185,7 @@ class MyLikes:
 
     def get_number_of_media_likes(self):
         '''Returns number of likes on a media object for Instagram ID self.photo_id'''
-
+        pass
 
 
     def has_user_liked_media(self):
@@ -1446,3 +1446,72 @@ class InstagramUserAdminUtils():
 
         return buf
     process_photos_by_instagram_api.short_description = 'Process photos by Instagram API'
+
+
+class InstagramComments():
+    """
+    Class to read and send Instagram comments
+    """
+
+    instagram_photo_id = None
+    comments = None
+    instagram_session = None
+
+    def __init__(self, p_photo_id, p_instagram_session):
+        self.instagram_photo_id = p_photo_id
+        self.instagram_session = p_instagram_session
+
+    def get_all_comments(self):
+        """
+        Returns all comments for an Instagram post with id self.instagram_photo_id
+        :return:
+        """
+
+        l_media_comments = None
+        l_instagram_thumbnail_url = None
+
+        try:
+            if self.instagram_session:
+                l_media_comments = self.instagram_session.api.media_comments(media_id=self.instagram_photo_id)
+                l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
+                l_instagram_thumbnail_url = l_instagram_media.get_thumbnail_url()
+
+        except InstagramAPIError as e:
+            logging.exception("init_instagram_API: ERR-00110 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            #self.message_user(request, buf, level=messages.WARNING)
+
+        except InstagramClientError as e:
+            logging.exception("init_instagram_API: ERR-00111 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
+            #self.message_user(request, buf, level=messages.WARNING)
+
+        except:
+            logging.exception("init_instagram_API: ERR-00112 Unexpected error: ")
+            raise
+
+        return l_media_comments, l_instagram_thumbnail_url
+
+    def send_instagram_comment(self, p_comment_text):
+
+        l_return = False
+
+        try:
+            if self.instagram_session:
+                l_media_comments = self.instagram_session.api.create_media_comment (
+                    media_id=self.instagram_photo_id,
+                    text=p_comment_text
+                )
+                l_return = True
+
+        except InstagramAPIError as e:
+            logging.exception("init_instagram_API: ERR-00110 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            #self.message_user(request, buf, level=messages.WARNING)
+
+        except InstagramClientError as e:
+            logging.exception("init_instagram_API: ERR-00111 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
+            #self.message_user(request, buf, level=messages.WARNING)
+
+        except:
+            logging.exception("init_instagram_API: ERR-00112 Unexpected error: ")
+            raise
+
+        return l_return

@@ -15,12 +15,14 @@ urlpatterns = patterns('',
     url(r'^admin1609/', include(admin.site.urls)),
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
     url(r'', include('social_auth.urls')),
+    url(r'^emoji/', include('emoji.urls')),
 
     url(r'^', include('lander.urls', namespace='lander')),
     url(r'^members/', include('members.urls', namespace='members')),
     url(r'^photos/', include('photos.urls', namespace='photos')),
     url(r'^categories/', include('categories.urls', namespace='categories')),
     url(r'^attributes/', include('attributes.urls', namespace='attributes')),
+    url(r'^smart-feed/', include('smartfeed.urls', namespace='smartfeed')),
     url(r'^instagramuser/', include('instagramuser.urls', namespace='instagramuser')),
 
 )

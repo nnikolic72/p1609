@@ -138,6 +138,7 @@ body {
     -webkit-border-radius: 12px 12px 12px 12px;
     border: 1px solid #000000;
     margin: 20px;
+    padding: 20px;
 }
 
 .squaresensor-content-panel {
@@ -187,4 +188,9 @@ body {
 
 .squaresensor-image-button {
     background: #FFFFFF;
+}
+
+.emoji {
+    width: 15px;
+    height: 15px;
 }

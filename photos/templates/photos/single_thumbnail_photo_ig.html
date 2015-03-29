@@ -18,7 +18,7 @@
             </div>
             <div class="col-xs-4 text-center">
                 {%  if show_describe_button %}
-                    <button class="btn btn-xs squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
+                    <button class="btn btn-xs squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.instagram_photo_id }}">
                         <small><span class="glyphicon glyphicon-list-alt"></span>
                         </small>
                     </button>
@@ -36,7 +36,7 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="myModal_{{ photo.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal_{{ photo.instagram_photo_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="container-fluid">

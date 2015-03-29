@@ -46,7 +46,7 @@
             <p class="text-justify"><b>{% trans 'Bio' %}:</b> {{ logged_member.instagram_user_bio }}</p>
             <p><b>{% trans 'Web Site' %}:</b> <a href="{{ logged_member.instagram_user_website_URL }}">{{ logged_member.instagram_user_website_URL }}</a></p>
             <p><a class="btn btn-sm btn-default" href="{{ logged_member.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
-                            <a href="{% url 'photos:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}">
+                <a href="{% url 'photos:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}">
                     <button class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'My best photos' %}</button>
                 </a></p>
         </div>
@@ -71,12 +71,25 @@
     <div class="row">
         <div class="col-xs-12 text-center">
             <div class="squaresensor-section-header">
-                <h4>{% trans 'Fine Photos' %}</h4>
+                <h4>{% trans 'SmartFeed' %}</h4>
+                <a href="{% url 'smartfeed:index' %}"><button class="btn btn-lg btn-success">{% trans 'View' %}</button></a>
+                <a href="#"><button class="btn btn-lg btn-success">{% trans 'Configure' %}</button></a>
 
 
             </div>
         </div>
     </div>
+
+    {% if show_describe_button %}
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <div class="squaresensor-section-header">
+                    <h4>{% trans 'Admin' %}</h4>
+                    <a href="{% url 'instagramuser:addinspiring' %}"><button class="btn btn-lg btn-success">{% trans 'Add Inspiring User' %}</button></a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock content %}
 
 {% block aside %}

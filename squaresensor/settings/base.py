@@ -28,6 +28,7 @@ settings_path = PROJECT_DIR.child('squaresensor').child("settings")
 settings_path = Path(settings_path, 'settings.ini')
 config.read(settings_path)
 
+INSTAGRAM_AUTH_EXTRA_ARGUMENTS = {'scope': 'likes comments relationships'}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -105,8 +106,6 @@ if not IS_APP_LIVE:
         IS_APP_LIVE = None
 
 
-# SECURITY WARNING: don't run with debug turned on in production!
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -124,6 +123,7 @@ INSTALLED_APPS = (
     'social_auth',
     'djcelery',
     'crispy_forms',
+    'emoji',
 
     'lander',
     'instagramuser',
@@ -131,6 +131,7 @@ INSTALLED_APPS = (
     'attributes',
     'categories',
     'photos',
+    'smartfeed',
 )
 
 

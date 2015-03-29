@@ -25,7 +25,7 @@
                 {% endif %}
             </div>
             <div class="col-xs-4 text-right">
-                <button class="btn btn-xs squaresensor-image-button">
+                <button class="btn btn-xs squaresensor-image-button" onclick="load_instagram_comments('{{ photo.instagram_photo_id }}');">
                     <small><span class="glyphicon glyphicon-comment"></span>
                         <div class="badge">{{ photo.instagram_comments }}</div></small>
                 </button>
@@ -35,8 +35,8 @@
 </div>
 
 
-<!-- Modal -->
-<div class="modal fade" id="myModal_{{ photo.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!-- Modal describe -->
+<div class="modal fade" id="myModal_{{photo.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="container-fluid">
@@ -86,6 +86,19 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Discard' %}</button>
                     <button type="button" class="btn btn-primary" onclick="save_attributes_and_categories({{ photo.id }});">{% trans 'Save' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal comments -->
+<div class="modal fade" id="myModal_comments_{{ photo.instagram_photo_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <div id="myModal_comments_text_{{ photo.instagram_photo_id }}">
+<p>Komentari</p>
                 </div>
             </div>
         </div>

@@ -1,0 +1,35 @@
+{% load i18n %}
+{% load emoji_tags %}
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">{% trans 'Comments' %}</h4>
+</div>
+<div class="modal-body">
+    <div align="center">
+        <img class="img-responsive img-thumbnail" src="{{ instagram_thumbnail_url }}">
+    </div>
+
+</div>
+<div class="modal-footer">
+    <form action="" method="POST" id="comment_form_{{ p_photo_id }}" class="form">
+        {% if comments %}
+            <div class="row">
+
+                <div class="col-xs-12 text-justify">
+                    <div class="btn-group" data-toggle="buttons">
+                        {% for comment in comments %}
+                            <p><b>{{ comment.user.username }}:</b> {{ comment.text|emoji_replace_unicode  }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>{% trans 'No comments.' %}</p>
+        {% endif %}
+        <input type="text" class="input-sm" name="new_comment_{{ p_photo_id }}">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Discard' %}</button>
+        <button type="button" class="btn btn-primary" onclick="send_instagram_comment('{{ p_photo_id }}');">{% trans 'Send' %}</button>
+
+    </form>
+</div>

@@ -5,10 +5,10 @@ from categories.views import CategoryIndexView, CategoryNameView
 __author__ = 'n.nikolic'
 
 urlpatterns = patterns('',
-                       url(r'^$', CategoryIndexView.as_view(),
+                       url(r'^$', login_required(CategoryIndexView.as_view()),
                            name='index'
                        ),
-                       url(r'^(?P<p_category_slug>.+)/$', CategoryNameView.as_view(),
+                       url(r'^(?P<p_category_slug>.+)/$', login_required(CategoryNameView.as_view()),
                            name='category_slug'
                        ),
                        )

@@ -7,6 +7,11 @@
 {% block bootstrap3_title %}{% block title %}{% endblock title %}{% endblock bootstrap3_title%}
 
 {% block bootstrap3_extra_head %}
+    {# Stops zooming on touchscren devices #}
+    <meta name="viewport" content="width=device-width,
+                                     initial-scale=1.0,
+                                     maximum-scale=1.0,
+                                     user-scalable=no">
     {% block css %}
         <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet">
     {% endblock css %}
@@ -34,7 +39,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Squaresensor</a>
+                    <a class="navbar-brand" href="{% url 'members:dashboard' %}">Squaresensor</a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
@@ -42,7 +47,7 @@
                     <ul class="nav navbar-nav">
                         <li class="active">
                         <li><a href="{% url 'members:dashboard' %}">Home</a></li>
-                        <li><a href="#">{% trans 'Smart Feed' %}</a></li>
+                        <li><a href="{% url 'smartfeed:index' %}">{% trans 'Smart Feed' %}</a></li>
                         <li><a href="#">{% trans 'Find Friends' %}</a></li>
                         <li><a href="{% url 'instagramuser:index_inspiring_artists' %}">{% trans 'Inspiring Artists' %}</a></li>
 
@@ -100,14 +105,16 @@
         </div>
     </div>
 
+
     {% block statusbar %}
         <div class="navbar-xs">
             <div class="navbar-primary">
                 <nav class="navbar navbar-default navbar-fixed-bottom">
                     <div class="container">
-                        <button class="btn btn-sm statusbar-text">LTM <span class="badge">{{ logged_member.likes_in_last_minute }}</span></button>
-                        <button class="btn btn-sm statusbar-text">CTM <span class="badge">{{ logged_member.comments_in_last_minute }}</span></button>
-                        <button class="btn btn-sm statusbar-text">IG limit used <span class="badge">{{ x_limit_pct }}%</span></button>
+                        <button class="btn btn-xs statusbar-text"><span class="glyphicon glyphicon-step-backward" onclick="back_button();"></span></button>
+                        <button class="btn btn-xs statusbar-text">LTM <span class="badge">{{ logged_member.likes_in_last_minute }}</span></button>
+                        <button class="btn btn-xs statusbar-text">CTM <span class="badge">{{ logged_member.comments_in_last_minute }}</span></button>
+                        <button class="btn btn-xs statusbar-text">IGLU <span class="badge">{{ x_limit_pct }}%</span></button>
                     </div>
                 </nav>
             </div>
