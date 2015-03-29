@@ -52,7 +52,7 @@ function load_instagram_comments(p_photo_id) {
 function send_instagram_comment_callback(data) {
     alert('send_instagram_comment_callback');
     var p_photo_id = data.p_photo_id;
-    show_comments_modal(p_photo_id); //hides
+    //show_comments_modal(p_photo_id); //hides
 }
 
 function send_instagram_comment(p_photo_id) {
