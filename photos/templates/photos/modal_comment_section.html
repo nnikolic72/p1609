@@ -65,7 +65,7 @@
                                 <div class="form-group col-xs-12">
                                     <input type="text" class="form-control input-sm" name="new_comment_{{ p_photo_id }}_{{ comment.0 }}" id="new_comment_{{ p_photo_id }}_{{ comment.0 }}" value="">
 
-                                    <button class="btn btn-default btn-xs"
+                                    <button type="button" class="btn btn-default btn-xs"
                                             onclick="send_instagram_inline_comment('{{ p_photo_id }}', '{{ comment.0 }}');"
                                             >{% trans 'Send' %}</button>
                                 </div>
