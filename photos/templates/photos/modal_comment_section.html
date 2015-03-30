@@ -12,7 +12,7 @@
 
 </div>
 <div class="modal-footer">
-    <form action="" method="POST" id="comment_form_{{ p_photo_id }}" class="form">
+
         {% if comments %}
             <div class="row">
 
@@ -63,7 +63,7 @@
                                 >
                             <form class="form form-inline" id="inline_comment_form_{{ p_photo_id }}">
                                 <div class="form-group col-xs-12">
-                                    <input type="text" class="form-control input-sm" name="new_comment_{{ p_photo_id }}" id="new_comment_{{ p_photo_id }}_{{ comment.0 }}" value="">
+                                    <input type="text" class="form-control input-sm" name="new_comment_{{ p_photo_id }}_{{ comment.0 }}" id="new_comment_{{ p_photo_id }}_{{ comment.0 }}" value="">
                                     <button class="btn btn-default btn-xs"
                                             onclick="send_instagram_inline_comment({{ p_photo_id }});"
                                             >{% trans 'Send' %}</button>
@@ -80,6 +80,7 @@
         {% else %}
             <p>{% trans 'No comments.' %}</p>
         {% endif %}
+    <form action="" method="POST" id="comment_form_{{ p_photo_id }}" class="form">
         <input type="text" class="input-sm" name="new_comment_{{ p_photo_id }}">
         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Discard' %}</button>
         <button type="button" class="btn btn-primary" onclick="send_instagram_comment('{{ p_photo_id }}');">{% trans 'Send' %}</button>

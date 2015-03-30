@@ -50,7 +50,7 @@ function load_instagram_comments(p_photo_id) {
 }
 
 function send_instagram_comment_callback(data) {
-    alert('send_instagram_comment_callback');
+    // alert('send_instagram_comment_callback');
     var p_photo_id = data.p_photo_id;
     var x_limit_pct = data.x_limit_pct;
     var comments_per_minute = data.comments_per_minute;
