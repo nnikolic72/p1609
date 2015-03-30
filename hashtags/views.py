@@ -14,16 +14,15 @@ from django.views.generic.base import TemplateView
 # Create your views here.
 from attributes.models import Attribute
 from categories.models import Category
-from instagramuser.models import InspiringUserBelongsToCategory, InspiringUser
 from members.models import Member
 
 
-class CategoryIndexView(TemplateView):
+class HashtagIndexView(TemplateView):
     """
-    Index view, displays list of categories
+    Index view, displays list of hashtags
     """
 
-    template_name = 'categories/index.html'
+    template_name = 'hashtags/index.html'
 
     def get(self, request, *args, **kwargs):
         """
@@ -60,22 +59,12 @@ class CategoryIndexView(TemplateView):
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
         # END Common for all members views ===============================================
-        l_categories_queryset = Category.objects.all()
 
-        l_categories_result_list = []
-        for category in l_categories_queryset:
-            l_inspiring_users_count = InspiringUserBelongsToCategory.objects.filter(category=category).count()
-            l_categories_result_list.append([category.title,
-                                             category.description,
-                                             category.slug,
-                                             l_inspiring_users_count
-            ]
-            )
 
         return render(request,
                       self.template_name,
                       dict(
-                          categories_list=l_categories_result_list,
+
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
@@ -87,11 +76,11 @@ class CategoryIndexView(TemplateView):
         )
 
 
-class CategoryNameView(TemplateView):
+class HashtagNameView(TemplateView):
     """
-    Index view, displays list of categories
+    Index view, displays list of hashtags
     """
-    template_name = 'categories/by_name.html'
+    template_name = 'hashtags/by-name.html'
 
     def get(self, request, *args, **kwargs):
         """
@@ -107,7 +96,7 @@ class CategoryNameView(TemplateView):
         :rtype:
         """
 
-        category_name = kwargs['p_category_slug']
+        hashtag_name = kwargs['p_hashtag_name']
 
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
@@ -131,22 +120,10 @@ class CategoryNameView(TemplateView):
         # END Limit calculation ----------------------------------------------------------
         # END Common for all members views ===============================================
 
-        try:
-            l_category = Category.objects.get(slug=category_name)
-        except ObjectDoesNotExist:
-            l_category = None
-        except:
-            raise
-
-        l_inspiring_users_belongs_to_category = \
-            InspiringUserBelongsToCategory.objects.filter(category=l_category)
-        #l_inspiring_users = InspiringUser.objects.filter(id=l_inspiring_users_belongs_to_category.instagram_user.id)
-
         return render(request,
                       self.template_name,
                       dict(
-                          inspiring_users=l_inspiring_users_belongs_to_category,
-                          l_category=l_category,
+
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
@@ -154,5 +131,5 @@ class CategoryNameView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-        )
+                          )
         )

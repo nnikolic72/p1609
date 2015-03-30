@@ -1,13 +1,16 @@
 from __future__ import division
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.utils import timezone
+from emoji.models import Emoji
 from photos.models import Photo
 
 __author__ = 'n.nikolic'
 from sys import exc_info
 from datetime import (
-                      datetime, timedelta
-                      )
+    datetime, timedelta
+)
 
 import numpy as np
 import logging
@@ -20,7 +23,7 @@ from django.shortcuts import get_object_or_404
 
 from squaresensor.settings.base import INSTAGRAM_SECRET_KEY
 
-from instagramuser.models import Follower, Following
+from instagramuser.models import Follower, Following, InspiringUser
 
 
 class InstagramAPIParametersInvalid(Exception):
@@ -251,7 +254,7 @@ class MyLikes:
         try:
             self.instagram_session.api.create_media_comment (media_id=self.photo_id,
                                                              text=p_comment_text
-                                                             )
+            )
             result = 'comment'
         except InstagramAPIError as e:
             if (e.status_code == 400):
@@ -369,11 +372,11 @@ class BestPhotos:
             for x_media in self.l_latest_photos:
                 l_time_delta = datetime.today() - x_media.created_time
                 l_media_list.append([x_media.id, x_media.like_count,
-                                                    x_media.comment_count,
-                                                    l_time_delta.days,
-                                                    0 # Error - to be calculated
-                                                    ]
-                                                   )
+                                     x_media.comment_count,
+                                     l_time_delta.days,
+                                     0 # Error - to be calculated
+                ]
+                )
             #media_cnt = len(l_media_list)
             '''Normalize the number of likes and days'''
             l_max_likes = max(l[1] for l in l_media_list)
@@ -499,8 +502,8 @@ class BestFollowers():
 
         try:
             l_instagram_followers, x_next = self.l_instagram_api.api.user_followed_by(
-                                                 self.l_instgram_user_id
-                                                 )
+                self.l_instgram_user_id
+            )
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True
@@ -565,9 +568,9 @@ class BestFollowers():
                         l_friends_ff_ratio = 0
 
                     if (settings.FRIENDS_TR_MIN_MEDIA_COUNT <= l_friends_media_count <= settings.FRIENDS_TR_MAX_MEDIA_COUNT) and \
-                       (settings.FRIENDS_TR_MIN_FOLLOWINGS <= l_friends_followings <= settings.FRIENDS_TR_MAX_FOLLOWINGS) and \
-                       (settings.FRIENDS_TR_MIN_FOLLOWERS <= l_friends_followers <= settings.FRIENDS_TR_MAX_FOLLOWERS) and \
-                       (settings.FRIENDS_TR_MIN_FF_RATIO <= l_friends_ff_ratio <= settings.FRIENDS_TR_MAX_FF_RATIO):
+                            (settings.FRIENDS_TR_MIN_FOLLOWINGS <= l_friends_followings <= settings.FRIENDS_TR_MAX_FOLLOWINGS) and \
+                            (settings.FRIENDS_TR_MIN_FOLLOWERS <= l_friends_followers <= settings.FRIENDS_TR_MAX_FOLLOWERS) and \
+                            (settings.FRIENDS_TR_MIN_FF_RATIO <= l_friends_ff_ratio <= settings.FRIENDS_TR_MAX_FF_RATIO):
 
                         if self.is_user_active_in_last_n_days(follower.id, settings.FRIENDS_TR_LAST_POST_BEFORE_DAYS):
                             '''User is active in last N days, passed all requirements
@@ -658,8 +661,8 @@ class BestFollowings():
 
         try:
             l_instagram_followings, x_next = self.l_instagram_api.api.user_follows(
-                                                 self.l_instgram_user_id
-                                                 )
+                self.l_instgram_user_id
+            )
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True
@@ -724,9 +727,9 @@ class BestFollowings():
                         l_friends_ff_ratio = 0
 
                     if (settings.FOLLOWINGS_TR_MIN_MEDIA_COUNT <= l_followings_media_count <= settings.FOLLOWINGS_TR_MAX_MEDIA_COUNT) and \
-                       (settings.FOLLOWINGS_TR_MIN_FOLLOWINGS <= l_followings_followings <= settings.FOLLOWINGS_TR_MAX_FOLLOWINGS) and \
-                       (settings.FOLLOWINGS_TR_MIN_FOLLOWERS <= l_followings_followers <= settings.FOLLOWINGS_TR_MAX_FOLLOWERS) and \
-                       (settings.FOLLOWINGS_TR_MIN_FF_RATIO <= l_friends_ff_ratio <= settings.FOLLOWINGS_TR_MAX_FF_RATIO):
+                            (settings.FOLLOWINGS_TR_MIN_FOLLOWINGS <= l_followings_followings <= settings.FOLLOWINGS_TR_MAX_FOLLOWINGS) and \
+                            (settings.FOLLOWINGS_TR_MIN_FOLLOWERS <= l_followings_followers <= settings.FOLLOWINGS_TR_MAX_FOLLOWERS) and \
+                            (settings.FOLLOWINGS_TR_MIN_FF_RATIO <= l_friends_ff_ratio <= settings.FOLLOWINGS_TR_MAX_FF_RATIO):
 
                         if self.is_user_active_in_last_n_days(following.id, settings.FOLLOWINGS_TR_LAST_POST_BEFORE_DAYS):
                             '''User is active in last N days, passed all requirements
@@ -790,7 +793,7 @@ class InstagramUserAdminUtils():
             ig_session.init_instagram_API()
 
             self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
-                 ig_session.get_api_limits()
+                ig_session.get_api_limits()
 
             #for obj in queryset:
             obj.to_be_processed_for_friends = False
@@ -798,7 +801,7 @@ class InstagramUserAdminUtils():
             obj.times_processed_for_friends = obj.times_processed_for_friends + 1
             '''get Instagram user data'''
             self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
-                 ig_session.get_api_limits()
+                ig_session.get_api_limits()
 
             if (ig_session):
                 '''We have Instagram session'''
@@ -836,19 +839,19 @@ class InstagramUserAdminUtils():
                                     instagram_utils = InstagramUserAdminUtils()
                                     l_new_friend = \
                                         Follower(instagram_user_id=follower.id,
-                                               instagram_user_name=follower.username, instagram_user_name_valid=True,
-                                               instagram_user_full_name=follower.full_name,
-                                               instagram_profile_picture_URL=follower.profile_picture,
-                                               instagram_user_bio=follower.bio,
-                                               instagram_user_website_URL=follower.website,
-                                               is_user_active=True,
-                                               number_of_followers=follower.counts[u'followed_by'],
-                                               number_of_followings=follower.counts[u'follows'],
-                                               number_of_media=follower.counts[u'media'],
-                                               instagram_user_profile_page_URL=instagram_utils.generate_instagram_profile_page_URL(follower.username),
-                                               iconosquare_user_profile_page_URL=instagram_utils.generate_iconosquare_profile_page_URL(follower.id),
-                                               is_potential_friend=True
-                                               )
+                                                 instagram_user_name=follower.username, instagram_user_name_valid=True,
+                                                 instagram_user_full_name=follower.full_name,
+                                                 instagram_profile_picture_URL=follower.profile_picture,
+                                                 instagram_user_bio=follower.bio,
+                                                 instagram_user_website_URL=follower.website,
+                                                 is_user_active=True,
+                                                 number_of_followers=follower.counts[u'followed_by'],
+                                                 number_of_followings=follower.counts[u'follows'],
+                                                 number_of_media=follower.counts[u'media'],
+                                                 instagram_user_profile_page_URL=instagram_utils.generate_instagram_profile_page_URL(follower.username),
+                                                 iconosquare_user_profile_page_URL=instagram_utils.generate_iconosquare_profile_page_URL(follower.id),
+                                                 is_potential_friend=True
+                                        )
 
                                     l_new_friend.save()
                                     l_new_friend.inspiringuser.add(obj)
@@ -869,23 +872,23 @@ class InstagramUserAdminUtils():
                                             l_existing.member.add(obj)
                                             l_existing.save()
                         else:
-                            buf = "Not enough Instagram API reuqests available (available %s, needed %)" %\
+                            buf = "Not enough Instagram API reuqests available (available %s, needed %)" % \
                                   (self.l_instagram_api_limit_start, (l_analyze_n_followers + 50))
                             pass
             obj.save()
 
         self.l_instagram_api_limit_end, self.l_instagram_api_limit = \
-             ig_session.get_api_limits()
+            ig_session.get_api_limits()
 
         if not buf:
             buf = 'Analyzed %s Inspiring Users. Analyzed %s folowers. Found %s private followers.' \
-                   ' Found %s new Friends (%s existing friends). Instagram API (%s - %s/%s / diff: %s)' \
-                   % (self.l_analyzed_goodusers, self.l_analyzed_followers,
-                      self.l_private_followers, self.l_found_friends, self.l_already_friends,
-                      self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
-                      self.l_instagram_api_limit,
-                      (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
-                      )
+                  ' Found %s new Friends (%s existing friends). Instagram API (%s - %s/%s / diff: %s)' \
+                  % (self.l_analyzed_goodusers, self.l_analyzed_followers,
+                     self.l_private_followers, self.l_found_friends, self.l_already_friends,
+                     self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
+                     self.l_instagram_api_limit,
+                     (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
+            )
         return buf
     analyze_instagram_user_find_friends.short_description = 'Find new friends from Instagram user'
 
@@ -907,12 +910,12 @@ class InstagramUserAdminUtils():
 
         if obj.to_be_processed_for_followings == True:
             ig_session = InstagramSession(
-               p_is_admin=True, p_token=''
+                p_is_admin=True, p_token=''
             )
             ig_session.init_instagram_API()
 
             self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
-                 ig_session.get_api_limits()
+                ig_session.get_api_limits()
 
             #for obj in queryset:
             obj.to_be_processed_for_followings = False
@@ -920,7 +923,7 @@ class InstagramUserAdminUtils():
             obj.times_processed_for_followings = obj.times_processed_for_followings + 1
             '''get Instagram user data'''
             self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
-                 ig_session.get_api_limits()
+                ig_session.get_api_limits()
 
             if (ig_session):
                 '''We have Instagram session and enough API call remaining'''
@@ -946,7 +949,7 @@ class InstagramUserAdminUtils():
                             l_best_instagram_followings = \
                                 BestFollowings(l_instagram_user_id, obj.user_type,
                                                l_analyze_n_followers, ig_session
-                                               )
+                                )
 
                             l_instagram_followings, l_existing_followings = \
                                 l_best_instagram_followings.get_best_instagram_followings()
@@ -961,18 +964,18 @@ class InstagramUserAdminUtils():
                                     instagram_utils = InstagramUserAdminUtils()
                                     l_new_following = \
                                         Following(instagram_user_id=following.id,
-                                               instagram_user_name=following.username, instagram_user_name_valid=True,
-                                               instagram_user_full_name=following.full_name,
-                                               instagram_profile_picture_URL=following.profile_picture,
-                                               instagram_user_bio=following.bio,
-                                               instagram_user_website_URL=following.website,
-                                               is_user_active=True,
-                                               number_of_followers=following.counts[u'followed_by'],
-                                               number_of_followings=following.counts[u'follows'],
-                                               number_of_media=following.counts[u'media'],
-                                               instagram_user_profile_page_URL=instagram_utils.generate_instagram_profile_page_URL(following.username),
-                                               iconosquare_user_profile_page_URL=instagram_utils.generate_iconosquare_profile_page_URL(following.id)
-                                               )
+                                                  instagram_user_name=following.username, instagram_user_name_valid=True,
+                                                  instagram_user_full_name=following.full_name,
+                                                  instagram_profile_picture_URL=following.profile_picture,
+                                                  instagram_user_bio=following.bio,
+                                                  instagram_user_website_URL=following.website,
+                                                  is_user_active=True,
+                                                  number_of_followers=following.counts[u'followed_by'],
+                                                  number_of_followings=following.counts[u'follows'],
+                                                  number_of_media=following.counts[u'media'],
+                                                  instagram_user_profile_page_URL=instagram_utils.generate_instagram_profile_page_URL(following.username),
+                                                  iconosquare_user_profile_page_URL=instagram_utils.generate_iconosquare_profile_page_URL(following.id)
+                                        )
                                     l_new_following.save()
                                     if obj.user_type == 'inspiring':
                                         l_new_following.inspiringuser.add(obj)
@@ -998,24 +1001,24 @@ class InstagramUserAdminUtils():
                                             l_existing.save()
 
                         else:
-                            buf = "Not enough Instagram API reuqests available (available %s, needed %)" %\
+                            buf = "Not enough Instagram API reuqests available (available %s, needed %)" % \
                                   (self.l_instagram_api_limit_start, (l_analyze_n_followers + 50))
                             pass
 
             obj.save()
 
         self.l_instagram_api_limit_end, self.l_instagram_api_limit = \
-             ig_session.get_api_limits()
+            ig_session.get_api_limits()
 
         if not buf:
             buf = 'Analyzed %s Inspiring Users. Analyzed %s followings. Found %s private followings.' \
-                   ' Found %s new Followings (%s existing Followings). Instagram API (%s - %s/%s / diff: %s)' \
-                   % (self.l_analyzed_goodusers, self.l_analyzed_followings,
-                      self.l_private_followings, self.l_found_followings, self.l_already_followings,
-                      self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
-                      self.l_instagram_api_limit,
-                      (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
-                      )
+                  ' Found %s new Followings (%s existing Followings). Instagram API (%s - %s/%s / diff: %s)' \
+                  % (self.l_analyzed_goodusers, self.l_analyzed_followings,
+                     self.l_private_followings, self.l_found_followings, self.l_already_followings,
+                     self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
+                     self.l_instagram_api_limit,
+                     (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
+            )
         return buf
     analyze_instagram_user_find_followings.short_description = 'Find Instagram user''s followings'
 
@@ -1061,11 +1064,11 @@ class InstagramUserAdminUtils():
         '''
 
         queryset = queryset.filter(
-                       Q(to_be_processed_for_basic_info=True) | \
-                       Q(to_be_processed_for_photos=True) | \
-                       Q(to_be_processed_for_friends=True) | \
-                       Q(to_be_processed_for_followings=True)
-                   )
+            Q(to_be_processed_for_basic_info=True) | \
+            Q(to_be_processed_for_photos=True) | \
+            Q(to_be_processed_for_friends=True) | \
+            Q(to_be_processed_for_followings=True)
+        )
 
         l_counter_for_basic_info = 0
         l_counter_for_friends = 0
@@ -1077,12 +1080,12 @@ class InstagramUserAdminUtils():
         message_followings = None
 
         ig_session = InstagramSession(
-                p_is_admin=True, p_token=''
-            )
+            p_is_admin=True, p_token=''
+        )
         ig_session.init_instagram_API()
 
         self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
-             ig_session.get_api_limits()
+            ig_session.get_api_limits()
 
         for obj in queryset:
             if obj.to_be_processed_for_basic_info == True:
@@ -1121,7 +1124,7 @@ class InstagramUserAdminUtils():
 
                 l_best_photos = BestPhotos(obj.instagram_user_id, self.l_find_top_n_photos,
                                            self.l_search_last_photos, ig_session
-                                           )
+                )
                 l_best_photos.get_instagram_photos()
                 l_top_photos = None
                 if l_best_photos.l_user_has_photos:
@@ -1189,15 +1192,15 @@ class InstagramUserAdminUtils():
 
 
         self.l_instagram_api_limit_end, self.l_instagram_api_limit = \
-             ig_session.get_api_limits()
+            ig_session.get_api_limits()
 
 
 
 
         buf = '%s users processed for basic info (Messages "%s").' \
               ' Processed %s photos (Messages "%s").' \
-              ' Processed %s users for friends (Messages "%s").'  \
-              ' Processed %s users for followings (Messages: "%s").'  \
+              ' Processed %s users for friends (Messages "%s").' \
+              ' Processed %s users for followings (Messages: "%s").' \
               ' Instagram API (%s - %s/%s / diff: %s)' % \
               (l_counter_for_basic_info, message_basic_info,
                l_counter_pics, message_best_photos,
@@ -1225,7 +1228,7 @@ class InstagramUserAdminUtils():
 
 
         buf = '%s user(s) flagged to "To Be Processed for basic info" successfully.' \
-            % (l_counter)
+              % (l_counter)
 
         return buf
 
@@ -1241,7 +1244,7 @@ class InstagramUserAdminUtils():
 
 
         buf = '%s user(s) flagged to "Not To Be Processed for basic info" successfully.' \
-            % (l_counter)
+              % (l_counter)
 
         return buf
 
@@ -1257,7 +1260,7 @@ class InstagramUserAdminUtils():
 
 
         buf = '%s user(s) flagged to "To Be Processed for photos" successfully.' \
-            % (l_counter)
+              % (l_counter)
 
         return buf
 
@@ -1273,7 +1276,7 @@ class InstagramUserAdminUtils():
 
 
         buf = '%s user(s) flagged to "Not To Be Processed for photos" successfully.' \
-            % (l_counter)
+              % (l_counter)
 
         return buf
 
@@ -1291,7 +1294,7 @@ class InstagramUserAdminUtils():
 
 
         buf = '%s user(s) flagged to "To Be Processed for Friends" successfully.' \
-            % (l_counter)
+              % (l_counter)
 
         return buf
 
@@ -1307,7 +1310,7 @@ class InstagramUserAdminUtils():
 
 
         buf = '%s user(s) flagged to "Not To Be Processed for Friends" successfully.' \
-            % (l_counter)
+              % (l_counter)
 
         return buf
 
@@ -1324,7 +1327,7 @@ class InstagramUserAdminUtils():
 
 
         buf = '%s user(s) flagged to "To Be Processed for Followings" successfully.' \
-            % (l_counter)
+              % (l_counter)
 
         return buf
 
@@ -1340,7 +1343,7 @@ class InstagramUserAdminUtils():
 
 
         buf = '%s user(s) flagged to "Not To Be Processed for Followings" successfully.' \
-            % (l_counter)
+              % (l_counter)
 
         return buf
 
@@ -1416,7 +1419,7 @@ class InstagramUserAdminUtils():
         ig_session.init_instagram_API()
 
         self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
-             ig_session.get_api_limits()
+            ig_session.get_api_limits()
 
         l_counter = 0
 
@@ -1431,18 +1434,18 @@ class InstagramUserAdminUtils():
 
 
         self.l_instagram_api_limit_end, self.l_instagram_api_limit = \
-             ig_session.get_api_limits()
+            ig_session.get_api_limits()
 
         if l_counter == 1:
             buf = '1 photo processed successfully. Instagram API (%s - %s/%s / diff: %s)' % \
-                    (self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
-                     self.l_instagram_api_limit, (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
-                     )
+                  (self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
+                   self.l_instagram_api_limit, (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
+                  )
         else:
             buf = '%s photos processed successfully.  Instagram API (%s - %s/%s / diff: %s)' % \
-                    (l_counter, self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
-                     self.l_instagram_api_limit, (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
-                     )
+                  (l_counter, self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
+                   self.l_instagram_api_limit, (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
+                  )
 
         return buf
     process_photos_by_instagram_api.short_description = 'Process photos by Instagram API'
@@ -1457,6 +1460,7 @@ class InstagramComments():
     comments = None
     instagram_session = None
     l_instagram_media = None
+    l_instagram_media_owner = None
 
     def __init__(self, p_photo_id, p_instagram_session):
         self.instagram_photo_id = p_photo_id
@@ -1476,7 +1480,7 @@ class InstagramComments():
                 l_media_comments = self.instagram_session.api.media_comments(media_id=self.instagram_photo_id)
                 self.l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
                 l_instagram_thumbnail_url = self.l_instagram_media.get_thumbnail_url()
-
+                self.l_instagram_media_owner = self.l_instagram_media.user
         except InstagramAPIError as e:
             logging.exception("init_instagram_API: ERR-00110 Instagram API Error %s : %s" % (e.status_code, e.error_message))
             #self.message_user(request, buf, level=messages.WARNING)
@@ -1521,6 +1525,7 @@ class InstagramComments():
         try:
             self.l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
             l_comment_count = self.l_instagram_media.comment_count
+            self.l_instagram_media_owner = self.l_instagram_media.user
         except InstagramAPIError as e:
             logging.exception("init_instagram_API: ERR-00110 Instagram API Error %s : %s" % (e.status_code, e.error_message))
             #self.message_user(request, buf, level=messages.WARNING)
@@ -1534,3 +1539,133 @@ class InstagramComments():
             raise
 
         return l_comment_count
+
+    def process_instagram_comments(self, p_arrangement_type, l_comments):
+        """
+
+        :param p_arrangement_type:
+        :type p_arrangement_type: 'list', 'thread'
+        :param l_comments:
+        :type l_comments: list of Instagram comments
+        :return:
+        :rtype: list of SquareSensor comments
+        """
+
+        l_comments_list = []
+        l_order = 1
+
+        for x_comment in l_comments:
+            #process text and replace with urls
+
+            # 1. split into words
+            l_comment_words = x_comment.text.split()
+            l_cleaned_comment = ''
+            l_references = ()  # which comments this comment references
+            for x_word in l_comment_words:
+                if x_word[0] == '#':
+                    # this is hashtag - replace with our hashtag link
+                    l_hashtag_text= x_word[1:]
+                    x_word = '<a href="%s">%s</a>' % \
+                             (reverse('hashtags:hashtag_name', kwargs={'p_hashtag_name':l_hashtag_text}),
+                              x_word
+                             )
+                if x_word[0] == '@':
+                    # this is user - replace with our user link
+                    l_username_text= x_word[1:]
+                    try:
+                        l_inspiring_user = InspiringUser.objects.get(instagram_user_name=l_username_text)
+                    except ObjectDoesNotExist:
+                        l_inspiring_user = None
+                    except:
+                        raise
+
+                    # find reference - comment may be linked to previous comment
+                    l_current_order = l_order
+                    l_pom_cnt = 1
+                    l_del = ','
+                    l_last_reference = None
+                    for c in l_comments:
+                        if l_pom_cnt == 1 and self.l_instagram_media_owner.username == c.user.username:
+                            pass  # skip the first comment - it is the post caption
+                        else:
+                            if c.user.username == l_username_text:
+                                l_last_reference = l_pom_cnt
+
+                        l_pom_cnt += 1
+                        if l_pom_cnt == l_current_order:
+                            if l_last_reference:
+                                l_references += (str(l_last_reference),)
+                                break
+
+                    if l_inspiring_user:
+                        x_word = '<a href="%s"><span class="glyphicon glyphicon-user"></span>%s</a>' % \
+                                 (reverse('photos:alltimebest',
+                                          kwargs={'p_username': l_inspiring_user.instagram_user_name, 'p_mode': 'view'}
+                                          ),
+                                  x_word
+                                 )
+                    else:
+                        x_word = '<a href="http://www.instagram.com/%s" target="_blank">@%s</a>' % \
+                                 (l_username_text, l_username_text)
+
+                l_cleaned_comment += x_word + ' '
+
+            l_is_photo_owner = False
+            if self.l_instagram_media_owner.username == x_comment.user.username:
+                l_is_photo_owner = True
+            l_cleaned_comment = Emoji.replace_unicode(l_cleaned_comment)
+            l_is_response = False
+            l_comment_item = \
+                [l_order,
+                 l_cleaned_comment,
+                 x_comment.user.username,
+                 l_is_photo_owner,
+                 l_references,
+                 l_is_response
+                ]
+            l_order += 1
+
+            l_comments_list.append(l_comment_item)
+
+        if p_arrangement_type == 'thread':
+            # we now have coments and references
+            # let's build the comment section
+            l_order = 1
+            l_resulting_list = list(l_comments_list)
+            if len(l_comments_list) > 0:
+                for y_comment in l_comments_list:
+                    # for each comment
+                    if len(y_comment[4]) > 0:
+                        for ref in y_comment[4]:
+                            l_insert_idx = None
+                            l_cnt_x = 1
+                            for x in l_resulting_list:
+                                if x[0] == int(ref):
+                                    l_insert_idx = l_cnt_x
+                                    break
+                                else:
+                                    l_cnt_x += 1
+                            l_remove_idx = None
+                            l_cnt_x = 1
+
+                            if l_insert_idx:
+                                new_element = y_comment[:]
+                                new_element[5] = True
+                                new_element[4] = ()
+                                # remove the reply first
+                                l_remove_idx = 1
+
+                                l_resulting_list.insert(l_insert_idx, new_element)
+
+
+                    l_order += 1
+
+        # remove replies
+        l_new_resulting_list = []
+        for x in l_resulting_list:
+            if len(x[4]) > 0 and (x[5] == False):
+                pass
+            else:
+                l_new_resulting_list.append(x)
+
+        return l_new_resulting_list

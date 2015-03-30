@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^photos/', include('photos.urls', namespace='photos')),
     url(r'^categories/', include('categories.urls', namespace='categories')),
     url(r'^attributes/', include('attributes.urls', namespace='attributes')),
+    url(r'^hashtags/', include('hashtags.urls', namespace='hashtags')),
     url(r'^smart-feed/', include('smartfeed.urls', namespace='smartfeed')),
     url(r'^instagramuser/', include('instagramuser.urls', namespace='instagramuser')),
 

@@ -40,10 +40,12 @@ class AddInspiringUserView(TemplateView):
         :return:
         :rtype:
         """
-
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
         # Common for all members views ===================================================
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -70,7 +72,10 @@ class AddInspiringUserView(TemplateView):
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
-                          x_limit_pct=x_limit_pct
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          show_describe_button=show_describe_button,
                       )
         )
 

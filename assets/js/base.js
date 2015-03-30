@@ -24,3 +24,11 @@ function stopRKey(evt) {
 }
 
 document.onkeypress = stopRKey;
+
+function inline_comment_toggler(divId, p_photo_id, p_instagram_user_name, comment_number ) {
+    //alert(divId + ' ' + p_photo_id + ' ' + p_instagram_user_name);
+    $('#new_comment_' + p_photo_id + '_' + comment_number).val('@'+p_instagram_user_name+' ');
+    $("#" + divId).toggle();
+    $('#new_comment_' + p_photo_id + '_' + comment_number).focus();
+
+}

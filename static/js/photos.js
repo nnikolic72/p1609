@@ -57,7 +57,7 @@ function send_instagram_comment_callback(data) {
 
     $('#iglu').html(x_limit_pct);
     $('#cpm').html(comments_per_minute);
-    // var l_comments_count = data.l_comments_count;
+    var l_comments_count = data.l_comments_count;
 
     var instagram_comments_text_id = '#instagram_comments_text_' + p_photo_id;
     $(instagram_comments_text_id).html(l_comments_count);
@@ -67,6 +67,18 @@ function send_instagram_comment_callback(data) {
 function send_instagram_comment(p_photo_id) {
     //alert('send_instagram_comment ' + p_photo_id);
     var id_name = '#comment_form_' + p_photo_id;
+    var data = $(id_name).serializeObject();
+
+    //alert('send_instagram_comment ' + data);
+
+    Dajaxice.photos.send_instagram_comment(send_instagram_comment_callback,
+        {'form': data, 'p_photo_id': p_photo_id }
+    );
+}
+
+function send_instagram_inline_comment(p_photo_id) {
+    //alert('send_instagram_comment ' + p_photo_id);
+    var id_name = '#inline_comment_form_' + p_photo_id;
     var data = $(id_name).serializeObject();
 
     //alert('send_instagram_comment ' + data);

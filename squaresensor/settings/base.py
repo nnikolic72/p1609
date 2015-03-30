@@ -35,6 +35,16 @@ INSTAGRAM_AUTH_EXTRA_ARGUMENTS = {'scope': 'likes comments relationships'}
 
 # SECURITY WARNING: keep the secret key used in production secret!
 try:
+    INSTAGRAM_COMMENTS_ALLOWED = os.environ['INSTAGRAM_COMMENTS_ALLOWED']
+except:
+    INSTAGRAM_COMMENTS_ALLOWED = None
+if not INSTAGRAM_COMMENTS_ALLOWED:
+    try:
+        INSTAGRAM_COMMENTS_ALLOWED = config.get('instagram', 'INSTAGRAM_COMMENTS_ALLOWED')
+    except:
+        INSTAGRAM_COMMENTS_ALLOWED = None
+
+try:
     INSTAGRAM_CLIENT_ID = os.environ['CLIENT_ID']
 except:
     INSTAGRAM_CLIENT_ID = None
@@ -132,6 +142,7 @@ INSTALLED_APPS = (
     'categories',
     'photos',
     'smartfeed',
+    'hashtags',
 )
 
 

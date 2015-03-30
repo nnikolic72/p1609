@@ -25,7 +25,8 @@
                 <div class="row squaresensor_inspiringuser">
                     <div class="col-xs-12 col-sm-4">
                         <div align="center">
-                            <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_id=inspiring_user.id %}"><img class="img-responsive img-circle" src="{{ inspiring_user.instagram_profile_picture_URL }}">
+                            <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_id=inspiring_user.id %}">
+                                <img class="img-responsive img-circle small_profile_img" src="{{ inspiring_user.instagram_profile_picture_URL }}">
                                 <br>
                                 <h4>@{{ inspiring_user.instagram_user_name }}</h4></a>
                         </div>
@@ -45,7 +46,8 @@
                         <p><a class="btn btn-sm btn-default" href="{{ inspiring_user.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
                             <a href="{% url 'photos:alltimebest' p_username=inspiring_user.instagram_user_name p_mode='view' %}">
                                 <button class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'Best photos' %}</button>
-                            </a></p>
+                            </a>
+                        </p>
                     </div>
                 </div>
             {% endfor %}

@@ -20,8 +20,6 @@ DATABASE_NAME = config.get('database', 'DATABASE_NAME')
 
 #INSTAGRAM_API_KEY = config.get('instagram', 'INSTAGRAM_API_KEY')
 
-
-
 DATABASES = {
     'default': {
         'ENGINE': DATABASE_ENGINE,

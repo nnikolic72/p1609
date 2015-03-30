@@ -19,14 +19,23 @@
 
 {% block content %}
     {{ block.super }}
-    {%  if categories_list  %}
-        {% for category in categories_list %}
-            <a href="{% url 'categories:category_slug' category.2 %}"><button class="btn btn-default">{{ category.0 }} <span class="badge">{{ category.3 }}</span> </button></a>
-            <p><small>{{ category.1 }}</small></p>
-        {% endfor %}
-    {% else %}
-        <p>{% trans 'There are no inspiring artists categorized on Squaresensor yet.' %}</p>
-    {% endif %}
+    <div class="container-fluid">
+        {%  if categories_list  %}
+            {% for category in categories_list %}
+                <div class="row squaresensor_category">
+                    <div class="col-xs-12 col-sm-5">
+                        <a href="{% url 'categories:category_slug' category.2 %}"><button class="btn btn-default">{{ category.0 }} <span class="badge">{{ category.3 }}</span> </button></a>
+                    </div>
+                    <div class="col-xs-12 col-sm-7 text-justify">
+                        <small class="">{{ category.1 }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>{% trans 'There are no inspiring artists categorized on Squaresensor yet.' %}</p>
+        {% endif %}
+    </div>
+
 {% endblock content %}
 
 {% block aside %}

@@ -115,8 +115,8 @@ def analyze_user(req, form):
                                  dict(
                                      photos=l_photos_queryset,
                                      show_describe_button=show_describe_button,
-                                     l_categories=l_categories,
-                                     l_attributes=l_categories,
+                                     categories=l_categories,
+                                     attributes=l_categories,
                                  )
     )
 

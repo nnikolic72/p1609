@@ -16,12 +16,65 @@
         {% if comments %}
             <div class="row">
 
-                <div class="col-xs-12 text-justify">
-                    <div class="btn-group" data-toggle="buttons">
-                        {% for comment in comments %}
-                            <p><b>{{ comment.user.username }}:</b> {{ comment.text|emoji_replace_unicode  }}</p>
-                        {% endfor %}
-                    </div>
+                <div class="col-xs-12">
+
+                    {% for comment in comments %}
+                        {% autoescape off %}
+                            {% if comment.3 == False %}<hr>{% endif %}
+                            <p class="
+                                    {% if comment.3 == True %}
+                                    text-right
+                                    {% else %}
+                                    text-left
+                                    {% endif %}
+                                "
+
+                                    >
+                                {% if comment.5 == True and comment.3 == True %}
+                                    <small><span class="glyphicon glyphicon-arrow-up"></span></small>
+                                {% endif %}
+
+                                {% if comment.3 == True %}{{ comment.1  }}: {% endif %}<b>
+                                {% if comment.3 == False %}
+                                <span class="btn btn-xs btn-default" onclick="inline_comment_toggler('comments_actions_{{ forloop.counter }}', '{{ p_photo_id }}', '{{ comment.2 }}', {{ comment.0 }});">
+                                <small><span class="glyphicon glyphicon-option-horizontal"></span></small>
+                                </span>
+                                {% endif %}
+                                {{ comment.2 }}
+                                {% if comment.3 == True %}
+                                <span class="btn btn-xs btn-default" onclick="inline_comment_toggler('comments_actions_{{ forloop.counter }}', '{{ p_photo_id }}', '{{ comment.2 }}', {{ comment.0 }});">
+                                <small><span class="glyphicon glyphicon-option-horizontal"></span></small>
+                                </span>
+                                {% endif %}
+                                </b>{% if comment.3 == False %}: {{ comment.1  }}{% endif %}
+                                {% if comment.5 == True and comment.3 == False %}
+                                    <small><span class="glyphicon glyphicon-ok"></span></small>
+                                {% endif %}</p>
+
+                        {% endautoescape %}
+                        <div id="comments_actions_{{ forloop.counter }}" style="display: none;"
+                             class="
+                                    {% if comment.3 == True %}
+                                    text-right
+                                    {% else %}
+                                    text-left
+                                    {% endif %}
+                                "
+                                >
+                            <form class="form form-inline" id="inline_comment_form_{{ p_photo_id }}">
+                                <div class="form-group col-xs-12">
+                                    <input type="text" class="form-control input-sm" name="new_comment_{{ p_photo_id }}" id="new_comment_{{ p_photo_id }}_{{ comment.0 }}" value="">
+                                    <button class="btn btn-default btn-xs"
+                                            onclick="send_instagram_inline_comment({{ p_photo_id }});"
+                                            >{% trans 'Send' %}</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% if comment.5 == True and comment.3 == True %}
+                            <hr>
+                        {% endif %}
+                    {% endfor %}
+
                 </div>
             </div>
         {% else %}

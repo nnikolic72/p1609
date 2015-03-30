@@ -17,6 +17,8 @@ from photos.models import Photo
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, InstagramComments
 from dajaxice.decorators import dajaxice_register
 
+from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED
+
 __author__ = 'n.nikolic'
 
 @dajaxice_register
@@ -281,12 +283,14 @@ def load_instagram_comments(req, p_photo_id):
     l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
     l_comments, instagram_thumbnail_url = l_instagram_comments.get_all_comments()
 
+    l_comments_list = l_instagram_comments.process_instagram_comments('thread', l_comments)
+
     #for comment in l_comments:
     #    comment.text = Emoji.replace_unicode(comment.text)
 
     html_text = render_to_string('photos/modal_comment_section.html',
                                  dict(
-                                     comments=l_comments,
+                                     comments=l_comments_list,
                                      p_photo_id=p_photo_id,
                                      instagram_thumbnail_url=instagram_thumbnail_url,
                                      )
@@ -347,14 +351,19 @@ def send_instagram_comment(req, form, p_photo_id):
     ig_session.init_instagram_API()
 
     l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
-    l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+    if INSTAGRAM_COMMENTS_ALLOWED == 1:
+        l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+    else:
+        l_result = False
     l_comments_count = l_instagram_comments.get_comments_count()
 
     #Todo check comments per minute
     comments_per_minute = 0
 
     return json.dumps(
-        dict(p_photo_id=p_photo_id, l_comments_count=l_comments_count,
+        dict(p_photo_id=p_photo_id,
+             l_comments_count=l_comments_count,
+
              x_ratelimit_remaining=x_ratelimit_remaining,
              x_ratelimit=x_ratelimit,
              x_limit_pct=x_limit_pct,

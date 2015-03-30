@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<div class="row squaresensor_inspiringuser">
+    <div class="col-xs-12 col-sm-3">
+        <div align="center">
+            <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_id=inspiring_user.instagram_user.id %}">
+                <img src="{{ inspiring_user.instagram_user.instagram_profile_picture_URL }}" class="img-responsive img-circle small_profile_img"><br>
+                @{{ inspiring_user.instagram_user.instagram_user_name }}</a>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-9">
+        <a class="btn btn-sm btn-default" href="{{ inspiring_user.instagram_user.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
+        <a href="{% url 'photos:alltimebest' p_username=inspiring_user.instagram_user.instagram_user_name p_mode='view' %}">
+            <button class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'Best Photos' %}</button>
+        </a>
+        <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_id=inspiring_user.instagram_user.id %}">
+            <button class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'Recent Best' %}</button>
+        </a>
+        <br>
+        <div class="btn-group" role="group" aria-label="smartfeedselection">
+            <button type="button" class="btn btn-default" id="smartfeed_g_{{ inspiring_user.instagram_user.id }}"
+                    onclick="smart_feed_subscribe({{ inspiring_user.instagram_user.id }}, 'green');"
+                    >
+                <span class="glyphicon glyphicon-ok-circle text-success" title="{% trans 'Feed Full' %}" id="smartfeed_span_g_{{ inspiring_user.instagram_user.id }}"></span>
+            </button>
+            <button type="button" class="btn btn-default" id="smartfeed_y_{{ inspiring_user.instagram_user.id }}"
+                    onclick="smart_feed_subscribe({{ inspiring_user.instagram_user.id }}, 'yellow');"
+                    >
+                <span class="glyphicon glyphicon-adjust text-warning" title="{% trans 'Feed Smart' %}" id="smartfeed_span_y_{{ inspiring_user.instagram_user.id }}"></span>
+            </button>
+            <button type="button" class="btn btn-default" id="smartfeed_r_{{ inspiring_user.instagram_user.id }}"
+                    onclick="smart_feed_subscribe({{ inspiring_user.instagram_user.id }}, 'red');"
+                    >
+                <span class="glyphicon glyphicon-ban-circle text-danger" title="{% trans 'Feed Off' %}" id="smartfeed_span_r_{{ inspiring_user.instagram_user.id }}"></span>
+            </button>
+        </div>
+    </div>
+</div>
