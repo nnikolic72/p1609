@@ -63,7 +63,7 @@
                                 >
                             <form class="form form-inline" id="inline_comment_form_{{ p_photo_id }}_{{ comment.0 }}">
                                 <div class="form-group col-xs-12">
-                                    <input type="text" class="form-control input-sm" name="new_comment_{{ p_photo_id }}" id="new_comment_{{ p_photo_id }}" value="">
+                                    <input type="text" class="form-control input-sm" name="new_comment_{{ p_photo_id }}_{{ comment.0 }}" id="new_comment_{{ p_photo_id }}_{{ comment.0 }}" value="">
 
                                     <button class="btn btn-default btn-xs"
                                             onclick="send_instagram_inline_comment('{{ p_photo_id }}', '{{ comment.0 }}');"

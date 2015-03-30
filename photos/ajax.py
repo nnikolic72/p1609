@@ -306,7 +306,7 @@ def load_instagram_comments(req, p_photo_id):
 
 
 @dajaxice_register
-def send_instagram_comment(req, form, p_photo_id):
+def send_instagram_comment(req, form, p_photo_id, p_inline):
     """
     Send instagram comment
     :param req:
@@ -343,7 +343,10 @@ def send_instagram_comment(req, form, p_photo_id):
     ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
     ig_session.init_instagram_API()
 
-    l_comment_form_input_id = u'new_comment_%s' %(p_photo_id)
+    if p_inline == '':
+        l_comment_form_input_id = u'new_comment_%s' %(p_photo_id)
+    else:
+        l_comment_form_input_id = u'new_comment_%s_s' %(p_photo_id, p_inline)
     comment_text = form[l_comment_form_input_id]
 
     tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
