@@ -351,10 +351,10 @@ def send_instagram_comment(req, form, p_photo_id):
     ig_session.init_instagram_API()
 
     l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
-    if INSTAGRAM_COMMENTS_ALLOWED == 1:
-        l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
-    else:
-        l_result = False
+    #if INSTAGRAM_COMMENTS_ALLOWED == 1:
+    l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+    #else:
+    #    l_result = False
     l_comments_count = l_instagram_comments.get_comments_count()
 
     #Todo check comments per minute
