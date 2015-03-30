@@ -116,7 +116,7 @@ def analyze_user(req, form):
                                      photos=l_photos_queryset,
                                      show_describe_button=show_describe_button,
                                      categories=l_categories,
-                                     attributes=l_categories,
+                                     attributes=l_attributes,
                                  )
     )
 

@@ -84,6 +84,7 @@ class AddInspiringUserByNameView(TemplateView):
     """
     Add inspiring user by name
     """
+    pass
 
 
 class InspiringUserIndexView(TemplateView):
