@@ -346,7 +346,7 @@ def send_instagram_comment(req, form, p_photo_id, p_inline):
     if p_inline == '':
         l_comment_form_input_id = u'new_comment_%s' %(p_photo_id)
     else:
-        l_comment_form_input_id = u'new_comment_%s_s' %(p_photo_id, p_inline)
+        l_comment_form_input_id = u'new_comment_%s_%s' %(p_photo_id, p_inline)
     comment_text = form[l_comment_form_input_id]
 
     tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
