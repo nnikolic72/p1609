@@ -50,7 +50,7 @@ function load_instagram_comments(p_photo_id) {
 }
 
 function send_instagram_comment_callback(data) {
-    alert('send_instagram_comment_callback');
+    //alert('send_instagram_comment_callback');
     var p_photo_id = data.p_photo_id;
     var x_limit_pct = data.x_limit_pct;
     var comments_per_minute = data.comments_per_minute;
@@ -72,18 +72,18 @@ function send_instagram_comment(p_photo_id) {
     //alert('send_instagram_comment ' + data);
 
     Dajaxice.photos.send_instagram_comment(send_instagram_comment_callback,
-        {'form': data, 'p_photo_id': p_photo_id }
+        {'form': data, 'p_photo_id': p_photo_id, 'p_inline': '' }
     );
 }
 
-function send_instagram_inline_comment(p_photo_id) {
-    //alert('send_instagram_comment ' + p_photo_id);
-    var id_name = '#inline_comment_form_' + p_photo_id;
+function send_instagram_inline_comment(p_photo_id, p_comment_order) {
+    //alert('send_instagram_inline_comment ' + p_photo_id);
+    var id_name = '#inline_comment_form_' + p_photo_id + '_' + p_comment_order;
     var data = $(id_name).serializeObject();
-
-    //alert('send_instagram_comment ' + data);
+    //alert('send_instagram_inline_comment ' + p_photo_id + 'exit');
+    alert('send_instagram_inline_comment ' + data);
 
     Dajaxice.photos.send_instagram_comment(send_instagram_comment_callback,
-        {'form': data, 'p_photo_id': p_photo_id }
+        {'form': data, 'p_photo_id': p_photo_id, 'p_inline': p_comment_order  }
     );
 }
