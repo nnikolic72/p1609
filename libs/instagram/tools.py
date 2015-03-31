@@ -2,6 +2,7 @@ from __future__ import division
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.http import HttpResponseNotFound
 from django.utils import timezone
 from emoji.models import Emoji
 from photos.models import Photo
@@ -21,7 +22,7 @@ from instagram.bind import InstagramAPIError, InstagramClientError
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
-from squaresensor.settings.base import INSTAGRAM_SECRET_KEY
+from squaresensor.settings.base import INSTAGRAM_SECRET_KEY, IMPORT_MAX_INSTAGRAM_FOLLOWINGS
 
 from instagramuser.models import Follower, Following, InspiringUser
 
@@ -646,6 +647,50 @@ class BestFollowings():
         return l_is_user_active
 
 
+    def get_instagram_followings(self):
+        """
+        Returns instagram followings for instagram user l_instgram_user_id
+        """
+        l_instagram_followings = None
+        l_user_private = False
+
+        try:
+            l_instagram_followings, x_next = self.l_instagram_api.api.user_follows(
+                self.l_instgram_user_id
+            )
+        except InstagramAPIError as e:
+            if (e.status_code == 400):
+                l_user_private = True
+            logging.exception("get_instagram_followings: ERR-00060 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+        except InstagramClientError as e:
+            logging.exception("get_instagram_followings: ERR-00061 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
+        except IndexError:
+            logging.exception("get_instagram_followings: ERR-00062 Instagram search unsuccessful: %s" % (exc_info()[0]))
+        except:
+            logging.exception("get_instagram_followings: ERR-00063 Unexpected error: %s" % (exc_info()[0]))
+            raise HttpResponseNotFound
+
+        if (len(l_instagram_followings) < self.l_analyze_n_photos) and (not l_user_private):
+            if l_instagram_followings:
+                while x_next:
+                    try:
+                        l_next_followings, x_next = self.l_instagram_api.api.user_follows(with_next_url = x_next)
+                    except InstagramAPIError as e:
+                        logging.exception("get_instagram_followings: ERR-00064 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+                    except InstagramClientError as e:
+                        logging.exception("get_instagram_followings: ERR-00065 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
+                    except IndexError:
+                        logging.exception("get_instagram_followings: ERR-00066 Instagram search unsuccessful: %s" % (exc_info()[0]))
+                    except:
+                        logging.exception("get_best_instagram_followings: ERR-00067 Unexpected error: %s" % (exc_info()[0]))
+                        raise HttpResponseNotFound
+
+
+                    l_instagram_followings.extend(l_next_followings)
+                    if len (l_instagram_followings) >= self.l_analyze_n_photos:
+                        break
+
+        return l_instagram_followings
 
 
     def get_best_instagram_followings(self):

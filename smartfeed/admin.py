@@ -153,7 +153,7 @@ class SquareFollowingAdmin(admin.ModelAdmin):
     )
 
     fieldsets = [
-        ('General Information', {'fields': [ 'instagram_user_name', 'user_type'
+        ('General Information', {'fields': [ 'member', 'instagram_user_name', 'user_type'
         ]
         }
         ),

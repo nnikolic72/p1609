@@ -21,7 +21,7 @@
     {{ block.super }}
 
     <div class="container-fluid">
-        <div class="row">
+        <div class="row" style="margin-bottom: 20px;">
             <div class="col-xs-12">
                 <a href="#"><button class="btn btn-success"
                                     onclick="import_instagram_followings('{{ logged_member.instagram_user_id }}')">
@@ -30,16 +30,22 @@
                 </a>
             </div>
         </div>
+        <div class="row">
+            <div id="instagram_followings_placeholder"></div>
+        </div>
 
-        {% if l_squarefollowing_queryset %}
+        <div class="container-fluid">
+            {% if l_squarefollowing_queryset %}
+                <h4>{% trans 'Your SmartFeed Subscriptions' %}</h4>
+                {% for squarefollowing in l_squarefollowing_queryset %}
 
-            {% for squarefollowing in l_squarefollowing_queryset %}
-                 {% include 'smartfeed/squarefollowing-item.html' %}
-            {% endfor %}
+                    {% include 'smartfeed/squarefollowing-item.html' %}
+                {% endfor %}
 
-        {% else %}
-            <p>{% trans 'You have no SquareFollowings defined. You can import them from Instagram.' %}</p>
-        {% endif %}
+            {% else %}
+                <p>{% trans 'You have no SquareFollowings defined. You can import them from Instagram.' %}</p>
+            {% endif %}
+        </div>
     </div>
 {% endblock content %}
 

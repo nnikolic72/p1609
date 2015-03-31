@@ -1,0 +1,32 @@
+{% load i18n %}
+
+<div class="row squaresensor_instagramfollowing_panel">
+    <div class="col-xs-2">
+        <img src="{{ instagramfollowing.0.profile_picture }}" class="img-circle img-responsive small_profile_img">
+    </div>
+    <div class="col-xs-5">
+        {% if instagramfollowing.1 == True %}
+            <span class="glyphicon glyphicon-user"></span>
+        {%  endif %}
+        @{{ instagramfollowing.0.username }}
+    </div>
+    <div class="col-xs-5">
+        <div class="btn-group" role="group" aria-label="smartfeedselection">
+            <button type="button" class="btn btn-default" id="smartfeed_g_{{ instagramfollowing.0.id }}"
+                    onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'green');"
+                    >
+                <span class="glyphicon glyphicon-ok-circle text-success" title="{% trans 'Feed Full' %}" id="smartfeed_span_g_{{ instagramfollowing.0.id }}"></span>
+            </button>
+            <button type="button" class="btn btn-default" id="smartfeed_y_{{ instagramfollowing.0.id }}"
+                    onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'yellow');"
+                    >
+                <span class="glyphicon glyphicon-adjust text-warning" title="{% trans 'Feed Smart' %}" id="smartfeed_span_y_{{ instagramfollowing.0.id }}"></span>
+            </button>
+            <button type="button" class="btn btn-default" id="smartfeed_r_{{ instagramfollowing.0.id }}"
+                    onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'red');"
+                    >
+                <span class="glyphicon glyphicon-ban-circle text-danger" title="{% trans 'Feed Off' %}" id="smartfeed_span_r_{{ instagramfollowing.0.id }}"></span>
+            </button>
+        </div>
+    </div>
+</div>

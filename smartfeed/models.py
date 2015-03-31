@@ -38,6 +38,8 @@ class SquareFollowing(InstagramUser):
         (R, 'Off'),
     )
 
+    #member = models.ManyToManyField('members.Member', null=True, blank=True)
+    member_id = models.ManyToManyField('members.Member', null=True, blank=True)
     squarefollowing_level = models.CharField(max_length=10, choices=SQUAREFOLLOWING_LEVEL_CHOICES, default=R)
 
     categories = models.ManyToManyField(Category, through='SquareFollowingBelongsToCategory', null=True, blank=True)

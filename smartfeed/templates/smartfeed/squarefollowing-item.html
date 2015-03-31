@@ -1,7 +1,49 @@
 {% load i18n %}
 
-<div class="row">
-    <div class="col-xs-12">
-        <p>{{ squarefollowing.instagram_user_name }}</p>
+<div class="row squaresensor_instagramfollowing_panel">
+    <div class="col-xs-2">
+        <img src="{{ squarefollowing.instagram_profile_picture_URL }}" class="img-circle img-responsive small_profile_img">
+    </div>
+    <div class="col-xs-5">
+        @{{  squarefollowing.instagram_user_name }}
+    </div>
+    <div class="col-xs-5">
+        <div class="btn-group" role="group" aria-label="smartfeedselection">
+            <button type="button" class="btn
+            {% if squarefollowing.squarefollowing_level == 'G'  %}
+                btn-success
+            {% else %}
+                btn-default
+            {% endif %}
+            " id="smartfeed_g_{{ squarefollowing.instagram_user_id }}"
+                    onclick="smart_feed_subscribe({{ squarefollowing.instagram_user_id }}, 'green');"
+                    >
+                <span class="glyphicon glyphicon-ok-circle text-success" title="{% trans 'Feed Full' %}" id="smartfeed_span_g_{{ squarefollowing.instagram_user_id }}"></span>
+            </button>
+
+            <button type="button" class="btn
+            {% if squarefollowing.squarefollowing_level == 'Y'  %}
+                btn-success
+            {% else %}
+                btn-default
+            {% endif %}
+            " id="smartfeed_y_{{ squarefollowing.instagram_user_id }}"
+                    onclick="smart_feed_subscribe({{ squarefollowing.instagram_user_id }}, 'yellow');"
+                    >
+                <span class="glyphicon glyphicon-adjust text-warning" title="{% trans 'Feed Smart' %}" id="smartfeed_span_y_{{ squarefollowing.instagram_user_id }}"></span>
+            </button>
+
+            <button type="button" class="btn
+            {% if squarefollowing.squarefollowing_level == 'R'  %}
+                btn-success
+            {% else %}
+                btn-default
+            {% endif %}
+            " id="smartfeed_r_{{ squarefollowing.instagram_user_id }}"
+                    onclick="smart_feed_subscribe({{ squarefollowing.instagram_user_id}}, 'red');"
+                    >
+                <span class="glyphicon glyphicon-ban-circle text-danger" title="{% trans 'Feed Off' %}" id="smartfeed_span_r_{{ squarefollowing.instagram_user_id }}"></span>
+            </button>
+        </div>
     </div>
 </div>

@@ -45,6 +45,10 @@ var Dajaxice = {
     
     import_instagram_followings: function(callback_function, argv, custom_settings){
         return Dajaxice.call('smartfeed.import_instagram_followings', 'POST', callback_function, argv, custom_settings);
+    },
+
+    smart_feed_subscribe: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('smartfeed.smart_feed_subscribe', 'POST', callback_function, argv, custom_settings);
     }
 
 

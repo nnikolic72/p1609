@@ -331,3 +331,6 @@ FOLLOWINGS_TR_MAX_FF_RATIO = 1.5
 
 #General threshold - when to stop processing Instagram requests
 INSTAGRAM_API_THRESHOLD = 500
+
+# SmartFeed
+IMPORT_MAX_INSTAGRAM_FOLLOWINGS = 2000
