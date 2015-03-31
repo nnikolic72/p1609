@@ -1605,8 +1605,11 @@ class InstagramComments():
                                   x_word
                                  )
                     else:
-                        x_word = '<a href="http://www.instagram.com/%s" target="_blank">@%s</a>' % \
-                                 (l_username_text, l_username_text)
+                        x_word = '<a href="%s" target="_blank">@%s</a>' % \
+                                 (reverse('instagramuser:any_user_recent_best',
+                                          kwargs={'p_instagram_user_name': l_username_text}
+                                          )
+                                  , l_username_text)
 
                 l_cleaned_comment += x_word + ' '
 
@@ -1621,7 +1624,8 @@ class InstagramComments():
                  x_comment.user.username,
                  l_is_photo_owner,
                  l_references,
-                 l_is_response
+                 l_is_response,
+                 x_comment.user.profile_picture
                 ]
             l_order += 1
 

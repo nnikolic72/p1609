@@ -208,6 +208,7 @@ class InspiringUserNameView(TemplateView):
                 l_best_photos.get_instagram_photos()
                 l_recent_media = l_best_photos.l_latest_photos
 
+
                 l_good_photos = []
                 for x_media in l_recent_media:
                     # filter out only the best
@@ -238,7 +239,7 @@ class InspiringUserNameView(TemplateView):
                       self.template_name,
                       dict(
                           photos=l_good_photos,
-                          photos_owner=inspiring_user,
+                          photos_owner=inspiring_user.instagram_user_name,
 
                           show_describe_button=False,
                           logged_member=logged_member,
@@ -448,6 +449,123 @@ class UsersBestPhotosView(TemplateView):
                           show_describe_button=show_describe_button,
                           photo_owner=squaresensor_user,
 
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )
+
+
+class AnyUserRecentBestView(TemplateView):
+    """
+    Calculates and Display andy user recent best
+    """
+    template_name = 'instagramuser/recent-inspiring-artists.html'
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handle get request - display photos and all controls
+
+        :param request:
+        :type request:
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
+        instagram_user_name = kwargs['p_instagram_user_name']
+
+        l_good_photos = None
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+
+        # END Common for all members views ===============================================
+
+        l_token = logged_member.get_member_token(request)
+        instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+        instagram_session.init_instagram_API()
+        user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
+
+        if len(user_search) > 0:
+            l_instagram_user = instagram_session.get_instagram_user(user_search[0].id)
+
+            l_best_photos = BestPhotos(
+                instgram_user_id=l_instagram_user.id,
+                top_n_photos=0,
+                search_photos_amount=100,
+                instagram_api=instagram_session
+            )
+            l_best_photos.get_instagram_photos()
+            l_recent_media = l_best_photos.l_latest_photos
+
+            l_top_photos = None
+            if l_best_photos.l_user_has_photos:
+                l_polynom, l_max_days, l_min_days, l_max_likes, l_min_likes = l_best_photos.get_top_photos()
+
+            l_good_photos = []
+            for x_media in l_recent_media:
+                # filter out only the best
+                l_time_delta = datetime.today() - x_media.created_time
+                l_days = l_time_delta.days
+                l_like_count = x_media.like_count
+
+                poly_theta_2 = l_polynom.coeffs[0]
+                poly_theta_1 = l_polynom.coeffs[1]
+                poly_theta_0 = l_polynom.coeffs[2]
+
+                #normalize
+                if (l_max_likes - l_min_likes) != 0:
+                    l_like_count = (l_like_count - l_min_likes) / \
+                                   (l_max_likes - l_min_likes)
+                else:
+                    l_like_count = 0
+
+                if (l_max_days - l_min_days) != 0:
+                    l_days = (l_days - l_min_days) / \
+                             (l_max_days - l_min_days)
+                else:
+                    l_days = 0
+                #l_hour = l_time_delta.hour
+                l_prediction = poly_theta_0 + poly_theta_1*l_days + \
+                               poly_theta_1*l_days*l_days
+
+                if l_prediction < l_like_count:
+                    l_good_photos.extend([x_media])
+
+
+        # Limit calculation --------------------------------------------------------------
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
+
+        return render(request,
+                      self.template_name,
+                      dict(
+                          photos=l_good_photos,
+                          photos_owner=instagram_user_name,
+
+                          show_describe_button=False,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
