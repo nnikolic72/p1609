@@ -25,7 +25,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12 text-center">
-            <a class="btn btn-default" href="{% url 'photos:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}" >{% trans 'Refresh' %}</a>
+            <a class="btn btn-default" href="{% url 'instagramuser:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}" >{% trans 'Refresh' %}</a>
         </div>
     </div>
 {% endblock content %}

@@ -46,7 +46,7 @@
             <p class="text-justify"><b>{% trans 'Bio' %}:</b> {{ logged_member.instagram_user_bio }}</p>
             <p><b>{% trans 'Web Site' %}:</b> <a href="{{ logged_member.instagram_user_website_URL }}">{{ logged_member.instagram_user_website_URL }}</a></p>
             <p><a class="btn btn-sm btn-default" href="{{ logged_member.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
-                <a href="{% url 'photos:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}">
+                <a href="{% url 'instagramuser:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}">
                     <button class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'My best photos' %}</button>
                 </a></p>
         </div>

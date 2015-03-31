@@ -1599,7 +1599,7 @@ class InstagramComments():
 
                     if l_inspiring_user:
                         x_word = '<a href="%s"><span class="glyphicon glyphicon-user"></span>%s</a>' % \
-                                 (reverse('photos:alltimebest',
+                                 (reverse('instagramuser:alltimebest',
                                           kwargs={'p_username': l_inspiring_user.instagram_user_name, 'p_mode': 'view'}
                                           ),
                                   x_word
