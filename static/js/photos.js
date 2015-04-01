@@ -25,7 +25,15 @@ function show_comments_modal(p_photo_id) {
     var modal_name = '#myModal_comments_' + p_photo_id;
 
     //alert('Show modal: ' + modal_name);
-    $(modal_name).modal('toggle');
+    $(modal_name).modal('show');
+}
+
+function hide_comments_modal(p_photo_id) {
+
+    var modal_name = '#myModal_comments_' + p_photo_id;
+
+    //alert('Show modal: ' + modal_name);
+    $(modal_name).modal('hide');
 }
 
 function load_instagram_comments_callback(data) {
@@ -38,7 +46,9 @@ function load_instagram_comments_callback(data) {
 
     $(modal_comment_text_id).html(html_text)
 
+
     show_comments_modal(p_photo_id);
+
 
 }
 
@@ -61,6 +71,7 @@ function send_instagram_comment_callback(data) {
 
     var instagram_comments_text_id = '#instagram_comments_text_' + p_photo_id;
     $(instagram_comments_text_id).html(l_comments_count);
+    load_instagram_comments(p_photo_id);
     //show_comments_modal(p_photo_id); //hides
 }
 

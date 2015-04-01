@@ -12,6 +12,8 @@ class CategorySquareFollowingInlineAdmin(admin.TabularInline):
 class AttributeSquareFollowingInlineAdmin(admin.TabularInline):
     model = SquareFollowing.attributes.through
 
+class SquareFollowingMemberInlineAdmin(admin.TabularInline):
+    model = SquareFollowing.member_id2.through
 
 class SquareFollowingAdmin(admin.ModelAdmin):
     '''Definition of Admin interface for Friend model'''
@@ -120,7 +122,10 @@ class SquareFollowingAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_friends_process_followings_false.short_description = 'Set "To Be Processed for Friends" to "No"'
 
-    inlines = (CategorySquareFollowingInlineAdmin, AttributeSquareFollowingInlineAdmin,)
+    inlines = (CategorySquareFollowingInlineAdmin,
+               AttributeSquareFollowingInlineAdmin,
+               SquareFollowingMemberInlineAdmin,
+    )
 
     list_display = (
         'instagram_user_name', 'is_user_active', 'number_of_media',
@@ -153,7 +158,7 @@ class SquareFollowingAdmin(admin.ModelAdmin):
     )
 
     fieldsets = [
-        ('General Information', {'fields': [ 'member', 'instagram_user_name', 'user_type'
+        ('General Information', {'fields': [ 'instagram_user_name', 'user_type'
         ]
         }
         ),
@@ -170,10 +175,7 @@ class SquareFollowingAdmin(admin.ModelAdmin):
         ]
         }
         ),
-        ('Source', {'fields': [ 'inspiringuser', 'member'
-        ]
-        }
-        ),
+
         ('Square Following Processing Information', {'fields': ['last_processed_for_basic_info_date',
                                                       'times_processed_for_basic_info',
                                                       'to_be_processed_for_basic_info',
@@ -185,7 +187,7 @@ class SquareFollowingAdmin(admin.ModelAdmin):
         }
         ),
         ('Instagram Information', {'fields': ['number_of_media',
-                                              'number_of_square_followings', 'number_of_followings',
+                                              'number_of_followings',
                                               'instagram_user_full_name', 'instagram_profile_picture_URL',
                                               'instagram_user_bio', 'instagram_user_website_URL',
                                               'instagram_user_id', 'instagram_user_name_valid']

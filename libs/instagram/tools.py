@@ -1143,6 +1143,7 @@ class InstagramUserAdminUtils():
                 '''get Instagram user data'''
                 obj, message_basic_info = self.analyze_instagram_user(ig_session, obj)
                 l_counter_for_basic_info += 1
+                obj.last_processed_for_friends_date = datetime.today()
                 obj.save()
 
             '''Analyze photos of this user'''
@@ -1185,6 +1186,7 @@ class InstagramUserAdminUtils():
                         obj.poly_order = 2
                     l_top_photos = l_best_photos.top_photos_list
                     obj.times_processed_for_photos = obj.times_processed_for_photos + 1
+                    obj.last_processed_for_photos_date = datetime.today()
                 obj.save()
 
                 '''Delete old best photos for this user'''
@@ -1212,6 +1214,7 @@ class InstagramUserAdminUtils():
                         l_counter_pics += 1
 
                 obj.to_be_processed_for_photos = False
+
                 obj.save()
                 message_best_photos = 'Success'
 
@@ -1221,6 +1224,7 @@ class InstagramUserAdminUtils():
                 message_find_friends = self.analyze_instagram_user_find_friends(request, obj)
                 obj.to_be_processed_for_friends = False
                 obj.times_processed_for_friends = obj.times_processed_for_friends + 1
+                obj.last_processed_for_friends_date = datetime.today()
                 obj.save()
                 l_counter_for_friends += 1
 
@@ -1230,6 +1234,7 @@ class InstagramUserAdminUtils():
                 l_counter_for_followings += 1
                 obj.times_processed_for_followings = obj.times_processed_for_followings + 1
                 obj.to_be_processed_for_followings = False
+                obj.last_processed_for_followings_date = datetime.today()
                 obj.save()
                 #message_followings = 'Success'
                 pass
@@ -1238,9 +1243,6 @@ class InstagramUserAdminUtils():
 
         self.l_instagram_api_limit_end, self.l_instagram_api_limit = \
             ig_session.get_api_limits()
-
-
-
 
         buf = '%s users processed for basic info (Messages "%s").' \
               ' Processed %s photos (Messages "%s").' \

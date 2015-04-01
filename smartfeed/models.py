@@ -22,12 +22,7 @@ class SquareFollowingBelongsToAttribute(models.Model):
     weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
 
-# Create your models here.
-class SquareFollowing(InstagramUser):
-    """
-    Class model defining a SquareFollowing - an Instagram user that Member follows through SquareSensor Smart Feed
-    """
-
+class SquareFollowingMember(models.Model):
     G = 'G'
     Y = 'Y'
     R = 'O'
@@ -37,15 +32,31 @@ class SquareFollowing(InstagramUser):
         (Y, 'Yellow'),
         (R, 'Off'),
     )
-
-    #member = models.ManyToManyField('members.Member', null=True, blank=True)
-    member_id = models.ManyToManyField('members.Member', null=True, blank=True)
+    squarefollowing = models.ForeignKey('SquareFollowing')
+    member = models.ForeignKey('members.Member')
     squarefollowing_level = models.CharField(max_length=10, choices=SQUAREFOLLOWING_LEVEL_CHOICES, default=R)
+
+
+# Create your models here.
+class SquareFollowing(InstagramUser):
+    """
+    Class model defining a SquareFollowing - an Instagram user that Member follows through SquareSensor Smart Feed
+    """
+
+    member_id2 = models.ManyToManyField('members.Member', null=True, blank=True, through='SquareFollowingMember')
 
     categories = models.ManyToManyField(Category, through='SquareFollowingBelongsToCategory', null=True, blank=True)
     attributes = models.ManyToManyField(Attribute, through='SquareFollowingBelongsToAttribute', null=True, blank=True)
 
     user_type = models.CharField(editable=False, default='squarefollowing', max_length=50)
+
+    last_processed =  models.DateTimeField(_('SquarFollowing processed date'),
+                                                              null=True, blank=True
+    )
+    times_processed = models.IntegerField(
+        _('Number of times SquareFollowing was processed'),
+        default=0, null=False
+    )
 
 
     class Meta:

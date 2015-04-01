@@ -119,8 +119,10 @@ class SmartFeedConfigureView(TemplateView):
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
         # END Common for all members views ===============================================
-        l_squarefollowing_queryset = SquareFollowing.objects.all()
+        l_squarefollowing_queryset = SquareFollowing.objects.filter(member_id2=logged_member)
 
+        #for x in l_squarefollowing_queryset:
+        #    for y in x.
 
         return render(request,
                       self.template_name,

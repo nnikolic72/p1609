@@ -22,7 +22,7 @@
 
     <div class="container-fluid">
         <div class="row" style="margin-bottom: 20px;">
-            <div class="col-xs-12">
+            <div class="col-xs-12 text-center">
                 <a href="#"><button class="btn btn-success"
                                     onclick="import_instagram_followings('{{ logged_member.instagram_user_id }}')">
                     {% trans 'Import My Instagram Followings' %}
@@ -36,7 +36,7 @@
 
         <div class="container-fluid">
             {% if l_squarefollowing_queryset %}
-                <h4>{% trans 'Your SmartFeed Subscriptions' %}</h4>
+                <h4 class="text-center">{% trans 'Your SmartFeed Subscriptions' %}</h4>
                 {% for squarefollowing in l_squarefollowing_queryset %}
 
                     {% include 'smartfeed/squarefollowing-item.html' %}
