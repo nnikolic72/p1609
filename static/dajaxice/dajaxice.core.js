@@ -30,6 +30,10 @@ var Dajaxice = {
         return Dajaxice.call('photos.save_attributes_and_categories', 'POST', callback_function, argv, custom_settings);
     },
 
+    like_instagram_picture: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.like_instagram_picture', 'POST', callback_function, argv, custom_settings);
+    },
+
     send_instagram_comment: function(callback_function, argv, custom_settings){
         return Dajaxice.call('photos.send_instagram_comment', 'POST', callback_function, argv, custom_settings);
     }

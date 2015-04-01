@@ -14,7 +14,7 @@ from django.views.generic.base import TemplateView
 from attributes.models import Attribute
 from categories.models import Category
 from instagramuser.models import InspiringUser, Following, Follower
-from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdminUtils
+from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdminUtils, MyLikes
 
 from squaresensor.settings.base import IS_APP_LIVE
 from .forms import AddInspiringUserForm
@@ -210,11 +210,17 @@ class InspiringUserNameView(TemplateView):
 
 
                 l_good_photos = []
+                liked_photos = []
                 for x_media in l_recent_media:
                     # filter out only the best
                     l_time_delta = datetime.today() - x_media.created_time
                     l_days = l_time_delta.days
                     l_like_count = x_media.like_count
+
+                    my_likes = MyLikes(request.user.username, x_media.instagram_photo_id, instagram_session )
+                    has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
+                    if has_user_liked_media:
+                        liked_photos.extend([x_media.instagram_photo_id])
 
                     #normalize
                     if (inspiring_user.poly_max_likes - inspiring_user.poly_min_likes) != 0:
@@ -235,11 +241,17 @@ class InspiringUserNameView(TemplateView):
                     if l_prediction < l_like_count:
                         l_good_photos.extend([x_media])
 
+
+
+
+
+
         return render(request,
                       self.template_name,
                       dict(
                           photos=l_good_photos,
                           photos_owner=inspiring_user.instagram_user_name,
+                          liked_photos=liked_photos,
 
                           show_describe_button=False,
                           logged_member=logged_member,
@@ -340,6 +352,7 @@ class UsersBestPhotosView(TemplateView):
         mode = kwargs['p_mode']
 
         show_describe_button = False
+        liked_photos = []
 
         squaresensor_user, queryset = self.find_squaresensor_user(instagram_user_name)
 
@@ -357,6 +370,7 @@ class UsersBestPhotosView(TemplateView):
 
         for q in queryset:
             q.to_be_processed_for_basic_info = True
+            q.to_be_processed_for_photos = True
             q.save()
         # Limit calculation --------------------------------------------------------------
         x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
@@ -384,18 +398,22 @@ class UsersBestPhotosView(TemplateView):
                     if self.is_following:
                         l_photos_queryset = Photo.objects.filter(following_id=squaresensor_user).order_by('-photo_rating')
 
+        l_token = logged_member.get_member_token(request)
+        instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+        instagram_session.init_instagram_API()
+
         if (l_photos_queryset.count() == 0) or (mode == 'refresh'):
             for q in queryset:
                 q.to_be_processed_for_basic_info = True
                 q.to_be_processed_for_photos = True
                 q.save()
-            l_token = logged_member.get_member_token(request)
-            instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
-            instagram_session.init_instagram_API()
+            ig_admin_utils = InstagramUserAdminUtils()
+            ig_admin_utils.process_instagram_user(request, q)
+
+
             user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
 
-            ig_utils = InstagramUserAdminUtils()
-            ig_utils.process_instagram_user(request, queryset)
+
 
             if self.is_member:
                 l_photos_queryset = Photo.objects.filter(member_id=squaresensor_user).order_by('-photo_rating')
@@ -411,8 +429,7 @@ class UsersBestPhotosView(TemplateView):
                         if self.is_following:
                             l_photos_queryset = Photo.objects.filter(following_id=squaresensor_user).order_by('-photo_rating')
 
-            if (l_photos_queryset.count() > 0):
-                ig_utils.process_photos_by_instagram_api(request, l_photos_queryset)
+
 
             if self.is_member:
                 l_photos_queryset = Photo.objects.filter(member_id=squaresensor_user).order_by('-photo_rating')
@@ -429,7 +446,17 @@ class UsersBestPhotosView(TemplateView):
                         if self.is_following:
                             l_photos_queryset = Photo.objects.filter(following_id=squaresensor_user).order_by('-photo_rating')
 
+        ig_utils = InstagramUserAdminUtils()
+        ig_utils.process_instagram_user(request, queryset)
+        if (l_photos_queryset.count() > 0):
+            ig_utils.process_photos_by_instagram_api(request, l_photos_queryset)
 
+        liked_photos = []
+        for x_media in l_photos_queryset:
+            my_likes = MyLikes(request.user.username, x_media.instagram_photo_id, instagram_session )
+            has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
+            if has_user_liked_media:
+                liked_photos.extend([x_media.instagram_photo_id])
 
         # Limit calculation --------------------------------------------------------------
         x_ratelimit_remaining, x_ratelimit = logged_member.refresh_api_limits(request)
@@ -441,13 +468,13 @@ class UsersBestPhotosView(TemplateView):
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
 
-
         return render(request,
                       self.template_name,
                       dict(
                           photos=l_photos_queryset,
                           show_describe_button=show_describe_button,
                           photo_owner=squaresensor_user,
+                          liked_photos=liked_photos,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
@@ -481,6 +508,7 @@ class AnyUserRecentBestView(TemplateView):
         instagram_user_name = kwargs['p_instagram_user_name']
 
         l_good_photos = None
+        liked_photos = None
 
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
@@ -518,11 +546,17 @@ class AnyUserRecentBestView(TemplateView):
                 l_polynom, l_max_days, l_min_days, l_max_likes, l_min_likes = l_best_photos.get_top_photos()
 
             l_good_photos = []
+            liked_photos = []
             for x_media in l_recent_media:
                 # filter out only the best
                 l_time_delta = datetime.today() - x_media.created_time
                 l_days = l_time_delta.days
                 l_like_count = x_media.like_count
+
+                my_likes = MyLikes(request.user.username, x_media.instagram_photo_id, instagram_session )
+                has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
+                if has_user_liked_media:
+                    liked_photos.extend([x_media.instagram_photo_id])
 
                 poly_theta_2 = l_polynom.coeffs[0]
                 poly_theta_1 = l_polynom.coeffs[1]
@@ -564,6 +598,7 @@ class AnyUserRecentBestView(TemplateView):
                       dict(
                           photos=l_good_photos,
                           photos_owner=instagram_user_name,
+                          liked_photos=liked_photos,
 
                           show_describe_button=False,
                           logged_member=logged_member,
@@ -574,3 +609,6 @@ class AnyUserRecentBestView(TemplateView):
                           attributes=l_attributes,
                           )
         )
+
+
+

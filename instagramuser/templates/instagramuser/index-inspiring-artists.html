@@ -43,9 +43,10 @@
                         <p><b>{% trans 'Name' %}:</b> {{ inspiring_user.instagram_user_full_name }}</p>
                         <p class="text-justify"><b>{% trans 'Bio' %}:</b> {{ inspiring_user.instagram_user_bio }}</p>
                         <p><b>{% trans 'Web Site' %}:</b> <small><a href="{{ inspiring_user.instagram_user_website_URL }}">{{ inspiring_user.instagram_user_website_URL }}</a></small></p>
-                        <p><a class="btn btn-sm btn-default" href="{{ inspiring_user.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
+                        <p>
+                            <a class="btn btn-sm btn-default" href="{{ inspiring_user.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
                             <a href="{% url 'instagramuser:alltimebest' p_username=inspiring_user.instagram_user_name p_mode='view' %}">
-                                <button class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'Best photos' %}</button>
+                                <button type="button" class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'Best photos' %}</button>
                             </a>
                         </p>
                     </div>

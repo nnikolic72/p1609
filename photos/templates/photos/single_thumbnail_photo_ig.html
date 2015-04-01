@@ -11,21 +11,31 @@
         <div class="panel panel-body squaresensor-image-panel-body">
 
             <div class="col-xs-4 text-left">
-                <button class="btn btn-xs squaresensor-image-button">
-                    <small><span class="glyphicon glyphicon-heart-empty"></span>
+                <button
+                id="like_button_{{ photo.instagram_photo_id }}"
+                onclick="like_instagram_picture('{{ photo.instagram_photo_id }}');"
+                        class="btn btn-xs squaresensor-image-button
+                    {%  if photo.id in liked_photos %}
+                        btn-danger
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                ">
+                    <small><span class="glyphicon glyphicon-heart-empty
+                    "></span>
                         <div class="badge">{{ photo.like_count }}</div></small>
                 </button>
             </div>
             <div class="col-xs-4 text-center">
                 {%  if show_describe_button %}
-                    <button class="btn btn-xs squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
+                    <button class="btn btn-xs btn-default squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
                         <small><span class="glyphicon glyphicon-list-alt"></span>
                         </small>
                     </button>
                 {% endif %}
             </div>
             <div class="col-xs-4 text-right">
-                <button class="btn btn-xs squaresensor-image-button" onclick="load_instagram_comments('{{ photo.id }}');">
+                <button class="btn btn-xs btn-default squaresensor-image-button" onclick="load_instagram_comments('{{ photo.id }}');">
                     <small><span class="glyphicon glyphicon-comment"></span>
                         <div class="badge" id="instagram_comments_text_{{ photo.id }}">{{ photo.comment_count }}</div></small>
                 </button>

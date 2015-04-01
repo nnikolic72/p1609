@@ -122,7 +122,12 @@ class PhotoAdmin(admin.ModelAdmin):
         ]
         }
         ),
-
+        ( 'Photo URLS', {'fields': ['instagram_low_resolution_URL', 'instagram_thumbnail_URL',
+                                                   'instagram_standard_resolution_URL',
+                                                   'instagram_link_URL'
+        ]
+        }
+        ),
         ( 'Categories and Attributes', {'fields': ['admin_thumbnail', 'photo_category',
                                                    'photo_attribute'
         ]

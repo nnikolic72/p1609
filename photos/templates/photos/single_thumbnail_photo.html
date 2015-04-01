@@ -3,29 +3,40 @@
 <div class="col-xs-12 col-sm-6">
     <div class="panel panel-heading">
         <div align="center">
+            {% if photo.instagram_low_resolution_URL %}
             <img class="img-responsive img-thumbnail" src="{{ photo.instagram_low_resolution_URL }}"
                  title="{{ photo.photo_rating }}">
+            {% endif %}
         </div>
 
 
         <div class="panel panel-body squaresensor-image-panel-body">
 
             <div class="col-xs-4 text-left">
-                <button class="btn btn-xs squaresensor-image-button">
-                    <small><span class="glyphicon glyphicon-heart-empty"></span>
+                <button id="like_button_{{ photo.instagram_photo_id }}"
+                        onclick="like_instagram_picture('{{ photo.instagram_photo_id }}');"
+                        class="btn btn-xs squaresensor-image-button
+                    {%  if photo.instagram_photo_id in liked_photos %}
+                        btn-danger
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                ">
+                    <small><span class="glyphicon glyphicon-heart-empty
+                    "></span>
                         <div class="badge" id="instagram_likes_text_{{ photo.instagram_photo_id }}">{{ photo.instagram_likes }}</div></small>
                 </button>
             </div>
             <div class="col-xs-4 text-center">
                 {%  if show_describe_button %}
-                    <button class="btn btn-xs squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
+                    <button class="btn btn-xs btn-default squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
                         <small><span class="glyphicon glyphicon-list-alt"></span>
                         </small>
                     </button>
                 {% endif %}
             </div>
             <div class="col-xs-4 text-right">
-                <button class="btn btn-xs squaresensor-image-button" onclick="load_instagram_comments('{{ photo.instagram_photo_id }}');">
+                <button class="btn btn-xs btn-default squaresensor-image-button" onclick="load_instagram_comments('{{ photo.instagram_photo_id }}');">
                     <small><span class="glyphicon glyphicon-comment"></span>
                         <div class="badge" id="instagram_comments_text_{{ photo.instagram_photo_id }}">{{ photo.instagram_comments }}</div></small>
                 </button>

@@ -19,9 +19,13 @@
 {% block content %}
     {{ block.super }}
     <div class="row">
+    {% if photos %}
         {% for photo in photos %}
             {% include 'photos/single_thumbnail_photo.html' %}
         {% endfor %}
+    {% else %}
+        <p>No available photos.</p>
+    {% endif %}
     </div>
     <div class="row">
         <div class="col-xs-12 text-center">

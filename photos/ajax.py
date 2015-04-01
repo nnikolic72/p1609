@@ -14,7 +14,7 @@ from instagramuser.models import FollowingBelongsToCategory, FollowerBelongsToCa
 from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
 from photos.models import Photo
 
-from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, InstagramComments
+from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, InstagramComments, MyLikes
 from dajaxice.decorators import dajaxice_register
 
 from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED
@@ -327,18 +327,6 @@ def send_instagram_comment(req, form, p_photo_id, p_inline):
     except:
         raise HttpResponseNotFound
 
-    # Limit calculation --------------------------------------------------------------
-    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
-
-    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
-    if x_ratelimit != 0:
-        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
-    else:
-        x_limit_pct = 100
-    # END Limit calculation ----------------------------------------------------------
-    # END Common for all members views ===============================================
-
-
     tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
     ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
     ig_session.init_instagram_API()
@@ -349,10 +337,6 @@ def send_instagram_comment(req, form, p_photo_id, p_inline):
         l_comment_form_input_id = u'new_comment_%s_%s' %(p_photo_id, p_inline)
     comment_text = form[l_comment_form_input_id]
 
-    tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
-    ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
-    ig_session.init_instagram_API()
-
     l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
     if INSTAGRAM_COMMENTS_ALLOWED == '1':
         l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
@@ -360,6 +344,16 @@ def send_instagram_comment(req, form, p_photo_id, p_inline):
         l_result = False
     l_comments_count = l_instagram_comments.get_comments_count()
 
+    # Limit calculation --------------------------------------------------------------
+    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+    if x_ratelimit != 0:
+        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+    else:
+        x_limit_pct = 100
+    # END Limit calculation ----------------------------------------------------------
+    # END Common for all members views ===============================================
     #Todo check comments per minute
     comments_per_minute = 0
 
@@ -371,5 +365,74 @@ def send_instagram_comment(req, form, p_photo_id, p_inline):
              x_ratelimit=x_ratelimit,
              x_limit_pct=x_limit_pct,
              comments_per_minute=comments_per_minute,
+             )
+    )
+
+
+@dajaxice_register
+def like_instagram_picture(req, p_photo_id):
+    """
+
+    :param req:
+    :type req:
+    :param form:
+    :type form:
+    :param p_photo_id:
+    :type p_photo_id:
+    :param p_inline:
+    :type p_inline:
+    :return:
+    :rtype:
+    """
+
+    # Common for all members views ===================================================
+    l_categories = Category.objects.all()
+    l_attributes = Attribute.objects.all()
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+        if logged_member.is_editor(req):
+            show_describe_button = True
+    except ObjectDoesNotExist:
+        logged_member = None
+    except:
+        raise HttpResponseNotFound
+
+    tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
+    ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
+    ig_session.init_instagram_API()
+
+    l_my_likes = MyLikes(p_instgram_user = logged_member.instagram_user_name,
+                         p_photo_id = p_photo_id,
+                         p_instagram_api= ig_session)
+    result = l_my_likes.like_instagram_media()
+
+    x, no_of_likes = l_my_likes.has_user_liked_media()
+
+
+    # Limit calculation --------------------------------------------------------------
+    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+    if x_ratelimit != 0:
+        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+    else:
+        x_limit_pct = 100
+    # END Limit calculation ----------------------------------------------------------
+    # END Common for all members views ===============================================
+
+    #Todo check likes per minute
+    likes_per_minute = 0
+
+
+    return json.dumps(
+        dict(p_photo_id=p_photo_id,
+             result=result,
+             no_of_likes=no_of_likes,
+
+
+             x_ratelimit_remaining=x_ratelimit_remaining,
+             x_ratelimit=x_ratelimit,
+             x_limit_pct=x_limit_pct,
+             likes_per_minute=likes_per_minute,
              )
     )

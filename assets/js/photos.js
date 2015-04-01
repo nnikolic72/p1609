@@ -98,3 +98,36 @@ function send_instagram_inline_comment(p_photo_id, p_comment_order) {
         {'form': data, 'p_photo_id': p_photo_id, 'p_inline': p_comment_order  }
     );
 }
+
+
+function like_instagram_picture_callback(data) {
+    //alert('like_instagram_picture_callback');
+    var result = data.result;
+    var p_photo_id = data.p_photo_id;
+    var no_of_likes = data.no_of_likes;
+    var button_id = '#like_button_' + p_photo_id;
+    var ig_likes_text_id = '#instagram_likes_text_' + p_photo_id;
+
+
+    if(result=='like') {
+        $(button_id).removeClass('btn-default').addClass('btn-danger');
+    }
+
+    if(result=='unlike') {
+        $(button_id).removeClass('btn-danger').addClass('btn-default');
+    }
+
+    $(ig_likes_text_id).html(no_of_likes)
+}
+
+function like_instagram_picture(p_photo_id) {
+    //alert('like_instagram_picture');
+    // var id_name = '#comment_form_' + p_photo_id;
+    // var data = $(id_name).serializeObject();
+
+    //alert('send_instagram_comment ' + data);
+
+    Dajaxice.photos.like_instagram_picture(like_instagram_picture_callback,
+        { 'p_photo_id': p_photo_id }
+    );
+}

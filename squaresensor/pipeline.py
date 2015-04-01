@@ -34,7 +34,10 @@ def add_member(*args, **kwargs):
                               instagram_user_id=l_instagram_user_id,
                               django_user=l_user
                               )
+        l_new_member.to_be_processed_for_basic_info = True
+        l_new_member.to_be_processed_for_photos = True
         l_new_member.save()
+
         
     #profile = user.get_profile()
     

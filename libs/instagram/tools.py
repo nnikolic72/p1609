@@ -204,6 +204,7 @@ class MyLikes:
         else:
             return False, no_of_likes
 
+
     def like_instagram_media(self):
         '''Procedure that likes instagram media with ID  self.photo_id'''
 
@@ -1143,7 +1144,7 @@ class InstagramUserAdminUtils():
                 '''get Instagram user data'''
                 obj, message_basic_info = self.analyze_instagram_user(ig_session, obj)
                 l_counter_for_basic_info += 1
-                obj.last_processed_for_friends_date = datetime.today()
+                obj.last_processed_for_basic_info_date = datetime.today()
                 obj.save()
 
             '''Analyze photos of this user'''
@@ -1202,15 +1203,33 @@ class InstagramUserAdminUtils():
                 '''Insert new best photos for this user'''
                 if l_top_photos:
                     for val in l_top_photos:
-                        if obj.user_type == 'inspiring':
-                            rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], inspiring_user_id=obj)
-                        if obj.user_type == 'follower':
-                            rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], friend_id=obj)
-                        if obj.user_type == 'member':
-                            rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], member_id=obj)
-                        if obj.user_type == 'following':
-                            rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], following_id=obj)
-                        rec.save()
+                        if Photo.objects.filter(instagram_photo_id=val[0]).exists():
+                            try:
+                                rec = Photo.objects.get(instagram_photo_id=val[0])
+                            except ObjectDoesNotExist:
+                                rec = None
+                            except:
+                                raise
+
+                            if obj.user_type == 'inspiring':
+                                rec.inspiring_user_id=obj
+                            if obj.user_type == 'follower':
+                                rec.friend_id=obj
+                            if obj.user_type == 'member':
+                                rec.member_id=obj
+                            if obj.user_type == 'following':
+                                rec.following_id=obj
+                            rec.save()
+                        else:
+                            if obj.user_type == 'inspiring':
+                                rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], inspiring_user_id=obj)
+                            if obj.user_type == 'follower':
+                                rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], friend_id=obj)
+                            if obj.user_type == 'member':
+                                rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], member_id=obj)
+                            if obj.user_type == 'following':
+                                rec = Photo(instagram_photo_id=val[0], photo_rating=val[1], following_id=obj)
+                            rec.save()
                         l_counter_pics += 1
 
                 obj.to_be_processed_for_photos = False

@@ -36,4 +36,10 @@ urlpatterns = patterns('',
                            login_required(UsersBestPhotosView.as_view()),
                            name='alltimebest'
                            ),
+
+
+
+
                        )
+
+
