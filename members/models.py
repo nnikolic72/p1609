@@ -103,6 +103,8 @@ class Member(InstagramUser):
                                         help_text=_('Membership type')
     )
 
+    smartfeed_last_seen_instagram_photo_id = models.CharField(max_length=100, blank=True, null=True)
+
     ig_api_limit_max = models.IntegerField(null=True, blank=True, default=0,
                                                   verbose_name=_('IG API Limit Max'),
                                                   help_text=_('How many IG requests are available per period')

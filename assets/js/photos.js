@@ -44,7 +44,7 @@ function load_instagram_comments_callback(data) {
     //alert(html_text);
     var modal_comment_text_id = '#myModal_comments_text_' + p_photo_id;
 
-    $(modal_comment_text_id).html(html_text)
+    $(modal_comment_text_id).html(html_text);
 
 
     show_comments_modal(p_photo_id);
@@ -107,7 +107,11 @@ function like_instagram_picture_callback(data) {
     var no_of_likes = data.no_of_likes;
     var button_id = '#like_button_' + p_photo_id;
     var ig_likes_text_id = '#instagram_likes_text_' + p_photo_id;
+    var html_text = '';
 
+    html_text += '<small><span class="glyphicon glyphicon-heart-empty"></span>';
+    html_text += '&nbsp;<div class="badge" id="instagram_likes_text_'+ p_photo_id + '">' + no_of_likes + '</div></small>';
+    $(button_id).html(html_text);
 
     if(result=='like') {
         $(button_id).removeClass('btn-default').addClass('btn-danger');
@@ -117,14 +121,19 @@ function like_instagram_picture_callback(data) {
         $(button_id).removeClass('btn-danger').addClass('btn-default');
     }
 
-    $(ig_likes_text_id).html(no_of_likes)
+
+
+    //$(ig_likes_text_id).html(no_of_likes)
 }
 
-function like_instagram_picture(p_photo_id) {
+function like_instagram_picture(p_photo_id, p_static_url) {
     //alert('like_instagram_picture');
     // var id_name = '#comment_form_' + p_photo_id;
     // var data = $(id_name).serializeObject();
-
+    var button_id = '#like_button_' + p_photo_id;
+    var html_text = '<div align=center><img class="img-responsive" src="' + p_static_url + 'img/ajax_loader-small.gif" style="height=11px;"></div>';
+    $(button_id).removeClass('btn-danger');
+    $(button_id).html(html_text);
     //alert('send_instagram_comment ' + data);
 
     Dajaxice.photos.like_instagram_picture(like_instagram_picture_callback,

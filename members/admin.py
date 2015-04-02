@@ -219,7 +219,8 @@ class MemberAdmin(admin.ModelAdmin):
                                               'number_of_followers', 'number_of_followings',
                                               'instagram_user_full_name', 'instagram_profile_picture_URL',
                                               'instagram_user_bio', 'instagram_user_website_URL',
-                                              'instagram_user_id', 'instagram_user_name_valid']
+                                              'instagram_user_id', 'instagram_user_name_valid',
+                                              'smartfeed_last_seen_instagram_photo_id']
         }
         ),
 

@@ -6,6 +6,7 @@ from django.http import HttpResponseNotFound
 from django.utils import timezone
 from emoji.models import Emoji
 from photos.models import Photo
+from smartfeed.models import SquareFollowing
 
 __author__ = 'n.nikolic'
 from sys import exc_info
@@ -1739,3 +1740,123 @@ class InstagramComments():
                 l_new_resulting_list.append(x)
 
         return l_new_resulting_list
+
+
+class SmartFeedHelper():
+
+    feed_owner_instagram_id = None
+    recent_media = None
+    instagram_session = None
+    batch_size = None
+    best_media_list = None
+    is_user_private = False
+    x_next = None
+    last_media_id = None
+    min_id = None
+
+    def __init__(self, p_feed_owner_instagram_id, p_instagram_session, p_batch_size, p_min_id):
+
+        self.feed_owner_instagram_id = p_feed_owner_instagram_id
+        self.instagram_session = p_instagram_session
+        self.batch_size = p_batch_size
+        self.min_id = p_min_id
+
+
+    def get_recent_media(self, p_starting_media_id):
+
+        self.recent_media = []
+        l_user_private = False
+        media_feed = None
+
+        try:
+            self.recent_media, self.x_next = self.instagram_session.api.user_media_feed (
+                user_id=self.feed_owner_instagram_id,
+                count=self.batch_size,
+                max_id=p_starting_media_id,
+                min_id=self.min_id
+            )
+        except InstagramAPIError as e:
+            if (e.status_code == 400):
+                l_user_private = True            # @UnusedVariable
+            logging.exception("get_instagram_user: ERR-00040 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+        except InstagramClientError as e:
+            logging.exception("get_instagram_user: ERR-00041 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
+        except IndexError:
+            logging.exception("get_instagram_user: ERR-00042 Instagram search unsuccessful: %s" % (exc_info()[0]))
+        except:
+            logging.exception("get_instagram_user: ERR-00043 Unexpected error: %s" % (exc_info()[0]))
+            raise
+
+    def find_best_media(self, p_media_to_return, p_starting_media_id, p_logged_member, p_max_days):
+
+        l_media_cnt = 0
+        l_safety = 0
+        self.best_media_list = []
+
+        self.instagram_session.get_api_limits()
+        x_ratelimit_remaining, x_ratelimit = self.instagram_session.get_api_limits()
+        l_max_days_reached = False
+
+
+        while (l_media_cnt < p_media_to_return) and (l_safety < 1000) and (x_ratelimit_remaining > 100) \
+                and (not l_max_days_reached):
+            self.get_recent_media(p_starting_media_id=self.last_media_id)
+
+            x_ratelimit_remaining, x_ratelimit = self.instagram_session.get_api_limits()
+
+            if (len(self.recent_media) == 0):
+                break
+
+            for x_media in self.recent_media:
+                self.last_media_id = x_media.id
+                l_safety += 1
+                l_author_instagram_id = x_media.user.id
+                l_likes_cnt = x_media.like_count
+                l_time_delta = datetime.today() - x_media.created_time
+                l_days = l_time_delta.days
+                if l_days > p_max_days:
+                    l_max_days_reached = True
+                    break
+
+                if l_media_cnt >= p_media_to_return:
+                    break
+
+                try:
+                    l_squarefollowing = SquareFollowing.objects.get(
+                        instagram_user_id=l_author_instagram_id,
+                        member_id2=p_logged_member
+                    )
+                except ObjectDoesNotExist:
+                    l_squarefollowing = None
+                except:
+                    raise
+
+                if l_squarefollowing:
+                    #normalize likes and age, poly values
+
+                    if (l_squarefollowing.poly_max_likes - l_squarefollowing.poly_min_likes) != 0:
+                        l_likes_cnt = (l_likes_cnt - l_squarefollowing.poly_min_likes) / \
+                                 (l_squarefollowing.poly_max_likes - l_squarefollowing.poly_min_likes)
+                    else:
+                        l_likes_cnt = 0
+
+                    if (l_squarefollowing.poly_max_days - l_squarefollowing.poly_min_days) != 0:
+                        l_days = (l_days - l_squarefollowing.poly_min_days) / \
+                                 (l_squarefollowing.poly_max_days - l_squarefollowing.poly_min_days)
+                    else:
+                        l_days = 0
+
+                    l_prediction = l_squarefollowing.poly_theta_0 + l_squarefollowing.poly_theta_1*l_days + \
+                                   l_squarefollowing.poly_theta_2*l_days*l_days
+
+                    if l_prediction < l_likes_cnt:
+                        l_media_cnt += 1
+                        self.best_media_list.extend([x_media])
+                        if l_media_cnt == 1:
+                            p_logged_member.smartfeed_last_seen_instagram_photo_id = x_media.id
+                            p_logged_member.save()
+
+
+        return self.best_media_list
+
+

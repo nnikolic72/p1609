@@ -9,8 +9,12 @@ from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.views.generic import FormView
 from django.views.generic.base import TemplateView
+from libs.instagram.tools import SmartFeedHelper, InstagramSession, MyLikes
 
-# Create your views here.
+from squaresensor.settings.base import (
+    SMART_FEED_BATCH_SIZE, SMART_FEED_MAX_LOAD_PICS
+)
+
 from attributes.models import Attribute
 from categories.models import Category
 from members.models import Member
@@ -49,6 +53,27 @@ class SmartFeedIndexView(TemplateView):
         except:
             raise HttpResponseNotFound
 
+
+        # END Common for all members views ===============================================
+        l_squarefollowing_queryset = SquareFollowing.objects.all()
+
+        l_token = logged_member.get_member_token(request)
+        instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+        instagram_session.init_instagram_API()
+
+        l_smart_feed_helper = SmartFeedHelper(
+            p_feed_owner_instagram_id=logged_member.instagram_user_id,
+            p_instagram_session=instagram_session,
+            p_batch_size=SMART_FEED_BATCH_SIZE,
+            p_min_id=logged_member.smartfeed_last_seen_instagram_photo_id
+        )
+        l_best_media = l_smart_feed_helper.find_best_media(
+            p_media_to_return=SMART_FEED_BATCH_SIZE,
+            p_starting_media_id=None,
+            p_logged_member=logged_member,
+            p_max_days=30
+        )
+
         # Limit calculation --------------------------------------------------------------
         x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
@@ -58,14 +83,19 @@ class SmartFeedIndexView(TemplateView):
         else:
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
-        # END Common for all members views ===============================================
-        l_squarefollowing_queryset = SquareFollowing.objects.all()
 
+        liked_photos = []
+        for x_media in l_best_media:
+            my_likes = MyLikes(request.user.username, x_media.id, instagram_session )
+            has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
+            if has_user_liked_media:
+                liked_photos.extend([x_media.id])
 
         return render(request,
                       self.template_name,
                       dict(
-                          l_squarefollowing_queryset=l_squarefollowing_queryset,
+                          best_media=l_best_media,
+                          liked_photos=liked_photos,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

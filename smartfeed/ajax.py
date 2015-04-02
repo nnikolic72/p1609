@@ -179,9 +179,9 @@ def smart_feed_subscribe(req, p_instagram_user_id, p_color):
             if l_best_photos.l_user_has_photos:
                 l_polynom, l_max_days, l_min_days, l_max_likes, l_min_likes = l_best_photos.get_top_photos()
 
-                l_new_squarefollowing.poly_theta_0 = l_polynom.coeffs[0]
+                l_new_squarefollowing.poly_theta_0 = l_polynom.coeffs[2]
                 l_new_squarefollowing.poly_theta_1 = l_polynom.coeffs[1]
-                l_new_squarefollowing.poly_theta_2 = l_polynom.coeffs[2]
+                l_new_squarefollowing.poly_theta_2 = l_polynom.coeffs[0]
                 l_new_squarefollowing.poly_min_days = l_min_days
                 l_new_squarefollowing.poly_max_days = l_max_days
                 l_new_squarefollowing.poly_min_likes = l_min_likes

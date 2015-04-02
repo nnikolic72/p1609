@@ -14,17 +14,18 @@
 
 {% block script %}
     {{ block.super }}
+    <script src="{{ STATIC_URL }}js/photos.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{ STATIC_URL }}js/smartfeed.js" type="text/javascript" charset="utf-8"></script>
 {% endblock script %}
 
 {% block content %}
     {{ block.super }}
-    {% if l_squarefollowing_queryset %}
-        {% for squarefollowing in l_squarefollowing_queryset %}
-            <p>{{ squarefollowing.instagram_user_name }}</p>
+    {% if best_media %}
+        {% for photo in best_media %}
+            {% include 'photos/single_thumbnail_photo_ig.html' %}
         {% endfor %}
     {% else %}
-        <p>{% trans 'You have no SquareFollowings defined. Go to your dashboard to set up.' %}</p>
+        <p>{% trans 'You have no SquareFollowings defined or they do not have any good recent photos. Go to your dashboard to set up.' %}</p>
     {% endif %}
 {% endblock content %}
 
