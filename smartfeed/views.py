@@ -14,8 +14,8 @@ from django.views.generic.base import TemplateView
 from libs.instagram.tools import SmartFeedHelper, InstagramSession, MyLikes
 
 from squaresensor.settings.base import (
-    SMART_FEED_BATCH_SIZE, SMART_FEED_MAX_LOAD_PICS
-)
+    SMART_FEED_BATCH_SIZE, SMART_FEED_MAX_LOAD_PICS,
+    MIN_SQUAREFOLLOWINGS)
 
 from attributes.models import Attribute
 from categories.models import Category
@@ -44,6 +44,7 @@ class SmartFeedIndexView(TemplateView):
         :rtype:
         """
 
+
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
         l_attributes = Attribute.objects.all()
@@ -55,50 +56,53 @@ class SmartFeedIndexView(TemplateView):
         except:
             raise HttpResponseNotFound
 
+        l_squarefollowings_count = SquareFollowing.objects.filter(member_id2=logged_member).count()
+        if l_squarefollowings_count >= MIN_SQUAREFOLLOWINGS:
 
-        # END Common for all members views ===============================================
-        l_squarefollowing_queryset = SquareFollowing.objects.all()
+            # END Common for all members views ===============================================
+            l_squarefollowing_queryset = SquareFollowing.objects.all()
 
-        l_token = logged_member.get_member_token(request)
-        instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
-        instagram_session.init_instagram_API()
+            l_token = logged_member.get_member_token(request)
+            instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+            instagram_session.init_instagram_API()
 
-        l_smart_feed_helper = SmartFeedHelper(
-            p_feed_owner_instagram_id=logged_member.instagram_user_id,
-            p_instagram_session=instagram_session,
-            p_batch_size=SMART_FEED_BATCH_SIZE,
-            p_min_id=logged_member.smartfeed_last_seen_instagram_photo_id
-        )
-        l_best_media = l_smart_feed_helper.find_best_media(
-            p_media_to_return=SMART_FEED_BATCH_SIZE,
-            p_starting_media_id=None,
-            p_logged_member=logged_member,
-            p_max_days=30
-        )
+            l_smart_feed_helper = SmartFeedHelper(
+                p_feed_owner_instagram_id=logged_member.instagram_user_id,
+                p_instagram_session=instagram_session,
+                p_batch_size=SMART_FEED_BATCH_SIZE,
+                p_min_id=logged_member.smartfeed_last_seen_instagram_photo_id
+            )
+            l_best_media = l_smart_feed_helper.find_best_media(
+                p_media_to_return=SMART_FEED_BATCH_SIZE,
+                p_starting_media_id=None,
+                p_logged_member=logged_member,
+                p_max_days=30
+            )
 
-        # Limit calculation --------------------------------------------------------------
-        logged_member.refresh_api_limits(request)
-        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+            # Limit calculation --------------------------------------------------------------
+            logged_member.refresh_api_limits(request)
+            x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
-        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
-        if x_ratelimit != 0:
-            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
-        else:
-            x_limit_pct = 100
-        # END Limit calculation ----------------------------------------------------------
+            x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+            if x_ratelimit != 0:
+                x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+            else:
+                x_limit_pct = 100
+            # END Limit calculation ----------------------------------------------------------
 
-        liked_photos = []
-        for x_media in l_best_media:
-            my_likes = MyLikes(request.user.username, x_media.id, instagram_session )
-            has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
-            if has_user_liked_media:
-                liked_photos.extend([x_media.id])
+            liked_photos = []
+            for x_media in l_best_media:
+                my_likes = MyLikes(request.user.username, x_media.id, instagram_session )
+                has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
+                if has_user_liked_media:
+                    liked_photos.extend([x_media.id])
 
         return render(request,
                       self.template_name,
                       dict(
                           best_media=l_best_media,
                           liked_photos=liked_photos,
+                          squarefollowings_count=l_squarefollowings_count,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

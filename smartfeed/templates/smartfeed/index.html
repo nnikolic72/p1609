@@ -20,6 +20,7 @@
 
 {% block content %}
     {{ block.super }}
+    {% if squarefollowings_count >= 10 %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12 text-center">
@@ -122,6 +123,9 @@
                 </div>
             </div>
         </div>
+        {% else %}
+            <p>{% trans 'Please add at least 10 SquareFollowings in your dashboard.' %}</p>
+        {% endif %}
     {% else %}
         <p>{% trans 'You have no SquareFollowings defined or they do not have any good recent photos. Go to your dashboard to set up.' %}</p>
     {% endif %}
