@@ -199,6 +199,7 @@ class InspiringUserNameView(TemplateView):
             user_search = instagram_session.is_instagram_user_valid(inspiring_user.instagram_user_name)
 
             if len(user_search) > 0:
+                l_instagram_user = instagram_session.get_instagram_user(user_search[0].id)
                 l_best_photos = BestPhotos(
                     instgram_user_id=inspiring_user.instagram_user_id,
                     top_n_photos=0,
@@ -252,6 +253,7 @@ class InspiringUserNameView(TemplateView):
                           photos=l_good_photos,
                           photos_owner=inspiring_user.instagram_user_name,
                           liked_photos=liked_photos,
+                          instagramuser=l_instagram_user,
 
                           show_describe_button=False,
                           logged_member=logged_member,

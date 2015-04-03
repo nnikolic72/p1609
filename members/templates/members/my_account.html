@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'My Squaresensor Account' %}{% endblock title %}
+{% block page-title %}{% trans 'My Squaresensor Account' %}{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/members.my_account.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/members.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <table class="table table-responsive">
+                    <tr>
+                        <td><b>Instagram user name</b></td>
+                        <td>{{ logged_member.instagram_user_name }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>User type</b></td>
+                        <td>{{ logged_member.user_type }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>{% trans 'My Categories' %} <small>{% trans 'Click to select/deselect' %}</small></h4>
+            </div>
+        </div>
+        <div class="row">
+            {% for category in categories %}
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <button type="button"
+                            id="category_button_{{ category.id }}"
+                            onclick="select_member_category({{ category.id }}, {{ logged_member.id }});"
+                            class="btn btn-block
+                    {%  if category in logged_member_categories_set.all %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                "><small>{{ category.title }}</small>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>{% trans 'My Styles' %} <small>{% trans 'Click to select/deselect' %}</small></h4>
+            </div>
+        </div>
+        <div class="row">
+            {% for attribute in attributes %}
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <button type="button"
+                            id="attribute_button_{{ attribute.id }}"
+                            onclick="select_member_attribute({{ attribute.id }}, {{ logged_member.id }});"
+                            class="btn btn-block
+                    {%  if attribute.id in logged_member_attributes %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                "><small>{{ attribute.title }}</small>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

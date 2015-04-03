@@ -8,6 +8,16 @@ from emoji.models import Emoji
 from photos.models import Photo
 from smartfeed.models import SquareFollowing, SquareFollowingMember
 
+from squaresensor.settings.base import TEST_APP, TEST_APP_FRIENDS_TR_ANALYZE_N_FRIENDS, FRIENDS_TR_MIN_MEDIA_COUNT, \
+    FRIENDS_TR_MAX_MEDIA_COUNT, FRIENDS_TR_MIN_FOLLOWINGS, FRIENDS_TR_MAX_FOLLOWINGS, FRIENDS_TR_MIN_FOLLOWERS, \
+    FRIENDS_TR_MAX_FOLLOWERS, FRIENDS_TR_MIN_FF_RATIO, FRIENDS_TR_MAX_FF_RATIO, FRIENDS_TR_LAST_POST_BEFORE_DAYS, \
+    FOLLOWINGS_TR_MAX_MEDIA_COUNT, FOLLOWINGS_TR_MIN_FOLLOWINGS, FOLLOWINGS_TR_MAX_FOLLOWINGS, \
+    FOLLOWINGS_TR_MIN_FOLLOWERS, FOLLOWINGS_TR_MAX_FOLLOWERS, FOLLOWINGS_TR_MIN_MEDIA_COUNT, FOLLOWINGS_TR_MIN_FF_RATIO, \
+    FOLLOWINGS_TR_MAX_FF_RATIO, FOLLOWINGS_TR_LAST_POST_BEFORE_DAYS, FRIENDS_TR_ANALYZE_N_FRIENDS, \
+    FOLLOWINGS_TR_ANALYZE_N_FOLLOWINGS, TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS, INSPIRING_USERS_FIND_TOP_N_PHOTOS, \
+    INSPIRING_USERS_SEARCH_N_PHOTOS, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS, MEMBERS_FIND_TOP_N_PHOTOS, \
+    MEMBERS_SEARCH_N_PHOTOS, FOLLOWINGS_FIND_TOP_N_PHOTOS, FOLLOWINGS_SEARCH_N_PHOTOS, INSTAGRAM_API_THRESHOLD
+
 __author__ = 'n.nikolic'
 from sys import exc_info
 from datetime import (
@@ -567,12 +577,12 @@ class BestFollowers():
                     else:
                         l_friends_ff_ratio = 0
 
-                    if (settings.FRIENDS_TR_MIN_MEDIA_COUNT <= l_friends_media_count <= settings.FRIENDS_TR_MAX_MEDIA_COUNT) and \
-                            (settings.FRIENDS_TR_MIN_FOLLOWINGS <= l_friends_followings <= settings.FRIENDS_TR_MAX_FOLLOWINGS) and \
-                            (settings.FRIENDS_TR_MIN_FOLLOWERS <= l_friends_followers <= settings.FRIENDS_TR_MAX_FOLLOWERS) and \
-                            (settings.FRIENDS_TR_MIN_FF_RATIO <= l_friends_ff_ratio <= settings.FRIENDS_TR_MAX_FF_RATIO):
+                    if (FRIENDS_TR_MIN_MEDIA_COUNT <= l_friends_media_count <= FRIENDS_TR_MAX_MEDIA_COUNT) and \
+                            (FRIENDS_TR_MIN_FOLLOWINGS <= l_friends_followings <= FRIENDS_TR_MAX_FOLLOWINGS) and \
+                            (FRIENDS_TR_MIN_FOLLOWERS <= l_friends_followers <= FRIENDS_TR_MAX_FOLLOWERS) and \
+                            (FRIENDS_TR_MIN_FF_RATIO <= l_friends_ff_ratio <= FRIENDS_TR_MAX_FF_RATIO):
 
-                        if self.is_user_active_in_last_n_days(follower.id, settings.FRIENDS_TR_LAST_POST_BEFORE_DAYS):
+                        if self.is_user_active_in_last_n_days(follower.id, FRIENDS_TR_LAST_POST_BEFORE_DAYS):
                             '''User is active in last N days, passed all requirements
                                Add it to friends
                             '''
@@ -766,12 +776,12 @@ class BestFollowings():
                     else:
                         l_friends_ff_ratio = 0
 
-                    if (settings.FOLLOWINGS_TR_MIN_MEDIA_COUNT <= l_followings_media_count <= settings.FOLLOWINGS_TR_MAX_MEDIA_COUNT) and \
-                            (settings.FOLLOWINGS_TR_MIN_FOLLOWINGS <= l_followings_followings <= settings.FOLLOWINGS_TR_MAX_FOLLOWINGS) and \
-                            (settings.FOLLOWINGS_TR_MIN_FOLLOWERS <= l_followings_followers <= settings.FOLLOWINGS_TR_MAX_FOLLOWERS) and \
-                            (settings.FOLLOWINGS_TR_MIN_FF_RATIO <= l_friends_ff_ratio <= settings.FOLLOWINGS_TR_MAX_FF_RATIO):
+                    if (FOLLOWINGS_TR_MIN_MEDIA_COUNT <= l_followings_media_count <= FOLLOWINGS_TR_MAX_MEDIA_COUNT) and \
+                            (FOLLOWINGS_TR_MIN_FOLLOWINGS <= l_followings_followings <= FOLLOWINGS_TR_MAX_FOLLOWINGS) and \
+                            (FOLLOWINGS_TR_MIN_FOLLOWERS <= l_followings_followers <= FOLLOWINGS_TR_MAX_FOLLOWERS) and \
+                            (FOLLOWINGS_TR_MIN_FF_RATIO <= l_friends_ff_ratio <= FOLLOWINGS_TR_MAX_FF_RATIO):
 
-                        if self.is_user_active_in_last_n_days(following.id, settings.FOLLOWINGS_TR_LAST_POST_BEFORE_DAYS):
+                        if self.is_user_active_in_last_n_days(following.id, FOLLOWINGS_TR_LAST_POST_BEFORE_DAYS):
                             '''User is active in last N days, passed all requirements
                                Add it to friends
                             '''
@@ -853,16 +863,16 @@ class InstagramUserAdminUtils():
                     if instagram_user:
                         l_instagram_user_id = instagram_user.id
                         l_number_of_followers = instagram_user.counts[u'followed_by']
-                        if l_number_of_followers < settings.FRIENDS_TR_ANALYZE_N_FRIENDS:
+                        if l_number_of_followers < FRIENDS_TR_ANALYZE_N_FRIENDS:
                             l_analyze_n_followers = l_number_of_followers
                         else:
-                            l_analyze_n_followers = settings.FRIENDS_TR_ANALYZE_N_FRIENDS
+                            l_analyze_n_followers = FRIENDS_TR_ANALYZE_N_FRIENDS
 
                         if (self.l_instagram_api_limit_start > (l_analyze_n_followers + 50)):
                             '''Do we have enough API requests available? Yes'''
-                            if settings.TEST_APP == True:
+                            if TEST_APP == True:
                                 '''Override for testing, analyze less followers'''
-                                l_analyze_n_followers = settings.TEST_APP_FRIENDS_TR_ANALYZE_N_FRIENDS
+                                l_analyze_n_followers = TEST_APP_FRIENDS_TR_ANALYZE_N_FRIENDS
 
                             l_best_instagram_followers = \
                                 BestFollowers(l_instagram_user_id, l_analyze_n_followers, ig_session)
@@ -975,16 +985,16 @@ class InstagramUserAdminUtils():
                     if instagram_user:
                         l_instagram_user_id = instagram_user.id
                         l_number_of_followers = instagram_user.counts[u'followed_by']
-                        if l_number_of_followers < settings.FOLLOWINGS_TR_ANALYZE_N_FOLLOWINGS:
+                        if l_number_of_followers < FOLLOWINGS_TR_ANALYZE_N_FOLLOWINGS:
                             l_analyze_n_followers = l_number_of_followers
                         else:
-                            l_analyze_n_followers = settings.FOLLOWINGS_TR_ANALYZE_N_FOLLOWINGS
+                            l_analyze_n_followers = FOLLOWINGS_TR_ANALYZE_N_FOLLOWINGS
 
                         if (self.l_instagram_api_limit_start > (l_analyze_n_followers + 50)):
 
-                            if settings.TEST_APP == True:
+                            if TEST_APP == True:
                                 '''Override for testing, analyze less followers'''
-                                l_analyze_n_followers = settings.TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS
+                                l_analyze_n_followers = TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS
 
                             l_best_instagram_followings = \
                                 BestFollowings(l_instagram_user_id, obj.user_type,
@@ -1144,22 +1154,22 @@ class InstagramUserAdminUtils():
             '''Analyze photos of this user'''
             if obj.to_be_processed_for_photos == True:
                 if obj.user_type == 'inspiring':
-                    self.l_find_top_n_photos = settings.INSPIRING_USERS_FIND_TOP_N_PHOTOS
-                    self.l_search_last_photos = settings.INSPIRING_USERS_SEARCH_N_PHOTOS
+                    self.l_find_top_n_photos = INSPIRING_USERS_FIND_TOP_N_PHOTOS
+                    self.l_search_last_photos = INSPIRING_USERS_SEARCH_N_PHOTOS
 
                 if obj.user_type == 'friend':
-                    self.l_find_top_n_photos = settings.FRIENDS_FIND_TOP_N_PHOTOS
-                    self.l_search_last_photos = settings.FRIENDS_SEARCH_N_PHOTOS
+                    self.l_find_top_n_photos = FRIENDS_FIND_TOP_N_PHOTOS
+                    self.l_search_last_photos = FRIENDS_SEARCH_N_PHOTOS
 
                 if obj.user_type == 'member':
-                    self.l_find_top_n_photos = settings.MEMBERS_FIND_TOP_N_PHOTOS
-                    self.l_search_last_photos = settings.MEMBERS_SEARCH_N_PHOTOS
+                    self.l_find_top_n_photos = MEMBERS_FIND_TOP_N_PHOTOS
+                    self.l_search_last_photos = MEMBERS_SEARCH_N_PHOTOS
 
                 if obj.user_type == 'following':
-                    self.l_find_top_n_photos = settings.FOLLOWINGS_FIND_TOP_N_PHOTOS
-                    self.l_search_last_photos = settings.FOLLOWINGS_SEARCH_N_PHOTOS
+                    self.l_find_top_n_photos = FOLLOWINGS_FIND_TOP_N_PHOTOS
+                    self.l_search_last_photos = FOLLOWINGS_SEARCH_N_PHOTOS
 
-                if settings.DEBUG == True:
+                if TEST_APP == True:
                     '''reduce number of photos to search'''
                     self.l_search_last_photos = 200
 
@@ -1485,7 +1495,7 @@ class InstagramUserAdminUtils():
 
         for obj in queryset:
             l_instagram_api_limit_current, foo = ig_session.get_api_limits()  # @UnusedVariable
-            if l_instagram_api_limit_current >= settings.INSTAGRAM_API_THRESHOLD:
+            if l_instagram_api_limit_current >= INSTAGRAM_API_THRESHOLD:
                 obj = self.get_instagram_photo_info(ig_session, obj)
                 obj.instagram_photo_processed = True
                 obj.last_processed_date = timezone.datetime.now()

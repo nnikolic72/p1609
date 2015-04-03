@@ -1,6 +1,6 @@
 from __future__ import division
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
@@ -48,8 +48,6 @@ class MemberDashboardView(TemplateView):
     template_name = 'members/dashboard.html'
 
     def get(self, request, *args, **kwargs):
-
-
         logged_member = None
         profile_photo_url = None
 
@@ -130,3 +128,62 @@ class MemberLogoutView(TemplateView):
         auth_logout(request)
 
         return HttpResponseRedirect(reverse('lander:index'))
+
+
+class MemberMyAccountView(TemplateView):
+    template_name = 'members/my_account.html'
+
+    def get(self, request, *args, **kwargs):
+        """
+
+        :param request:
+        :type request:
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+
+        # END Common for all members views ===============================================
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+        l_logged_members_categories = logged_member.categories.all()
+        l_logged_members_attributes = logged_member.attributes.all()
+
+
+        return render(request,
+                      self.template_name,
+                      dict(logged_members_categories=l_logged_members_categories,
+                        logged_members_attributes=l_logged_members_categories,
+
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )

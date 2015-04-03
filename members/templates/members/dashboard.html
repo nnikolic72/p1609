@@ -34,21 +34,44 @@
             <img class="img-responsive img-circle squaresensor-normal-profile-pic squaresensor-image-circular" src="{{ logged_member.instagram_profile_picture_URL }}">
         </div>
         <div class="col-xs-12 col-sm-9">
-            <div class="text-center">
-                <span class="btn btn-primary" style="margin-bottom: 5px;">Posts <span class="badge">{{ logged_member.number_of_media }}</span></span>
-
-                <span class="btn btn-primary" style="margin-bottom: 5px;">Followers <span class="badge">{{ logged_member.number_of_followers }}</span></span>
-
-                <span class="btn btn-primary" style="margin-bottom: 5px;">Follows <span class="badge">{{ logged_member.number_of_followings }}</span></span>
+            <div class="container-fluid">
+                <div class="row text-center">
+                    <div class="col-xs-12 col-lg-4 btn-block">
+                        <span class="btn btn-primary">Posts <span class="badge">{{ logged_member.number_of_media }}</span></span>
+                    </div>
+                    <div class="col-xs-12 col-lg-4 btn-block">
+                        <span class="btn btn-primary">Followers <span class="badge">{{ logged_member.number_of_followers }}</span></span>
+                    </div>
+                    <div class="col-xs-12 col-lg-4 btn-block">
+                        <span class="btn btn-primary">Follows <span class="badge">{{ logged_member.number_of_followings }}</span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <b>{% trans 'Name' %}:</b> {{ logged_member.instagram_user_full_name }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <b>{% trans 'Bio' %}:</b> {{ logged_member.instagram_user_bio }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><b>{% trans 'Web Site' %}:</b> <a href="{{ logged_member.instagram_user_website_URL }}">{{ logged_member.instagram_user_website_URL }}</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-lg-6">
+                        <button class="btn btn-sm btn-default btn-block squaresensor-button-with-margin" ><a href="{{ logged_member.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a></button>
+                    </div>
+                    <div class="col-xs-12 col-lg-6">
+                        <button class="btn btn-sm btn-default btn-block squaresensor-button-with-margin"><a href="{% url 'instagramuser:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}">
+                            {% trans 'My best photos' %}
+                        </a>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <br>
-            <p><b>{% trans 'Name' %}:</b> {{ logged_member.instagram_user_full_name }}</p>
-            <p class="text-justify"><b>{% trans 'Bio' %}:</b> {{ logged_member.instagram_user_bio }}</p>
-            <p><b>{% trans 'Web Site' %}:</b> <a href="{{ logged_member.instagram_user_website_URL }}">{{ logged_member.instagram_user_website_URL }}</a></p>
-            <p><a class="btn btn-sm btn-default" href="{{ logged_member.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
-                <a href="{% url 'instagramuser:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}">
-                    <button class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'My best photos' %}</button>
-                </a></p>
         </div>
     </div>
 
@@ -63,7 +86,10 @@
     <div class="row">
         <div class="col-xs-12 text-center">
             <div class="squaresensor-section-header">
-                <h4>{% trans 'Suggested Friends' %}</h4>
+                <h4>{% trans 'My Account' %}</h4>
+                <form action="{% url 'members:my_account' %}" method="get">
+                    <button class="btn btn-lg btn-success btn-block squaresensor-button-with-margin">{% trans 'My Account' %}</button>
+                </form>
             </div>
         </div>
     </div>
@@ -72,8 +98,8 @@
         <div class="col-xs-12 text-center">
             <div class="squaresensor-section-header">
                 <h4>{% trans 'SmartFeed' %}</h4>
-                <a href="{% url 'smartfeed:index' %}"><button class="btn btn-lg btn-success">{% trans 'View' %}</button></a>
-                <a href="{% url 'smartfeed:configure' %}"><button class="btn btn-lg btn-success">{% trans 'Configure' %}</button></a>
+                <a href="{% url 'smartfeed:index' %}"><button class="btn btn-lg btn-success btn-block squaresensor-button-with-margin">{% trans 'View' %}</button></a>
+                <a href="{% url 'smartfeed:configure' %}"><button class="btn btn-lg btn-success btn-block squaresensor-button-with-margin">{% trans 'Configure' %}</button></a>
 
 
             </div>
@@ -85,7 +111,7 @@
             <div class="col-xs-12 text-center">
                 <div class="squaresensor-section-header">
                     <h4>{% trans 'Admin' %}</h4>
-                    <a href="{% url 'instagramuser:addinspiring' %}"><button class="btn btn-lg btn-success">{% trans 'Add Inspiring User' %}</button></a>
+                    <a href="{% url 'instagramuser:addinspiring' %}"><button class="btn btn-lg btn-success btn-block squaresensor-button-with-margin">{% trans 'Add Inspiring User' %}</button></a>
                 </div>
             </div>
         </div>
