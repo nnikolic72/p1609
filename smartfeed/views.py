@@ -44,6 +44,9 @@ class SmartFeedIndexView(TemplateView):
         :rtype:
         """
 
+        liked_photos = None
+        l_squarefollowings_count = None
+        l_best_media = None
 
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
@@ -79,23 +82,24 @@ class SmartFeedIndexView(TemplateView):
                 p_max_days=30
             )
 
-            # Limit calculation --------------------------------------------------------------
-            logged_member.refresh_api_limits(request)
-            x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
-
-            x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
-            if x_ratelimit != 0:
-                x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
-            else:
-                x_limit_pct = 100
-            # END Limit calculation ----------------------------------------------------------
-
             liked_photos = []
             for x_media in l_best_media:
                 my_likes = MyLikes(request.user.username, x_media.id, instagram_session )
                 has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
                 if has_user_liked_media:
                     liked_photos.extend([x_media.id])
+
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
 
         return render(request,
                       self.template_name,
@@ -138,7 +142,8 @@ class SmartFeedConfigureCalendarView(TemplateView):
         :rtype:
         """
         p_period_str = kwargs['p_period']
-
+        l_best_media = None
+        liked_photos = None
 
 
         try:
@@ -175,39 +180,40 @@ class SmartFeedConfigureCalendarView(TemplateView):
         l_token = logged_member.get_member_token(request)
         instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
         instagram_session.init_instagram_API()
+        l_squarefollowings_count = SquareFollowing.objects.filter(member_id2=logged_member).count()
+        if l_squarefollowings_count >= MIN_SQUAREFOLLOWINGS:
+            l_smart_feed_helper = SmartFeedHelper(
+                p_feed_owner_instagram_id=logged_member.instagram_user_id,
+                p_instagram_session=instagram_session,
+                p_batch_size=SMART_FEED_BATCH_SIZE,
+                p_min_id=None,
+                p_date_from=date_from,
+                p_date_to=date_from_to
+            )
+            l_best_media = l_smart_feed_helper.find_best_media(
+                p_media_to_return=SMART_FEED_BATCH_SIZE,
+                p_starting_media_id=None,
+                p_logged_member=logged_member,
+                p_max_days=30
+            )
 
-        l_smart_feed_helper = SmartFeedHelper(
-            p_feed_owner_instagram_id=logged_member.instagram_user_id,
-            p_instagram_session=instagram_session,
-            p_batch_size=SMART_FEED_BATCH_SIZE,
-            p_min_id=None,
-            p_date_from=date_from,
-            p_date_to=date_from_to
-        )
-        l_best_media = l_smart_feed_helper.find_best_media(
-            p_media_to_return=SMART_FEED_BATCH_SIZE,
-            p_starting_media_id=None,
-            p_logged_member=logged_member,
-            p_max_days=30
-        )
+            # Limit calculation --------------------------------------------------------------
+            logged_member.refresh_api_limits(request)
+            x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
-        # Limit calculation --------------------------------------------------------------
-        logged_member.refresh_api_limits(request)
-        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+            x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+            if x_ratelimit != 0:
+                x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+            else:
+                x_limit_pct = 100
+            # END Limit calculation ----------------------------------------------------------
 
-        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
-        if x_ratelimit != 0:
-            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
-        else:
-            x_limit_pct = 100
-        # END Limit calculation ----------------------------------------------------------
-
-        liked_photos = []
-        for x_media in l_best_media:
-            my_likes = MyLikes(request.user.username, x_media.id, instagram_session )
-            has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
-            if has_user_liked_media:
-                liked_photos.extend([x_media.id])
+            liked_photos = []
+            for x_media in l_best_media:
+                my_likes = MyLikes(request.user.username, x_media.id, instagram_session )
+                has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
+                if has_user_liked_media:
+                    liked_photos.extend([x_media.id])
 
         return render(request,
                       self.template_name,
