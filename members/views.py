@@ -170,14 +170,16 @@ class MemberMyAccountView(TemplateView):
         else:
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
-        l_logged_members_categories = logged_member.categories.all()
-        l_logged_members_attributes = logged_member.attributes.all()
+        #l_logged_members_categories = logged_member.categories
+        #l_logged_members_attributes = logged_member.attributes
+
 
 
         return render(request,
                       self.template_name,
-                      dict(logged_members_categories=l_logged_members_categories,
-                        logged_members_attributes=l_logged_members_categories,
+                      dict(
+                          #logged_members_categories=l_logged_members_categories,
+                        #logged_members_attributes=l_logged_members_categories,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

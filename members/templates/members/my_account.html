@@ -19,6 +19,7 @@
 
 {% block content %}
     {{ block.super }}
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
@@ -41,16 +42,19 @@
         </div>
         <div class="row">
             {% for category in categories %}
+
                 <div class="col-xs-12 col-sm-6 col-md-4">
                     <button type="button"
                             id="category_button_{{ category.id }}"
                             onclick="select_member_category({{ category.id }}, {{ logged_member.id }});"
                             class="btn btn-block
-                    {%  if category in logged_member_categories_set.all %}
-                        btn-info
-                    {% else %}
-                        btn-default
-                    {% endif %}
+                    {% for checkcat in  logged_member.memberbelongstocategory_set.all %}
+                        {%  if category == checkcat.category %}
+                            btn-info
+                        {% else %}
+                            btn-default
+                        {% endif %}
+                    {% endfor %}
                 "><small>{{ category.title }}</small>
                     </button>
                 </div>
@@ -70,11 +74,13 @@
                             id="attribute_button_{{ attribute.id }}"
                             onclick="select_member_attribute({{ attribute.id }}, {{ logged_member.id }});"
                             class="btn btn-block
-                    {%  if attribute.id in logged_member_attributes %}
-                        btn-info
-                    {% else %}
-                        btn-default
-                    {% endif %}
+                    {% for checkatr in  logged_member.memberbelongstoattribute_set.all %}
+                        {%  if attribute == checkatr.attribute %}
+                            btn-info
+                        {% else %}
+                            btn-default
+                        {% endif %}
+                    {% endfor %}
                 "><small>{{ attribute.title }}</small>
                     </button>
                 </div>
