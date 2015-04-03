@@ -6,7 +6,7 @@ from django.http import HttpResponseNotFound
 from django.utils import timezone
 from emoji.models import Emoji
 from photos.models import Photo
-from smartfeed.models import SquareFollowing
+from smartfeed.models import SquareFollowing, SquareFollowingMember
 
 __author__ = 'n.nikolic'
 from sys import exc_info
@@ -489,9 +489,6 @@ class BestFollowers():
 
         return l_is_user_active
 
-
-
-
     def get_best_instagram_followers(self):
         '''Analyze followers and find the best ones'''
 
@@ -588,10 +585,6 @@ class BestFollowers():
                 pass
 
         return l_best_instagram_followers, l_existing_instagram_friends
-
-
-
-
 
 
 class BestFollowings():
@@ -1620,6 +1613,7 @@ class InstagramComments():
 
         l_comments_list = []
         l_order = 1
+        l_resulting_list = None
 
         for x_comment in l_comments:
             #process text and replace with urls
@@ -1753,13 +1747,24 @@ class SmartFeedHelper():
     x_next = None
     last_media_id = None
     min_id = None
+    date_from = None
+    date_to = None
 
-    def __init__(self, p_feed_owner_instagram_id, p_instagram_session, p_batch_size, p_min_id):
+    def __init__(self,
+                 p_feed_owner_instagram_id,
+                 p_instagram_session,
+                 p_batch_size,
+                 p_min_id,
+                 p_date_from = None,
+                 p_date_to = None
+    ):
 
         self.feed_owner_instagram_id = p_feed_owner_instagram_id
         self.instagram_session = p_instagram_session
         self.batch_size = p_batch_size
         self.min_id = p_min_id
+        self.date_from = p_date_from
+        self.date_to = p_date_to
 
 
     def get_recent_media(self, p_starting_media_id):
@@ -1792,6 +1797,7 @@ class SmartFeedHelper():
         l_media_cnt = 0
         l_safety = 0
         self.best_media_list = []
+        first_media = True
 
         self.instagram_session.get_api_limits()
         x_ratelimit_remaining, x_ratelimit = self.instagram_session.get_api_limits()
@@ -1814,8 +1820,16 @@ class SmartFeedHelper():
                 l_likes_cnt = x_media.like_count
                 l_time_delta = datetime.today() - x_media.created_time
                 l_days = l_time_delta.days
+
+                if self.date_from and self.date_to:
+                    if (x_media.created_time <= self.date_from):
+                        l_max_days_reached = True
+                        break
+                    if (x_media.created_time >= self.date_to):
+                        continue
+
                 if l_days > p_max_days:
-                    l_max_days_reached = True
+
                     break
 
                 if l_media_cnt >= p_media_to_return:
@@ -1826,35 +1840,49 @@ class SmartFeedHelper():
                         instagram_user_id=l_author_instagram_id,
                         member_id2=p_logged_member
                     )
+                    l_squarefollowing_level = SquareFollowingMember.objects.get(
+                        squarefollowing=l_squarefollowing,
+                        member=p_logged_member
+                    ).squarefollowing_level
                 except ObjectDoesNotExist:
                     l_squarefollowing = None
+                    l_squarefollowing_level = None
                 except:
                     raise
 
+
                 if l_squarefollowing:
                     #normalize likes and age, poly values
-
-                    if (l_squarefollowing.poly_max_likes - l_squarefollowing.poly_min_likes) != 0:
-                        l_likes_cnt = (l_likes_cnt - l_squarefollowing.poly_min_likes) / \
-                                 (l_squarefollowing.poly_max_likes - l_squarefollowing.poly_min_likes)
-                    else:
-                        l_likes_cnt = 0
-
-                    if (l_squarefollowing.poly_max_days - l_squarefollowing.poly_min_days) != 0:
-                        l_days = (l_days - l_squarefollowing.poly_min_days) / \
-                                 (l_squarefollowing.poly_max_days - l_squarefollowing.poly_min_days)
-                    else:
-                        l_days = 0
-
-                    l_prediction = l_squarefollowing.poly_theta_0 + l_squarefollowing.poly_theta_1*l_days + \
-                                   l_squarefollowing.poly_theta_2*l_days*l_days
-
-                    if l_prediction < l_likes_cnt:
+                    if l_squarefollowing_level == 'G':
                         l_media_cnt += 1
                         self.best_media_list.extend([x_media])
-                        if l_media_cnt == 1:
-                            p_logged_member.smartfeed_last_seen_instagram_photo_id = x_media.id
-                            p_logged_member.save()
+
+                    if l_squarefollowing_level == 'Y':
+                        if (l_squarefollowing.poly_max_likes - l_squarefollowing.poly_min_likes) != 0:
+                            l_likes_cnt = (l_likes_cnt - l_squarefollowing.poly_min_likes) / \
+                                     (l_squarefollowing.poly_max_likes - l_squarefollowing.poly_min_likes)
+                        else:
+                            l_likes_cnt = 0
+
+                        if (l_squarefollowing.poly_max_days - l_squarefollowing.poly_min_days) != 0:
+                            l_days = (l_days - l_squarefollowing.poly_min_days) / \
+                                     (l_squarefollowing.poly_max_days - l_squarefollowing.poly_min_days)
+                        else:
+                            l_days = 0
+
+                        l_prediction = l_squarefollowing.poly_theta_0 + l_squarefollowing.poly_theta_1*l_days + \
+                                       l_squarefollowing.poly_theta_2*l_days*l_days
+
+                        if l_prediction < l_likes_cnt:
+                            l_media_cnt += 1
+                            if p_logged_member.smartfeed_last_seen_instagram_photo_id != x_media.id:
+                                self.best_media_list.extend([x_media])
+                            if first_media:
+                                if self.date_from is None and self.date_to is None:
+                                    p_logged_member.smartfeed_last_seen_instagram_photo_id = x_media.id
+                                    p_logged_member.save()
+                                    first_media = False
+
 
 
         return self.best_media_list

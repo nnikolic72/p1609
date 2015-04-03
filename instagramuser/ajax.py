@@ -47,6 +47,7 @@ def analyze_user(req, form):
             raise HttpResponseNotFound
 
         # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(req)
         x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
         x_ratelimit_used = x_ratelimit - x_ratelimit_remaining

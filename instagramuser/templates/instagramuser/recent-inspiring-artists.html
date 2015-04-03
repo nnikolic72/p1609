@@ -21,6 +21,7 @@
 {% block content %}
     {{ block.super }}
     <div class="container-fluid">
+        {% include "instagramuser/instagram_user_profile.html" %}
         {% for photo in photos %}
             {% include 'photos/single_thumbnail_photo_ig.html' %}
         {% endfor %}

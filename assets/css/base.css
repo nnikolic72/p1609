@@ -183,7 +183,22 @@ body {
     -webkit-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
     box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
-    margin-top: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.squaresensor-image-circular {
+    -webkit-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+}
+
+.squaresensor-button {
+    -webkit-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
 }
 
 .squaresensor-image-button {
@@ -197,12 +212,16 @@ body {
 
 .small_profile_img {
     width: 80px;
-    height: 80px;
 }
 
 .comments_profile_img {
     width: 30px;
     height: 30px;
+}
+
+.photo_profile_img {
+    width: 34px;
+    height: 34px;
 }
 
 .comment_button_with_image {

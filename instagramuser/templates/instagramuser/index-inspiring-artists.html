@@ -26,27 +26,41 @@
                     <div class="col-xs-12 col-sm-4">
                         <div align="center">
                             <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user_name %}">
-                                <img class="img-responsive img-circle small_profile_img" src="{{ inspiring_user.instagram_profile_picture_URL }}">
+                                <img class="img-responsive img-circle small_profile_img squaresensor-image-circular" src="{{ inspiring_user.instagram_profile_picture_URL }}">
                                 <br>
                                 <h4>@{{ inspiring_user.instagram_user_name }}</h4></a>
+                            <br>
+                            <button class="btn btn-default squaresensor-button">
+                                <span class="glyphicon glyphicon-bookmark"></span>
+                            </button>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-8">
-                        <div class="text-center">
-                            <span class="btn btn-primary" style="margin-bottom: 5px;">Posts <span class="badge">{{ inspiring_user.number_of_media }}</span></span>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-xs-12 text-center">
+                                    <span class="btn btn-primary" style="margin-bottom: 5px;"><small>Posts<br><span class="badge"><small>{{ inspiring_user.number_of_media }}</small></span></small></span>
 
-                            <span class="btn btn-primary" style="margin-bottom: 5px;">Followers <span class="badge">{{ inspiring_user.number_of_followers }}</span></span>
+                                    <span class="btn btn-primary" style="margin-bottom: 5px;"><small>Followers<br><span class="badge"><small>{{ inspiring_user.number_of_followers }}</small></span></small></span>
 
-                            <span class="btn btn-primary" style="margin-bottom: 5px;">Follows <span class="badge">{{ inspiring_user.number_of_followings }}</span></span>
+                                    <span class="btn btn-primary" style="margin-bottom: 5px;"><small>Follows<br><span class="badge"><small>{{ inspiring_user.number_of_followings }}</small></span></small></span>
+                                </div>
+                            </div>
                         </div>
                         <br>
                         <p><b>{% trans 'Name' %}:</b> {{ inspiring_user.instagram_user_full_name }}</p>
                         <p class="text-justify"><b>{% trans 'Bio' %}:</b> {{ inspiring_user.instagram_user_bio }}</p>
                         <p><b>{% trans 'Web Site' %}:</b> <small><a href="{{ inspiring_user.instagram_user_website_URL }}">{{ inspiring_user.instagram_user_website_URL }}</a></small></p>
                         <p>
-                            <a class="btn btn-sm btn-default" href="{{ inspiring_user.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
+
                             <a href="{% url 'instagramuser:alltimebest' p_username=inspiring_user.instagram_user_name p_mode='view' %}">
-                                <button type="button" class="btn btn-sm btn-default" style="margin: 10px;">{% trans 'Best photos' %}</button>
+                                <button type="button" class="btn btn-sm btn-default squaresensor-button" style="margin: 10px;">{% trans 'Best photos' %}</button>
+                            </a>
+                            <a href="{% url 'instagramuser:any_user_recent_best' p_instagram_user_name=inspiring_user.instagram_user_name %}">
+                                <button type="button" class="btn btn-sm btn-default squaresensor-button" style="margin: 10px;">{% trans 'Recent good photos' %}</button>
+                            </a>
+                            <a href="{{ inspiring_user.instagram_user_profile_page_URL }}" target="_blank">
+                                <button class="btn btn-sm btn-default squaresensor-button">{% trans 'IG Profile' %}</button>
                             </a>
                         </p>
                     </div>

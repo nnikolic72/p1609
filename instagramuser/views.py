@@ -217,10 +217,10 @@ class InspiringUserNameView(TemplateView):
                     l_days = l_time_delta.days
                     l_like_count = x_media.like_count
 
-                    my_likes = MyLikes(request.user.username, x_media.instagram_photo_id, instagram_session )
+                    my_likes = MyLikes(request.user.username, x_media.id, instagram_session )
                     has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
                     if has_user_liked_media:
-                        liked_photos.extend([x_media.instagram_photo_id])
+                        liked_photos.extend([x_media.id])
 
                     #normalize
                     if (inspiring_user.poly_max_likes - inspiring_user.poly_min_likes) != 0:
@@ -553,10 +553,10 @@ class AnyUserRecentBestView(TemplateView):
                 l_days = l_time_delta.days
                 l_like_count = x_media.like_count
 
-                my_likes = MyLikes(request.user.username, x_media.instagram_photo_id, instagram_session )
+                my_likes = MyLikes(request.user.username, x_media.id, instagram_session )
                 has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
                 if has_user_liked_media:
-                    liked_photos.extend([x_media.instagram_photo_id])
+                    liked_photos.extend([x_media.id])
 
                 poly_theta_2 = l_polynom.coeffs[0]
                 poly_theta_1 = l_polynom.coeffs[1]
@@ -583,6 +583,7 @@ class AnyUserRecentBestView(TemplateView):
 
 
         # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
         x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
         x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
@@ -599,6 +600,7 @@ class AnyUserRecentBestView(TemplateView):
                           photos=l_good_photos,
                           photos_owner=instagram_user_name,
                           liked_photos=liked_photos,
+                          instagramuser=l_instagram_user,
 
                           show_describe_button=False,
                           logged_member=logged_member,

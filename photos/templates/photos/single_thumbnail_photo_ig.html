@@ -2,20 +2,33 @@
 {% load static %}
 
 <div class="col-xs-12 col-sm-6">
-    <div class="panel panel-heading">
-        <div align="center">
-            <small>@{{ photo.user.username }}</small>
-            <img class="img-responsive img-thumbnail" src="{{ photo.images.low_resolution.url }}"
-                 >
+    <div class="container-fluid squaresensor-image-panel-body">
+        <div class="row">
+            <div class="col-xs-12 col-sm-3 text-center">
+                <div align="center">
+                    <img class="img-responsive img-circle photo_profile_img squaresensor-image-circular" src="{{ photo.user.profile_picture }}">
+                </div>
+                <a href="{% url 'instagramuser:any_user_recent_best' p_instagram_user_name=photo.user.username %}"><small>@{{ photo.user.username|truncatechars:15 }}</small></a>
+
+            </div>
+            <div class="col-xs-12 col-sm-9 text-center">
+                <span class="glyphicon glyphicon-time"></span> <small>{{ photo.created_time|date:"D, d-M"  }}</small><br><small>{{ photo.created_time|timesince|truncatechars:15 }} ago</small>
+            </div>
+
+            <div class="col-xs-12 text-center">
+                <div align="center" style="margin-top: 10px; margin-bottom: 10px;">
+                    <img class="img-responsive img-thumbnail" src="{{ photo.images.low_resolution.url }}"
+                            >
+                </div>
+            </div>
         </div>
 
-
-        <div class="panel panel-body squaresensor-image-panel-body">
+        <div class="row">
 
             <div class="col-xs-4 text-left">
                 <button
-                id="like_button_{{ photo.id }}"
-                onclick="like_instagram_picture('{{ photo.id }}', '{% get_static_prefix %}');"
+                        id="like_button_{{ photo.id }}"
+                        onclick="like_instagram_picture('{{ photo.id }}', '{% get_static_prefix %}');"
                         class="btn btn-xs squaresensor-image-button
                     {%  if photo.id in liked_photos %}
                         btn-danger
@@ -54,7 +67,7 @@
         <div class="modal-content">
             <div class="container-fluid">
                 <div id="myModal_comments_text_{{ photo.id }}">
-<p>Komentari</p>
+                    <p>Komentari</p>
                 </div>
             </div>
         </div>

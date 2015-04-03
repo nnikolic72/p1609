@@ -42,15 +42,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
     except:
         raise HttpResponseNotFound
 
-    # Limit calculation --------------------------------------------------------------
-    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
-    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
-    if x_ratelimit != 0:
-        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
-    else:
-        x_limit_pct = 100
-    # END Limit calculation ----------------------------------------------------------
     # END Common for all members views ===============================================
 
     try:
@@ -261,6 +253,16 @@ def save_attributes_and_categories(req, form, p_photo_id):
                         l_inspiring_user_attribute.save()
 
     l_modal_name = '#myModal_%s' % (p_photo_id)
+    # Limit calculation --------------------------------------------------------------
+    logged_member.refresh_api_limits(req)
+    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+    if x_ratelimit != 0:
+        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+    else:
+        x_limit_pct = 100
+    # END Limit calculation ----------------------------------------------------------
 
     return json.dumps({
         'modal_name': l_modal_name,
@@ -410,6 +412,7 @@ def like_instagram_picture(req, p_photo_id):
 
 
     # Limit calculation --------------------------------------------------------------
+    logged_member.refresh_api_limits(req)
     x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
     x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
