@@ -52,7 +52,7 @@ function smart_feed_subscribe_callback(data) {
         }
     }
 
-    $('#instagram_following_' + p_instagram_user_id).fadeOut(600);
+    //$('#instagram_following_' + p_instagram_user_id).fadeOut(600);
 
 }
 
