@@ -1643,6 +1643,7 @@ class InstagramComments():
                 if x_word[0] == '@':
                     # this is user - replace with our user link
                     l_username_text= x_word[1:]
+                    l_username_text = l_username_text.strip(" .!#$%^&*()_+=,;'"":/?")
                     try:
                         l_inspiring_user = InspiringUser.objects.get(instagram_user_name=l_username_text)
                     except ObjectDoesNotExist:
