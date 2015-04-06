@@ -3,6 +3,7 @@ import json
 from django.http import HttpResponseNotFound
 from django.template.loader import render_to_string
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.datetime_safe import datetime, date
 from django.utils.translation import ugettext as _
 from emoji.models import Emoji
 from social_auth.db.django_models import UserSocialAuth
@@ -318,7 +319,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
     )
 
 @dajaxice_register
-def load_instagram_comments(req, p_photo_id):
+def load_instagram_comments(req, p_photo_id, p_new_friends_interaction):
     """
     Load Instagram photos for Instagram photo p_photo_id, and return text to modal dialog
     :param req:
@@ -331,7 +332,7 @@ def load_instagram_comments(req, p_photo_id):
     ig_session.init_instagram_API()
 
     l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
-    l_comments, instagram_thumbnail_url = l_instagram_comments.get_all_comments()
+    l_comments, instagram_thumbnail_url, photo_caption = l_instagram_comments.get_all_comments()
 
     l_comments_list = l_instagram_comments.process_instagram_comments('thread', l_comments)
 
@@ -343,6 +344,8 @@ def load_instagram_comments(req, p_photo_id):
                                      comments=l_comments_list,
                                      p_photo_id=p_photo_id,
                                      instagram_thumbnail_url=instagram_thumbnail_url,
+                                     photo_caption=photo_caption,
+                                     p_new_friends_interaction=p_new_friends_interaction
                                      )
     )
 
@@ -356,7 +359,7 @@ def load_instagram_comments(req, p_photo_id):
 
 
 @dajaxice_register
-def send_instagram_comment(req, form, p_photo_id, p_inline):
+def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_interaction):
     """
     Send instagram comment
     :param req:
@@ -381,6 +384,9 @@ def send_instagram_comment(req, form, p_photo_id, p_inline):
     ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
     ig_session.init_instagram_API()
 
+    l_instagram_photo = ig_session.get_instagram_photo_info(p_photo_id)
+    l_photo_author_instagram_id = l_instagram_photo.user.id
+
     if p_inline == '':
         l_comment_form_input_id = u'new_comment_%s' %(p_photo_id)
     else:
@@ -392,6 +398,29 @@ def send_instagram_comment(req, form, p_photo_id, p_inline):
         l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
     else:
         l_result = False
+
+    if (p_new_friends_interaction == 1):
+        try:
+            l_interacted_friend = Follower.objects.get(instagram_user_id=l_photo_author_instagram_id)
+        except ObjectDoesNotExist:
+            l_interacted_friend = None
+        except:
+            raise
+
+        if l_interacted_friend:
+            l_interacted_friend.member.add(logged_member)
+            l_interacted_friend.interaction_count += 1
+            l_interacted_friend.save()
+            # increase member daily interactions count
+            l_today = datetime.today().date()
+            if l_today == logged_member.daily_new_friends_interactions_date:
+                logged_member.daily_new_friends_interactions += 1
+            else:
+                logged_member.daily_new_friends_interactions_date = l_today
+                logged_member.daily_new_friends_interactions = 1
+            logged_member.save()
+
+
     l_comments_count = l_instagram_comments.get_comments_count()
 
     # Limit calculation --------------------------------------------------------------
@@ -410,6 +439,8 @@ def send_instagram_comment(req, form, p_photo_id, p_inline):
     return json.dumps(
         dict(p_photo_id=p_photo_id,
              l_comments_count=l_comments_count,
+             p_new_friends_interaction=p_new_friends_interaction,
+             p_photo_author_instagram_id=l_photo_author_instagram_id,
 
              x_ratelimit_remaining=x_ratelimit_remaining,
              x_ratelimit=x_ratelimit,

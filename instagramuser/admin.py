@@ -605,7 +605,7 @@ class FollowerAdmin(admin.ModelAdmin):
 
     list_display = (
         'instagram_user_name', 'is_user_active', 'number_of_media',
-        'number_of_followers', 'number_of_followings',
+        'number_of_followers', 'number_of_followings', 'interaction_count',
         'to_be_processed_for_basic_info', 'to_be_processed_for_photos'
     )
 
@@ -651,7 +651,7 @@ class FollowerAdmin(admin.ModelAdmin):
         ]
         }
         ),
-        ('Source', {'fields': [ 'inspiringuser', 'member'
+        ('Source', {'fields': [ 'inspiringuser', 'member', 'interaction_count'
         ]
         }
         ),

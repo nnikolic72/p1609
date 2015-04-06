@@ -298,7 +298,7 @@ FOLLOWINGS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find
 FOLLOWINGS_SEARCH_N_PHOTOS = 500  # how many last photos to search while finding the best ones
 
 # APP settings: friends/followers
-FRIENDS_FIND_TOP_N_PHOTOS = 5  # how may best photos to find
+FRIENDS_FIND_TOP_N_PHOTOS = 4  # how may best photos to find
 FRIENDS_SEARCH_N_PHOTOS = 100  # how many last photos to search while finding the best ones
 
 # APP settings: members

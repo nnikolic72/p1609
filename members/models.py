@@ -115,6 +115,13 @@ class Member(InstagramUser):
                                                   help_text=_('How many IG requests are remaining for period')
     )
 
+    daily_new_friends_interactions = models.IntegerField(null=True, blank=True, default=0,
+                                                  verbose_name=_('Daily Interactions'),
+                                                  help_text=_('How many daily interactions a member had')
+    )
+
+    daily_new_friends_interactions_date = models.DateField(null=True, blank=True
+    )
 
 
     class Meta(InstagramUser.Meta):

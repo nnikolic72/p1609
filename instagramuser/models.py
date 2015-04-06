@@ -283,6 +283,7 @@ class Follower(InstagramUser):
     is_potential_friend = models.BooleanField(default=False, null=False, blank=False)
     inspiringuser = models.ManyToManyField('instagramuser.InspiringUser', null=True, blank=True)
     member = models.ManyToManyField('members.Member', null=True, blank=True)
+    interaction_count = models.IntegerField(default=0, null=False, blank=False)
 
     class Meta:
         verbose_name = _('Follower')

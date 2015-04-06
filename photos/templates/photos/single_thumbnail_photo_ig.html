@@ -50,7 +50,7 @@
                 {% endif %}
             </div>
             <div class="col-xs-4 text-right">
-                <button class="btn btn-xs btn-default squaresensor-image-button" onclick="load_instagram_comments('{{ photo.id }}');">
+                <button class="btn btn-xs btn-default squaresensor-image-button" onclick="load_instagram_comments('{{ photo.id }}', {{ new_friends_interaction }});">
                     <small><span class="glyphicon glyphicon-comment"></span>
                         <div class="badge" id="instagram_comments_text_{{ photo.id }}">{{ photo.comment_count }}</div></small>
                 </button>

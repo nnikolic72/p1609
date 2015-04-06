@@ -7,12 +7,15 @@ from .views import (AddInspiringUserView,
     InspiringUserIndexView,
     InspiringUserNameView,
     UsersBestPhotosView,
-    AnyUserRecentBestView
-)
+    AnyUserRecentBestView,
+    FindFriendsView)
 
 urlpatterns = patterns('',
                        url(r'^add/$', login_required(AddInspiringUserView.as_view()),
                            name='addinspiring'
+                           ),
+                       url(r'^new-friends/$', login_required(FindFriendsView.as_view()),
+                           name='new_friends'
                            ),
                        url(r'^add/(?P<p_username>[_a-zA-Z\d\.]+)/$', login_required(AddInspiringUserByNameView.as_view()),
                            name='addinspiringname'

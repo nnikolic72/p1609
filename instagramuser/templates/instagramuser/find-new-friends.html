@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'Find New Instagram Friends' %}{% endblock title %}
+{% block page-title %}{% trans 'Find New Friends' %}{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/instagramuser.find-new-friends.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/photos.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/instagramuser.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="container-fluid">
+        <div id="top-of-new-friends-page"></div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h3>{% trans 'Guidelines:' %}</h3>
+                <ul>
+                    <li>{% trans 'Pick one photo you like, per user, to interact with.' %}</li>
+                    <li>{% trans 'Please do not spam. Spamming is not allowed on Squaresensor.' %}</li>
+                    <li>{% trans "Please be supportive if you like people's work. If not - skip." %}</li>
+                    <li>{% trans 'Do not use more than three hashtags in your comments. Preferably do not use any.' %}</li>
+                    <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
+                </ul>
+                <hr>
+            </div>
+        </div>
+        {% if friends_and_photos %}
+
+            {% for friend_and_photos in friends_and_photos %}
+                <div class="squaresensor-sub-panel" id="new_friend_{{ friend_and_photos.0.instagram_user_id }}">
+                    <div class="row"  style="margin-bottom: 20px;">
+                        <div class="col-xs-12 col-sm-4">
+                            <img class="img-responsive img-circle squaresensor-image-circular small_profile_img" src="{{ friend_and_photos.0.instagram_profile_picture_URL }}">
+                        </div>
+                        <div class="col-xs-12 col-sm-8">
+                            <h4>@{{ friend_and_photos.0.instagram_user_name }}</h4>
+                            <br>
+                            {% if show_describe_button %}
+                                <form method="get" action="#">
+                                    <button type="button" class="btn btn-default squaresensor-button-with-margin">
+                                        {% trans 'Remove new friend' %}
+                                    </button>
+                                </form>
+                            {%  endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        {% for photo in friend_and_photos.1 %}
+                                {% include 'photos/single_thumbnail_photo_ig.html' %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>{% trans 'There are no new friends available in Squaresensor at the moment!' %}</p>
+        {% endif %}
+
+    </div>
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

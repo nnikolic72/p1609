@@ -107,6 +107,7 @@ class SmartFeedIndexView(TemplateView):
                           best_media=l_best_media,
                           liked_photos=liked_photos,
                           squarefollowings_count=l_squarefollowings_count,
+                          new_friends_interaction=0,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
@@ -228,6 +229,7 @@ class SmartFeedConfigureCalendarView(TemplateView):
                           period_verbose=p_period_verbose,
                           period_number=p_period,
                           squarefollowings_count=l_squarefollowings_count,
+                          new_friends_interaction=0,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

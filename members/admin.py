@@ -184,6 +184,10 @@ class MemberAdmin(admin.ModelAdmin):
                                             ]
         }
         ),
+        ('New Friends Interactions', {'fields': ['daily_new_friends_interactions', 'daily_new_friends_interactions_date',
+                                            ]
+        }
+        ),
        ('Maths', {'fields': ['poly_order',
                               'poly_theta_0',
                               'poly_theta_1',

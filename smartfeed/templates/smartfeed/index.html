@@ -23,14 +23,31 @@
     {% if squarefollowings_count >= 10 %}
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xs-12 text-center">
-                    {% if period_number %}
-                        {% trans 'Showing photos from ' %}{{ period_verbose }}
-                    {% else %}
-                        {% trans 'Showing new SmartFeed photos and all photos from Green SquareFollowings.' %}
-                    {% endif %}
+                <div class="col-xs-12 text-left">
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="text-center">{% trans 'Welcome to your SmartFeed!' %}<br><small>{%  blocktrans %}You have {{ squarefollowings_count }} SmartFollowings{% endblocktrans %}</small></h4>
+                        <h3>{% trans 'Information' %}</h3>
+                        <ul>
+                            <li>{% trans 'Your SmartFeed shows photos from your regular Instagram Feed' %}</li>
+                            <li>{% trans 'If you missed a photo you can always pick a day in the past and see your SmartFeed from that day' %}</li>
+                            <li>{% trans 'Some photos from your Instagram feed, that are posted now or a few hours ago, may appear in your SmartFeed a few hours later.' %}</li>
+                            <li>{% trans 'You can always configure your SmartFollowings ' %}<a class="btn btn-xs btn-default" href="{% url 'smartfeed:configure' %}">here</a></li>
+                        </ul>
+                        {% if period_number %}
+                            <h5>{% trans 'Now showing photos from ' %}{{ period_verbose }}</h5>
+                        {% else %}
+                            <h5>{% trans 'Now showing:' %}</h5>
+                            <ul>
+                                <li>{% trans 'New SmartFeed photos' %}</li>
+                                <li>{% trans 'All photos from Green SquareFollowings' %}</li>
+                                <li>{% trans 'All Yellow SmartFollowings posts are filtered to show the best' %}</li>
+                                <li>{% trans 'No photos from Red SquareFollowings' %}</li>
+                            </ul>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="col-xs-12 text-center">
+                <div class="col-xs-12 text-center" style="margin-bottom: 20px; margin-top: 20px;">
                     {% trans 'Pick a day ' %}
                     <div class="btn-group" role="group" aria-label="bgroup">
                         <button type="button" class="btn btn-xs
@@ -80,7 +97,7 @@
             {% endfor %}
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-xs-12 text-center">
+                    <div class="col-xs-12 text-center" style="margin-bottom: 20px; margin-top: 20px;">
                         {% trans 'Pick a day ' %}
                         <div class="btn-group" role="group" aria-label="bgroup">
                             <button type="button" class="btn btn-xs

@@ -173,6 +173,19 @@ body {
     background-color: rgba(255, 255, 255, 1);
 }
 
+.squaresensor-inspiring-user-panel {
+    -webkit-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    border: 0px solid #7f7f7f;
+
+    margin-bottom: 20px;
+
+    padding: 10px;
+
+    background-color: rgba(255, 255, 255, 1);
+}
+
 .squaresensor-image-panel-heading {
     -webkit-box-shadow: 1px 7px 22px -5px rgba(0,0,0,0.75);
     -moz-box-shadow: 1px 7px 22px -5px rgba(0,0,0,0.75);

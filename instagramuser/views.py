@@ -13,12 +13,13 @@ from django.views.generic import FormView
 from django.views.generic.base import TemplateView
 from attributes.models import Attribute
 from categories.models import Category
-from instagramuser.models import InspiringUser, Following, Follower
+from instagramuser.models import InspiringUser, Following, Follower, FollowerBelongsToCategory, \
+    FollowerBelongsToAttribute
 from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdminUtils, MyLikes
 
-from squaresensor.settings.base import IS_APP_LIVE
+from squaresensor.settings.base import IS_APP_LIVE, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS
 from .forms import AddInspiringUserForm
-from members.models import Member
+from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
 from photos.models import Photo
 
 class AddInspiringUserView(TemplateView):
@@ -254,6 +255,7 @@ class InspiringUserNameView(TemplateView):
                           photos_owner=inspiring_user.instagram_user_name,
                           liked_photos=liked_photos,
                           instagramuser=l_instagram_user,
+                          new_friends_interaction=0,
 
                           show_describe_button=False,
                           logged_member=logged_member,
@@ -477,6 +479,7 @@ class UsersBestPhotosView(TemplateView):
                           show_describe_button=show_describe_button,
                           photo_owner=squaresensor_user,
                           liked_photos=liked_photos,
+                          new_friends_interaction=0,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
@@ -603,6 +606,7 @@ class AnyUserRecentBestView(TemplateView):
                           photos_owner=instagram_user_name,
                           liked_photos=liked_photos,
                           instagramuser=l_instagram_user,
+                          new_friends_interaction=0,
 
                           show_describe_button=False,
                           logged_member=logged_member,
@@ -615,4 +619,104 @@ class AnyUserRecentBestView(TemplateView):
         )
 
 
+class FindFriendsView(TemplateView):
+    """
+    Class to display a list of new friends candidates
+    """
+    template_name = 'instagramuser/find-new-friends.html'
 
+    def get(self, request, *args, **kwargs):
+        """
+        Handle get request - display new friends, their photos and all controls
+
+        :param request:
+        :type request:
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+        # load members categories
+        l_member_categories = MemberBelongsToCategory.objects.filter(instagram_user=logged_member).values('category')
+        l_member_attributes = MemberBelongsToAttribute.objects.filter(instagram_user=logged_member).values('attribute')
+
+        l_followers_set = Follower.objects.filter(inspiringuser__isnull=False,
+                                                  is_user_active=True
+                                                  ).exclude(member=logged_member).order_by('-interaction_count')
+
+        l_followers_categories = FollowerBelongsToCategory.objects.\
+            filter(category=l_member_categories, instagram_user=l_followers_set).values('instagram_user')
+
+        l_followers_attributes = FollowerBelongsToAttribute.objects.\
+            filter(attribute=l_member_attributes, instagram_user=l_followers_set).values('instagram_user')
+
+        l_new_friends_list = []
+        for follower_category in l_followers_categories:
+            if follower_category in l_followers_attributes:
+                l_new_friends_list.extend([follower_category[u'instagram_user']])
+
+        l_followers_set_filtered = Follower.objects.filter(id__in=l_new_friends_list)
+
+        l_followers_set_filtered = l_followers_set_filtered[:5] # Get a number of new friends form membership level
+
+        l_token = logged_member.get_member_token(request)
+        instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+        instagram_session.init_instagram_API()
+
+        l_friends_and_photos = []
+        for follower in l_followers_set_filtered:
+            l_best_photos = BestPhotos(
+                instgram_user_id=follower.instagram_user_id,
+                top_n_photos=FRIENDS_FIND_TOP_N_PHOTOS,
+                search_photos_amount=FRIENDS_SEARCH_N_PHOTOS,
+                instagram_api=instagram_session
+            )
+            l_best_photos.get_instagram_photos()
+            l_best_photos.get_top_photos()
+            l_top_photos_list = []
+            for photo in l_best_photos.top_photos_list:
+                l_instagram_photo = instagram_session.get_instagram_photo_info(photo[0])
+                l_top_photos_list.extend([l_instagram_photo])
+            l_friends_and_photos.append([follower, l_top_photos_list])
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
+
+        return render(request,
+                      self.template_name,
+                      dict(
+                          friends_and_photos=l_friends_and_photos,
+                          show_describe_button=show_describe_button,
+                          new_friends_interaction=1,
+
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )

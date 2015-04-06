@@ -1550,6 +1550,7 @@ class InstagramComments():
                 l_media_comments = self.instagram_session.api.media_comments(media_id=self.instagram_photo_id)
                 self.l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
                 l_instagram_thumbnail_url = self.l_instagram_media.get_thumbnail_url()
+                l_photo_caption = self.l_instagram_media.caption.text
                 self.l_instagram_media_owner = self.l_instagram_media.user
         except InstagramAPIError as e:
             logging.exception("init_instagram_API: ERR-00110 Instagram API Error %s : %s" % (e.status_code, e.error_message))
@@ -1563,7 +1564,7 @@ class InstagramComments():
             logging.exception("init_instagram_API: ERR-00112 Unexpected error: ")
             raise
 
-        return l_media_comments, l_instagram_thumbnail_url
+        return l_media_comments, l_instagram_thumbnail_url, l_photo_caption
 
     def send_instagram_comment(self, p_comment_text):
 
@@ -1636,14 +1637,15 @@ class InstagramComments():
                 if x_word[0] == '#':
                     # this is hashtag - replace with our hashtag link
                     l_hashtag_text= x_word[1:]
-                    x_word = '<a href="%s">%s</a>' % \
-                             (reverse('hashtags:hashtag_name', kwargs={'p_hashtag_name':l_hashtag_text}),
-                              x_word
-                             )
+                    if len(l_hashtag_text)<0:
+                        x_word = '<a href="%s">%s</a>' % \
+                                 (reverse('hashtags:hashtag_name', kwargs={'p_hashtag_name':l_hashtag_text}),
+                                  x_word
+                                 )
                 if x_word[0] == '@':
                     # this is user - replace with our user link
                     l_username_text= x_word[1:]
-                    l_username_text = l_username_text.strip(" .!#$%^&*()_+=,;'"":/?")
+                    l_username_text = l_username_text.strip(" .!#$%^&*()+=,;'"":/?")
                     try:
                         l_inspiring_user = InspiringUser.objects.get(instagram_user_name=l_username_text)
                     except ObjectDoesNotExist:
@@ -1670,18 +1672,20 @@ class InstagramComments():
                                 break
 
                     if l_inspiring_user:
-                        x_word = '<a href="%s"><span class="glyphicon glyphicon-user"></span>%s</a>' % \
-                                 (reverse('instagramuser:alltimebest',
-                                          kwargs={'p_username': l_inspiring_user.instagram_user_name, 'p_mode': 'view'}
-                                          ),
-                                  x_word
-                                 )
+                        if len(l_inspiring_user.instagram_user_name)<0:
+                            x_word = '<a href="%s"><span class="glyphicon glyphicon-user"></span>%s</a>' % \
+                                     (reverse('instagramuser:alltimebest',
+                                              kwargs={'p_username': l_inspiring_user.instagram_user_name, 'p_mode': 'view'}
+                                              ),
+                                      x_word
+                                     )
                     else:
-                        x_word = '<a href="%s" target="_blank">@%s</a>' % \
-                                 (reverse('instagramuser:any_user_recent_best',
-                                          kwargs={'p_instagram_user_name': l_username_text}
-                                          )
-                                  , l_username_text)
+                        if len(l_username_text)< 0:
+                            x_word = '<a href="%s" target="_blank">@%s</a>' % \
+                                     (reverse('instagramuser:any_user_recent_best',
+                                              kwargs={'p_instagram_user_name': l_username_text}
+                                              )
+                                      , l_username_text)
 
                 l_cleaned_comment += x_word + ' '
 
