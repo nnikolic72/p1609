@@ -16,7 +16,7 @@
             <div class="col-xs-4 text-left">
                 <button id="like_button_{{ photo.instagram_photo_id }}"
                         onclick="like_instagram_picture('{{ photo.instagram_photo_id }}', '{% get_static_prefix %}');"
-                        class="btn btn-xs squaresensor-image-button
+                        class="btn btn-xs squaresensor-image-button btn-block
                     {%  if photo.instagram_photo_id in liked_photos %}
                         btn-danger
                     {% else %}
@@ -30,14 +30,14 @@
             </div>
             <div class="col-xs-4 text-center">
                 {%  if show_describe_button %}
-                    <button class="btn btn-xs btn-default squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
+                    <button class="btn btn-xs btn-default squaresensor-image-button btn-block" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
                         <small><span class="glyphicon glyphicon-list-alt"></span>
                         </small>
                     </button>
                 {% endif %}
             </div>
             <div class="col-xs-4 text-right">
-                <button class="btn btn-xs btn-default squaresensor-image-button" onclick="load_instagram_comments('{{ photo.instagram_photo_id }}');">
+                <button class="btn btn-xs btn-default squaresensor-image-button btn-block" onclick="load_instagram_comments('{{ photo.instagram_photo_id }}');">
                     <small><span class="glyphicon glyphicon-comment"></span>
                         <div class="badge" id="instagram_comments_text_{{ photo.instagram_photo_id }}">{{ photo.instagram_comments }}</div></small>
                 </button>

@@ -25,13 +25,51 @@
             <div class="col-xs-12">
                 <table class="table table-responsive">
                     <tr>
-                        <td><b>Instagram user name</b></td>
+                        <td><b>{% trans 'Instagram user name' %}</b></td>
                         <td>{{ logged_member.instagram_user_name }}</td>
                     </tr>
                     <tr>
-                        <td><b>User type</b></td>
+                        <td><b>{% trans 'User type' %}</b></td>
                         <td>{{ logged_member.user_type }}</td>
                     </tr>
+                    {% if logged_member.membership %}
+                        <tr>
+                            <td><b>{% trans 'Membership type' %}</b></td>
+                            <td>{{ logged_member.membership.membership_type }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>{% trans 'Recurring membership?' %}</b></td>
+                            <td>{{ logged_member.membership.recurring_membership }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>{% trans 'Start time' %}</b></td>
+                            <td>{{ logged_member.membership.membership_start_time }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>{% trans 'End time' %}</b></td>
+                            <td>{{ logged_member.membership.membership_end_time }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>{% trans 'Status' %}</b></td>
+                            <td>{% if logged_member.membership.active_membership == True %}{% trans 'Active' %}{% else %}{% trans 'Inactive' %}{% endif %}</td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <form action="{% url 'members:new_membership' %}" method="get">
+                                <button type="submit" class="btn btn-success">
+                                    {% trans 'Become a member' %}
+                                </button>
+                            </form>
+                        </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td><b>{% trans 'Membership info' %}</b></td>
+                            <td>{% trans 'No active membership' %}
+                            </td>
+                        </tr>
+                    {% endif %}
+
                 </table>
             </div>
         </div>

@@ -1,26 +1,33 @@
 {% load i18n %}
 
-<div class="row squaresensor_inspiringuser">
+<div class="row">
     <div class="col-xs-12 col-sm-3">
-        <div align="center">
-            <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user.instagram_user_name %}">
-                <img src="{{ inspiring_user.instagram_user.instagram_profile_picture_URL }}" class="img-responsive img-circle small_profile_img squaresensor-image-circular"><br>
-                @{{ inspiring_user.instagram_user.instagram_user_name }}</a>
-        </div>
+
+        <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user.instagram_user_name %}">
+            <img src="{{ inspiring_user.instagram_user.instagram_profile_picture_URL }}" class="img-responsive img-circle center-block small_profile_img squaresensor-image-circular"><br>
+            <h4 class="text-center">@{{ inspiring_user.instagram_user.instagram_user_name }}</h4></a>
+
     </div>
-    <div class="col-xs-12 col-sm-9">
-        <button class="btn btn-sm btn-default squaresensor-button" style="margin: 10px;">
-            <a href="{{ inspiring_user.instagram_user.instagram_user_profile_page_URL }}" target="_blank">{% trans 'IG Profile Page' %}</a>
-        </button>
-        <button class="btn btn-sm btn-default squaresensor-button" style="margin: 10px;">
-            <a href="{% url 'instagramuser:alltimebest' p_username=inspiring_user.instagram_user.instagram_user_name p_mode='view' %}">
+    <div class="col-xs-12 col-sm-3">
+        <form action="{% url 'instagramuser:alltimebest' p_username=inspiring_user.instagram_user.instagram_user_name p_mode='view' %}">
+            <button type="submit" class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
                 {% trans 'Best Photos' %}
-            </a>
-        </button>
-        <button class="btn btn-sm btn-default squaresensor-button" style="margin: 10px;">
-            <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user.instagram_user_name %}">
+            </button>
+        </form>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+        <form action="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user.instagram_user_name %}" method="get">
+            <button type="submit" class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
                 {% trans 'Recent Best' %}
-            </a>
-        </button>
+            </button>
+        </form>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+        <form action="{{ inspiring_user.instagram_user.instagram_user_profile_page_URL }}" target="_blank" method="get">
+            <button type="submit" class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                {% trans 'IG Profile Page' %}
+            </button>
+        </form>
     </div>
 </div>
+<hr>

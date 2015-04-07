@@ -10,6 +10,7 @@
 {% block css %}
     {{ block.super }}
     <link href="{{ STATIC_URL }}css/categories.index.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/categories.by_name.css" rel="stylesheet">
 {% endblock css %}
 
 {% block script %}
@@ -20,11 +21,25 @@
 {% block content %}
     {{ block.super }}
     <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Information about Inspiring Artists Categories:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is a list of SquareSensor photography categories by subject.' %}</li>
+                        <li>{% trans 'Each category name has a number of Inspiring Artists assigned to it.' %}</li>
+                        <li>{% trans "Zero by SquareSensor category name means there are no Inspiring Artists currently assigned in this category." %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         {%  if categories_list  %}
             {% for category in categories_list %}
                 <div class="row squaresensor_category">
                     <div class="col-xs-12 col-sm-5">
-                        <a href="{% url 'categories:category_slug' category.2 %}"><button class="btn btn-default">{{ category.0 }} <span class="badge">{{ category.3 }}</span> </button></a>
+                        <form action="{% url 'categories:category_slug' category.2 %}" method="get"><button type="submit" style="white-space: normal;" class="btn btn-default btn-block"><h4><small>{{ category.0 }}<br><span class="badge">{{ category.3 }}</span></small></h4></button></form>
                     </div>
                     <div class="col-xs-12 col-sm-7 text-justify">
                         <small class="">{{ category.1 }}</small>
@@ -32,7 +47,9 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p>{% trans 'There are no inspiring artists categorized on Squaresensor yet.' %}</p>
+            <div class="alert alert-info" role="alert">
+                {% trans 'There are no inspiring artists categorized on Squaresensor yet.' %}
+            </div>
         {% endif %}
     </div>
 

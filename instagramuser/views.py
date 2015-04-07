@@ -93,7 +93,7 @@ class InspiringUserIndexView(TemplateView):
     List all inspiring users
     """
 
-    template_name = 'instagramuser/index-inspiring-artists.html'
+    template_name = 'instagramuser/index-inspiring-artists2.html'
 
     def get(self, request, *args, **kwargs):
         """

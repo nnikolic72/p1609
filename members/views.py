@@ -2,18 +2,22 @@ from __future__ import division
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
+from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import logout as auth_logout
 
 # Create your views here.
+from dateutil.relativedelta import relativedelta
 from django.views.generic import TemplateView
 from social_auth.db.django_models import UserSocialAuth
 from attributes.models import Attribute
 from categories.models import Category
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils
+from .forms import MembershipForm
 
-from .models import Member
+
+from .models import Member, Membership
 
 
 class MemberHomePageView(TemplateView):
@@ -180,6 +184,141 @@ class MemberMyAccountView(TemplateView):
                       dict(
                           #logged_members_categories=l_logged_members_categories,
                         #logged_members_attributes=l_logged_members_categories,
+
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )
+
+
+class MemberNewMembershipView(TemplateView):
+
+    template_name = 'members/new-membership.html'
+
+    def get(self, request, *args, **kwargs):
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+
+        # END Common for all members views ===============================================
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
+        form = MembershipForm()
+
+        return render(request,
+                      self.template_name,
+                      dict(form=form,
+
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )
+
+
+class MemberNewMembershipResultView(TemplateView):
+
+    template_name = 'members/membership-result.html'
+
+    def post(self, request, *args, **kwargs):
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+
+        # END Common for all members views ===============================================
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
+        membership_form = MembershipForm(self.request.POST)
+
+        if membership_form.is_valid():
+            membership_type = membership_form.cleaned_data['membership_type']
+            try:
+                recurring_membership = membership_form.cleaned_data['recurring_membership']
+            except:
+                recurring_membership = u'off'
+            membership_duration = membership_form.cleaned_data['membership_duration']
+            l_membership_start_time=datetime.today()
+
+            if membership_duration == 'MON':
+                l_membership_end_time = l_membership_start_time + relativedelta(months=+1)
+            if membership_duration == 'YEA':
+                l_membership_end_time = l_membership_start_time + relativedelta(years=+1)
+            if recurring_membership == True:
+                l_recurring_membership = True
+            else:
+                l_recurring_membership = False
+
+            #old_membership = logged_member.membership
+
+
+            l_new_membership = Membership(
+                membership_type=membership_type,
+                membership_start_time=l_membership_start_time,
+                membership_end_time=l_membership_end_time,
+                recurring_membership=l_recurring_membership,
+                active_membership=True
+            )
+            try:
+                l_new_membership.save()
+                for membership in logged_member.membership.all():
+                    membership.active_membership = False
+                    membership.save()
+                #old_membership.save()
+                logged_member.membership.add(l_new_membership)
+                #logged_member.membership.remove(old_membership)
+                #logged_member.save()
+            except:
+                raise
+
+
+        return render(request,
+                      self.template_name,
+                      dict(
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

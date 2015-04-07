@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block title %}@{{ photo_owner.instagram_user_name }} {% trans 'All Time Best Photos' %}{% endblock title %}
-{% block page-title %}@{{ photo_owner.instagram_user_name }} <small>{% trans 'All Time Best Photos' %}</small>{% endblock page-title %}
+{% block page-title %}@{{ photo_owner.instagram_user_name }} <small>{% trans 'All Time Best Posts' %}</small>{% endblock page-title %}
 
 {% block css %}
     {{ block.super }}
@@ -19,13 +19,28 @@
 {% block content %}
     {{ block.super }}
     <div class="row">
-    {% if photos %}
-        {% for photo in photos %}
-            {% include 'photos/single_thumbnail_photo.html' %}
-        {% endfor %}
-    {% else %}
-        <p>No available photos.</p>
-    {% endif %}
+    <div class="col-xs-12">
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3>{% trans 'Information' %}</h3>
+            <ul>
+                <li>{% trans 'This page shows the best posts of Instagram user @' %}{{ photo_owner.instagram_user_name }}</li>
+                <li>{% trans 'This selection is done by SquareSensor intelligent technology' %}</li>
+                <li>{% trans 'Selection is not definitive - it is only informative' %}</li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="row">
+        {% if photos %}
+            {% for photo in photos %}
+                {% include 'photos/single_thumbnail_photo.html' %}
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No available photos.
+            </div>
+        {% endif %}
     </div>
     <div class="row">
         <div class="col-xs-12 text-center">

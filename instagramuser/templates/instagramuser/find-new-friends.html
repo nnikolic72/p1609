@@ -24,15 +24,18 @@
         <div id="top-of-new-friends-page"></div>
         <div class="row">
             <div class="col-xs-12">
-                <h3>{% trans 'Guidelines:' %}</h3>
-                <ul>
-                    <li>{% trans 'Pick one photo you like, per user, to interact with.' %}</li>
-                    <li>{% trans 'Please do not spam. Spamming is not allowed on Squaresensor.' %}</li>
-                    <li>{% trans "Please be supportive if you like people's work. If not - skip." %}</li>
-                    <li>{% trans 'Do not use more than three hashtags in your comments. Preferably do not use any.' %}</li>
-                    <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
-                </ul>
-                <hr>
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Guidelines:' %}</h3>
+                    <ul>
+                        <li>{% trans 'Pick one photo you like, per user, to interact with.' %}</li>
+                        <li>{% trans 'Please do not spam. Spamming is not allowed on Squaresensor.' %}</li>
+                        <li>{% trans "Please be supportive if you like people's work. If not - skip." %}</li>
+                        <li>{% trans 'Do not use more than three hashtags in your comments.' %}</li>
+                        <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
+                    </ul>
+                </div>
             </div>
         </div>
         {% if friends_and_photos %}
@@ -57,15 +60,25 @@
                     </div>
                     <div class="row">
                         {% for photo in friend_and_photos.1 %}
-                                {% include 'photos/single_thumbnail_photo_ig.html' %}
+                            {% include 'photos/single_thumbnail_photo_ig.html' %}
                         {% endfor %}
                     </div>
                 </div>
             {% endfor %}
-        {% else %}
-            <p>{% trans 'There are no new friends available in Squaresensor at the moment!' %}</p>
-        {% endif %}
 
+
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                {% trans 'There are no new friends available in Squaresensor at the moment!' %}
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-xs-12 col-sm-offset-4 col-sm-4">
+                <form method="get" action="{%  url 'members:dashboard' %}">
+                    <button class="btn btn-default btn-block">{% trans 'Go to Dashboard' %}</button>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock content %}
 

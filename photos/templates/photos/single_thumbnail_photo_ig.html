@@ -17,7 +17,7 @@
 
             <div class="col-xs-12 text-center">
                 <div align="center" style="margin-top: 10px; margin-bottom: 10px;">
-                    <img class="img-responsive img-thumbnail" src="{{ photo.images.low_resolution.url }}"
+                    <img class="img-responsive img-thumbnail" src="{{ photo.images.low_resolution.url }}" title="{{ photo.caption }}"
                             >
                 </div>
             </div>
@@ -25,11 +25,11 @@
 
         <div class="row">
 
-            <div class="col-xs-4 text-left">
+            <div class="col-xs-5">
                 <button
                         id="like_button_{{ photo.id }}"
                         onclick="like_instagram_picture('{{ photo.id }}', '{% get_static_prefix %}');"
-                        class="btn btn-xs squaresensor-image-button
+                        class="btn btn-xs squaresensor-image-button btn-block
                     {%  if photo.id in liked_photos %}
                         btn-danger
                     {% else %}
@@ -41,16 +41,16 @@
                         <div class="badge">{{ photo.like_count }}</div></small>
                 </button>
             </div>
-            <div class="col-xs-4 text-center">
+            <div class="col-xs-2">
                 {%  if show_describe_button %}
-                    <button class="btn btn-xs btn-default squaresensor-image-button" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
+                    <button class="btn btn-xs btn-default squaresensor-image-button btn-block" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
                         <small><span class="glyphicon glyphicon-list-alt"></span>
                         </small>
                     </button>
                 {% endif %}
             </div>
-            <div class="col-xs-4 text-right">
-                <button class="btn btn-xs btn-default squaresensor-image-button" onclick="load_instagram_comments('{{ photo.id }}', {{ new_friends_interaction }});">
+            <div class="col-xs-5">
+                <button class="btn btn-xs btn-default squaresensor-image-button btn-block" onclick="load_instagram_comments('{{ photo.id }}', {{ new_friends_interaction }});">
                     <small><span class="glyphicon glyphicon-comment"></span>
                         <div class="badge" id="instagram_comments_text_{{ photo.id }}">{{ photo.comment_count }}</div></small>
                 </button>

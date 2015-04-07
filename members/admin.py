@@ -184,6 +184,11 @@ class MemberAdmin(admin.ModelAdmin):
                                             ]
         }
         ),
+        ('Membership Information', {'fields': ['membership'
+
+                                            ]
+        }
+        ),
         ('New Friends Interactions', {'fields': ['daily_new_friends_interactions', 'daily_new_friends_interactions_date',
                                             ]
         }
@@ -243,4 +248,20 @@ class MemberAdmin(admin.ModelAdmin):
         #('Time Information', {'fields': ['creation_date', 'last_update_date']})
     ]
 
+
+class MembershipAdmin(admin.ModelAdmin):
+    list_display = ('membership_type', 'active_membership', 'recurring_membership', 'membership_start_time',
+                    'membership_end_time', 'pk'
+    )
+    fieldsets = [
+        ('General Information', {'fields': ['membership_type',
+                                            'active_membership', 'recurring_membership',
+                                            'membership_start_time', 'membership_end_time'
+
+                                            ]
+        }
+        ),
+        ]
+
 admin.site.register(Member, MemberAdmin)
+admin.site.register(Membership, MembershipAdmin)

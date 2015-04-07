@@ -39,24 +39,24 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{% url 'members:dashboard' %}">Squaresensor</a>
+                    <a class="navbar-brand" href="{% url 'members:dashboard' %}" id="toolbar-dashboard" onclick="display_loading_text('toolbar-dashboard', '{{ STATIC_URL }}')">Squaresensor</a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse color-primary-1" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li class="active">
-                        <li><a href="{% url 'members:dashboard' %}">Home</a></li>
-                        <li><a href="{% url 'smartfeed:index' %}">{% trans 'Smart Feed' %}</a></li>
-                        <li><a href="{% url 'instagramuser:new_friends' %}">{% trans 'Find Friends' %}</a></li>
-                        <li><a href="{% url 'instagramuser:index_inspiring_artists' %}">{% trans 'Inspiring Artists' %}</a></li>
+                        <li><a href="{% url 'members:dashboard' %}" id="toolbar-dashboard2" onclick="display_loading_text('toolbar-dashboard2', '{{ STATIC_URL }}')">{% trans 'Dashboard' %}</a></li>
+                        <li><a href="{% url 'smartfeed:index' %}" id="toolbar-smartfeed-index" onclick="display_loading_text('toolbar-smartfeed-index', '{{ STATIC_URL }}')">{% trans 'Smart Feed' %}</a></li>
+                        <li><a href="{% url 'instagramuser:new_friends' %}" id="toolbar-find-friends" onclick="display_loading_text('toolbar-find-friends', '{{ STATIC_URL }}')">{% trans 'Find Friends' %}</a></li>
+                        <li><a href="{% url 'instagramuser:index_inspiring_artists' %}" id="toolbar-inspiring-artists" onclick="display_loading_text('toolbar-inspiring-artists', '{{ STATIC_URL }}')">{% trans 'Inspiring Artists' %}</a></li>
 
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans 'Browse' %} <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="#">{% trans 'Find IG User' %}</a></li>
-                                <li><a href="{% url 'categories:index' %}">{% trans 'Categories' %}</a></li>
-                                <li><a href="{% url 'attributes:index' %}">{% trans 'Styles' %}</a></li>
+                                <li><a href="{% url 'categories:index' %}" id="toolbar-browse-categories" onclick="display_loading_text('toolbar-browse-categories', '{{ STATIC_URL }}')">{% trans 'Categories' %}</a></li>
+                                <li><a href="{% url 'attributes:index' %}" id="toolbar-browse-attributes" onclick="display_loading_text('toolbar-browse-attributes', '{{ STATIC_URL }}')">{% trans 'Styles' %}</a></li>
                             </ul>
                         </li>
                     </ul>

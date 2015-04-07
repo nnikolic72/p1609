@@ -135,6 +135,9 @@ class Membership(models.Model):
     Model to hold membership information
     """
 
+    def __unicode__(self):
+        return str(self.pk)
+
     membership_type = models.CharField(max_length=200, null=False, blank=False,
                                        default="Free",
                                        verbose_name=_('Membership type'),
@@ -168,3 +171,5 @@ class Membership(models.Model):
             self.creation_date = datetime.today()
         self.last_update_date = datetime.today()
         return super(Membership, self).save(*args, **kwargs)
+
+

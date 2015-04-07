@@ -19,6 +19,23 @@
 
 {% block content %}
     {{ block.super }}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Information about Inspiring Artists:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is hand picked selection of fine Instagram Photographers.' %}</li>
+                        <li>{% trans 'Here you can choose how you will search for Inspiring Artists.' %}</li>
+                        <li>{% trans "'Search by Category' with display a list of photography subject categories." %}</li>
+                        <li>{% trans "'Search by Style' with display a list of styles of photography." %}</li>
+                        <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     {%  if inspiring_users  %}
 
         {% for inspiring_user in inspiring_users %}
@@ -78,7 +95,9 @@
         {% endfor %}
 
     {% else %}
-        <p>{% trans 'There are no inspiring artists on Squaresensor yet.' %}</p>
+        <div class="alert alert-info" role="alert">
+        {% trans 'There are no inspiring artists on Squaresensor yet.' %}
+        </div>
     {% endif %}
 {% endblock content %}
 

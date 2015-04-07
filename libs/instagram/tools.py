@@ -35,7 +35,8 @@ from django.shortcuts import get_object_or_404
 
 from squaresensor.settings.base import INSTAGRAM_SECRET_KEY, IMPORT_MAX_INSTAGRAM_FOLLOWINGS
 
-from instagramuser.models import Follower, Following, InspiringUser
+from instagramuser.models import Follower, Following, InspiringUser, InspiringUserBelongsToCategory, \
+    InspiringUserBelongsToAttribute, FollowerBelongsToCategory, FollowerBelongsToAttribute
 
 
 class InstagramAPIParametersInvalid(Exception):
@@ -839,11 +840,10 @@ class InstagramUserAdminUtils():
 
         if obj.to_be_processed_for_friends == True:
             ig_session = InstagramSession(p_is_admin=True, p_token='')
-
             ig_session.init_instagram_API()
 
-            self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
-                ig_session.get_api_limits()
+            #self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
+            #    ig_session.get_api_limits()
 
             #for obj in queryset:
             obj.to_be_processed_for_friends = False
@@ -905,6 +905,62 @@ class InstagramUserAdminUtils():
 
                                     l_new_friend.save()
                                     l_new_friend.inspiringuser.add(obj)
+                                    #add categories
+                                    if obj.user_type == 'inspiring':
+                                        l_categories = InspiringUserBelongsToCategory.objects.filter(
+                                            instagram_user=obj,
+                                        )
+                                        l_attributes = InspiringUserBelongsToAttribute.objects.filter(
+                                            instagram_user=obj,
+                                        )
+
+                                        for category in l_categories:
+                                            try:
+                                                l_follower_belongs_to_category_exists = \
+                                                    FollowerBelongsToCategory.objects.get(
+                                                        instagram_user=l_new_friend,
+                                                        category=category.category,
+                                                        frequency=1
+                                                    )
+                                            except ObjectDoesNotExist:
+                                                l_follower_belongs_to_category_exists = None
+                                            except:
+                                                raise
+
+                                            if not l_follower_belongs_to_category_exists:
+                                                l_follower_belongs_to_category = FollowerBelongsToCategory(
+                                                    instagram_user=l_new_friend,
+                                                    category=category.category,
+                                                    frequency=1
+                                                )
+                                                l_follower_belongs_to_category.save()
+                                            else:
+                                                l_follower_belongs_to_category_exists.frequency += 1
+                                                l_follower_belongs_to_category_exists.save()
+
+                                        for attribute in l_attributes:
+                                            try:
+                                                l_follower_belongs_to_attribute_exists = \
+                                                    FollowerBelongsToAttribute.objects.get(
+                                                        instagram_user=l_new_friend,
+                                                        attribute=attribute.attribute
+                                                    )
+                                            except ObjectDoesNotExist:
+                                                l_follower_belongs_to_attribute_exists = None
+                                            except:
+                                                raise
+
+                                            if not l_follower_belongs_to_attribute_exists:
+                                                l_follower_belongs_to_attribute = FollowerBelongsToAttribute(
+                                                    instagram_user=l_new_friend,
+                                                    attribute=attribute.attribute,
+                                                    frequency=1
+                                                )
+                                                l_follower_belongs_to_attribute.save()
+                                            else:
+                                                l_follower_belongs_to_attribute_exists.frequency += 1
+                                                l_follower_belongs_to_attribute_exists.save()
+
 
                                     self.l_found_friends += 1
 
@@ -1550,7 +1606,10 @@ class InstagramComments():
                 l_media_comments = self.instagram_session.api.media_comments(media_id=self.instagram_photo_id)
                 self.l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
                 l_instagram_thumbnail_url = self.l_instagram_media.get_thumbnail_url()
-                l_photo_caption = self.l_instagram_media.caption.text
+                try:
+                    l_photo_caption = self.l_instagram_media.caption.text
+                except:
+                    l_photo_caption = ''
                 self.l_instagram_media_owner = self.l_instagram_media.user
         except InstagramAPIError as e:
             logging.exception("init_instagram_API: ERR-00110 Instagram API Error %s : %s" % (e.status_code, e.error_message))

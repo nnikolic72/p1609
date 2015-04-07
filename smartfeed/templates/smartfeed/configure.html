@@ -21,9 +21,54 @@
     {{ block.super }}
 
     <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Information:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is a list of your SquareFollowings.' %}</li>
+                        <li>{% trans "First step is to import your Instagram followings by clicking on a button 'Import My Instagram Followings'." %}</li>
+                        <li>{% trans 'SquareFollowing is Instagram user that you want to appear in your SquareSensor SmartFeed.' %}</li>
+                        <li>{% trans "In this screen you can configure your SquareFollowings levels." %}</li>
+                        <li>{% trans 'There are three SquareFollowings levels:' %}</li>
+                        <ol>
+                            <li>{% trans 'Green - high - all posts appear in your SmartFeed' %}
+                                <br>
+                                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                                    <button type="button" class="btn btn-success">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                </div>
+                            </li>
+                            <li>{% trans 'Yellow - medium - only best posts appear in your SmartFeed' %}
+                                <br>
+                                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-warning">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                </div>
+                            </li>
+                            <li>{% trans 'Red - off - no posts appear in your SmartFeed' %}
+                                <br>
+                                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-danger">&nbsp;&nbsp;</button>
+                                </div>
+                            </li>
+                        </ol>
+                        <li>{% trans 'SquareFollowings levels are changed by clicking on three buttons next to Instagram user name.' %}</li>
+                        <li><b>{% trans 'You can change SquareFollowing level at any point on this screen.' %}</b></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div class="row" style="margin-bottom: 20px;">
             <div class="col-xs-12 text-center">
-                <a href="#"><button class="btn btn-success"
+                <a href="#"><button data-loading-text="Loading..." class="btn btn-success"
                                     onclick="import_instagram_followings('{{ logged_member.instagram_user_id }}')">
                     {% trans 'Import My Instagram Followings' %}
                 </button>
@@ -43,7 +88,9 @@
                 {% endfor %}
 
             {% else %}
-                <p>{% trans 'You have no SquareFollowings defined. You can import them from Instagram.' %}</p>
+                <div class="alert alert-info" role="alert">
+                    {% trans 'You have no SquareFollowings defined. You can import them from Instagram.' %}
+                </div>
             {% endif %}
         </div>
     </div>

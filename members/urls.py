@@ -7,7 +7,9 @@ from .views import (
     MemberDashboardView,
     MemberDisabledView,
     MemberLogoutView,
-    MemberMyAccountView
+    MemberMyAccountView,
+    MemberNewMembershipView,
+    MemberNewMembershipResultView
 )
 
 
@@ -17,4 +19,6 @@ urlpatterns = patterns('',
     url(r'^disabled/$', MemberDisabledView.as_view(), name='disabled'),
     url(r'^logout/$', login_required(MemberLogoutView.as_view()), name='logout'),
     url(r'^account/$', login_required(MemberMyAccountView.as_view()), name='my_account'),
+    url(r'^new-membership/$', login_required(MemberNewMembershipView.as_view()), name='new_membership'),
+    url(r'^new-membership-result/$', login_required(MemberNewMembershipResultView.as_view()), name='new_membership_result'),
 )

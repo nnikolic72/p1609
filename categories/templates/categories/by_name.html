@@ -29,7 +29,9 @@
             {% endfor %}
         </div>
     {% else %}
-        <p>{% trans 'No Inspiring artists in category' %} "{{ l_category.title }}".</p>
+        <div class="alert alert-info" role="alert">
+        {% trans 'No Inspiring artists in category' %} "{{ l_category.title }}".
+        </div>
     {% endif %}
 {% endblock content %}
 

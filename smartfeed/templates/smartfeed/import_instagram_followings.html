@@ -8,5 +8,7 @@
     {% endfor %}
     </div>
 {% else %}
-    <p class="text-center">{% trans 'You have no Instagram Followings. Nothing to import.' %}</p>
+    <div class="alert alert-info" role="alert">
+    {% trans 'You have no Instagram Followings. Nothing to import.' %}
+    </div>
 {% endif %}

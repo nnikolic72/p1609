@@ -13,41 +13,42 @@
     </div>
     <div class="col-xs-12 col-sm-5 text-center">
         {% for squarefollowing_level_item in squarefollowing.squarefollowingmember_set.all %}
-            <div class="btn-group" role="group" aria-label="smartfeedselection">
+            <p>{% trans 'SquareFollowing level' %}</p>
+            <div class="btn-group" role="group" aria-label="smartfeedselection" id="button_group_{{ squarefollowing.instagram_user_id }}">
                 <button type="button" class="btn
-            {% if squarefollowing_level_item.squarefollowing_level == 'G'  %}
+                {% if squarefollowing_level_item.squarefollowing_level == 'G'  %}
                 btn-success
-            {% else %}
+                {% else %}
                 btn-default
-            {% endif %}
-            " id="smartfeed_g_{{ squarefollowing.instagram_user_id }}"
+                {% endif %}
+                " id="smartfeed_g_{{ squarefollowing.instagram_user_id }}"
                         onclick="smart_feed_subscribe({{ squarefollowing.instagram_user_id }}, 'green', '{% get_static_prefix %}');"
                         >
-                    <span class="glyphicon glyphicon-ok-circle text-success" title="{% trans 'Feed Full' %}" id="smartfeed_span_g_{{ squarefollowing.instagram_user_id }}"></span>
+                    &nbsp;&nbsp;
                 </button>
 
                 <button type="button" class="btn
-            {% if squarefollowing_level_item.squarefollowing_level == 'Y'  %}
-                btn-success
-            {% else %}
+                {% if squarefollowing_level_item.squarefollowing_level == 'Y'  %}
+                btn-warning
+                {% else %}
                 btn-default
-            {% endif %}
-            " id="smartfeed_y_{{ squarefollowing.instagram_user_id }}"
+                {% endif %}
+                " id="smartfeed_y_{{ squarefollowing.instagram_user_id }}"
                         onclick="smart_feed_subscribe({{ squarefollowing.instagram_user_id }}, 'yellow', '{% get_static_prefix %}');"
                         >
-                    <span class="glyphicon glyphicon-adjust text-warning" title="{% trans 'Feed Smart' %}" id="smartfeed_span_y_{{ squarefollowing.instagram_user_id }}"></span>
+                    &nbsp;&nbsp;
                 </button>
 
                 <button type="button" class="btn
-            {% if squarefollowing_level_item.squarefollowing_level == 'O'  %}
-                btn-success
-            {% else %}
+                {% if squarefollowing_level_item.squarefollowing_level == 'O'  %}
+                btn-danger
+                {% else %}
                 btn-default
-            {% endif %}
-            " id="smartfeed_r_{{ squarefollowing.instagram_user_id }}"
+                {% endif %}
+                " id="smartfeed_r_{{ squarefollowing.instagram_user_id }}"
                         onclick="smart_feed_subscribe({{ squarefollowing.instagram_user_id}}, 'red', '{% get_static_prefix %}');"
                         >
-                    <span class="glyphicon glyphicon-ban-circle text-danger" title="{% trans 'Feed Off' %}" id="smartfeed_span_r_{{ squarefollowing.instagram_user_id }}"></span>
+                    &nbsp;&nbsp;
                 </button>
             </div>
         {% endfor %}

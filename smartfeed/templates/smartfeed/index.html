@@ -34,7 +34,7 @@
                             <li>{% trans 'Some photos from your Instagram feed, that are posted now or a few hours ago, may appear in your SmartFeed a few hours later.' %}</li>
                             <li>{% trans 'You can always configure your SmartFollowings ' %}<a class="btn btn-xs btn-default" href="{% url 'smartfeed:configure' %}">here</a></li>
                         </ul>
-                        {% if period_number %}
+                        {% if period_verbose %}
                             <h5>{% trans 'Now showing photos from ' %}{{ period_verbose }}</h5>
                         {% else %}
                             <h5>{% trans 'Now showing:' %}</h5>
@@ -50,35 +50,40 @@
                 <div class="col-xs-12 text-center" style="margin-bottom: 20px; margin-top: 20px;">
                     {% trans 'Pick a day ' %}
                     <div class="btn-group" role="group" aria-label="bgroup">
-                        <button type="button" class="btn btn-xs
+                        <button type="button" id="period0" onclick="display_ajax_img('period0', '{{ STATIC_URL }}')"
+                                class="btn btn-xs
                     {% if period_number == 0 %}
                         btn-info
                     {% else %}
                         btn-default
                     {% endif %}
                     "><a href="{% url 'smartfeed:calendar' p_period=0 %}">today</a></button>
-                        <button type="button" class="btn btn-default btn-xs
+                        <button type="button" id="period1" onclick="display_ajax_img('period1', '{{ STATIC_URL }}')"
+                                class="btn btn-default btn-xs
                     {% if period_number == 1 %}
                         btn-info
                     {% else %}
                         btn-default
                     {% endif %}
                     "><a href="{% url 'smartfeed:calendar' p_period=1 %}">1d</a></button>
-                        <button type="button" class="btn btn-default btn-xs
+                        <button type="button" id="period2" onclick="display_ajax_img('period2', '{{ STATIC_URL }}')"
+                                class="btn btn-default btn-xs
                     {% if period_number == 2 %}
                         btn-info
                     {% else %}
                         btn-default
                     {% endif %}
                     "><a href="{% url 'smartfeed:calendar' p_period=2 %}">2d</a></button>
-                        <button type="button" class="btn btn-default btn-xs
+                        <button type="button" id="period3" onclick="display_ajax_img('period3', '{{ STATIC_URL }}')"
+                                class="btn btn-default btn-xs
                     {% if period_number == 3 %}
                         btn-info
                     {% else %}
                         btn-default
                     {% endif %}
                     "><a href="{% url 'smartfeed:calendar' p_period=3 %}">3d</a></button>
-                        <button type="button" class="btn btn-default btn-xs
+                        <button type="button" id="period3" onclick="display_ajax_img('period3', '{{ STATIC_URL }}')"
+                                class="btn btn-default btn-xs
                     {% if period_number == 4 %}
                         btn-info
                     {% else %}
@@ -100,35 +105,41 @@
                     <div class="col-xs-12 text-center" style="margin-bottom: 20px; margin-top: 20px;">
                         {% trans 'Pick a day ' %}
                         <div class="btn-group" role="group" aria-label="bgroup">
-                            <button type="button" class="btn btn-xs
+                            <button type="button" id="period0" onclick="display_ajax_img('period0', '{{ STATIC_URL }}')"
+                                    class="btn btn-xs
                     {% if period_number == 0 %}
                         btn-info
                     {% else %}
                         btn-default
                     {% endif %}
                     "><a href="{% url 'smartfeed:calendar' p_period=0 %}">today</a></button>
-                            <button type="button" class="btn btn-default btn-xs
+
+                            <button type="button"  id="period1" onclick="display_ajax_img('period1', '{{ STATIC_URL }}')"
+                                    class="btn btn-default btn-xs
                     {% if period_number == 1 %}
                         btn-info
                     {% else %}
                         btn-default
                     {% endif %}
                     "><a href="{% url 'smartfeed:calendar' p_period=1 %}">1d</a></button>
-                            <button type="button" class="btn btn-default btn-xs
+                            <button type="button" id="period2" onclick="display_ajax_img('period2', '{{ STATIC_URL }}')"
+                                    class="btn btn-default btn-xs
                     {% if period_number == 2 %}
                         btn-info
                     {% else %}
                         btn-default
                     {% endif %}
                     "><a href="{% url 'smartfeed:calendar' p_period=2 %}">2d</a></button>
-                            <button type="button" class="btn btn-default btn-xs
+                            <button type="button" id="period3" onclick="display_ajax_img('period3', '{{ STATIC_URL }}')"
+                                    class="btn btn-default btn-xs
                     {% if period_number == 3 %}
                         btn-info
                     {% else %}
                         btn-default
                     {% endif %}
                     "><a href="{% url 'smartfeed:calendar' p_period=3 %}">3d</a></button>
-                            <button type="button" class="btn btn-default btn-xs
+                            <button type="button" id="period4" onclick="display_ajax_img('period4', '{{ STATIC_URL }}')"
+                                    class="btn btn-default btn-xs
                     {% if period_number == 4 %}
                         btn-info
                     {% else %}
@@ -169,10 +180,12 @@
 
         {% endif %}
     {% else %}
-        <p>{% trans 'Please add at least 10 SquareFollowings in your dashboard.' %}</p>
-        <form method="get" action="{% url 'smartfeed:configure' %}">
-            <button class="btn btn-default">{% trans 'SmartFeed Configuration' %}</button>
-        </form>
+        <div class="alert alert-info" role="alert">
+            <p>{% trans 'Please add at least 10 SquareFollowings in your dashboard.' %}</p>
+            <form method="get" action="{% url 'smartfeed:configure' %}">
+                <button class="btn btn-default">{% trans 'SmartFeed Configuration' %}</button>
+            </form>
+        </div>
     {% endif %}
 {% endblock content %}
 

@@ -52,3 +52,4 @@ function select_member_attribute(p_attribute_id, p_logged_member_id) {
         {'p_attribute_id': p_attribute_id, 'p_logged_member_id': p_logged_member_id}
     );
 }
+

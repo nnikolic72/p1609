@@ -15,21 +15,22 @@
             @{{ instagramfollowing.0.username }}
         </div>
         <div class="col-xs-12 col-sm-5 text-center">
-            <div class="btn-group" role="group" aria-label="smartfeedselection">
+            <div class="btn-group" role="group" aria-label="smartfeedselection" id="button_group_{{ instagramfollowing.0.id }}">
+                <p>{% trans 'Import' %}</p>
                 <button type="button" class="btn btn-default" id="smartfeed_g_{{ instagramfollowing.0.id }}"
                         onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'green', '{% get_static_prefix %}');"
                         >
-                    <span class="glyphicon glyphicon-ok-circle text-success" title="{% trans 'Feed Full' %}" id="smartfeed_span_g_{{ instagramfollowing.0.id }}"></span>
+                    &nbsp;&nbsp;
                 </button>
                 <button type="button" class="btn btn-default" id="smartfeed_y_{{ instagramfollowing.0.id }}"
                         onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'yellow', '{% get_static_prefix %}');"
                         >
-                    <span class="glyphicon glyphicon-adjust text-warning" title="{% trans 'Feed Smart' %}" id="smartfeed_span_y_{{ instagramfollowing.0.id }}"></span>
+                    &nbsp;&nbsp;
                 </button>
                 <button type="button" class="btn btn-default" id="smartfeed_r_{{ instagramfollowing.0.id }}"
                         onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'red', '{% get_static_prefix %}');"
                         >
-                    <span class="glyphicon glyphicon-ban-circle text-danger" title="{% trans 'Feed Off' %}" id="smartfeed_span_r_{{ instagramfollowing.0.id }}"></span>
+                    &nbsp;&nbsp;
                 </button>
             </div>
         </div>
