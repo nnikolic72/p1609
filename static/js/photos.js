@@ -69,30 +69,38 @@ function show_hidden_comments() {
 function send_instagram_comment_callback(data) {
     //alert('send_instagram_comment_callback');
     var p_photo_id = data.p_photo_id;
-    var x_limit_pct = data.x_limit_pct;
-    var comments_per_minute = data.comments_per_minute;
     var p_new_friends_interaction = data.p_new_friends_interaction;
     var p_photo_author_instagram_id = data.p_photo_author_instagram_id;
+    var comments_per_minute = data.comments_per_minute;
+    var x_limit_pct = data.x_limit_pct.toPrecision(2);
+    var result = data.result;
 
-    $('#iglu').html(x_limit_pct);
-    $('#cpm').html(comments_per_minute);
+
     var l_comments_count = data.l_comments_count;
 
     var instagram_comments_text_id = '#instagram_comments_text_' + p_photo_id;
     $(instagram_comments_text_id).html(l_comments_count);
-    if (p_new_friends_interaction==0) {
-        load_instagram_comments(p_photo_id);
-    }
 
-    if (p_new_friends_interaction==1) {
-        var new_friend_id = "#new_friend_" + p_photo_author_instagram_id;
+    if(result=='limit') {
         hide_comments_modal(p_photo_id);
-        $('html, body').animate({
-            scrollTop: $(new_friend_id).offset().top - 50
-        }, 600);
-        $(new_friend_id).hide();
-    }
+        $('#error-message').html('Comment not sent. You have hit the hourly limit in commenting the posts. Please wait and try again later.');
+        $('#ErrorDialog').modal('show');
+    } else {
+        if (p_new_friends_interaction == 0) {
+            load_instagram_comments(p_photo_id);
+        }
 
+        if (p_new_friends_interaction == 1) {
+            var new_friend_id = "#new_friend_" + p_photo_author_instagram_id;
+            hide_comments_modal(p_photo_id);
+            $('html, body').animate({
+                scrollTop: $(new_friend_id).offset().top - 50
+            }, 600);
+            $(new_friend_id).hide();
+        }
+    }
+    $('#ctm').html(comments_per_minute);
+    $('#iglu').html(x_limit_pct + ' %');
 
     //if we interact with new friends -
     //show_comments_modal(p_photo_id); //hides
@@ -130,6 +138,9 @@ function like_instagram_picture_callback(data) {
     var result = data.result;
     var p_photo_id = data.p_photo_id;
     var no_of_likes = data.no_of_likes;
+    var likes_per_minute = data.likes_per_minute;
+    var x_limit_pct = data.x_limit_pct.toPrecision(2);
+
     var button_id = '#like_button_' + p_photo_id;
     var ig_likes_text_id = '#instagram_likes_text_' + p_photo_id;
     var html_text = '';
@@ -146,9 +157,13 @@ function like_instagram_picture_callback(data) {
         $(button_id).removeClass('btn-danger').addClass('btn-default');
     }
 
+    if(result=='limit') {
+        $('#error-message').html('Like not sent. You have hit the hourly limit in liking the posts. Please wait and try again later.');
+        $('#ErrorDialog').modal('show');
+    }
 
-
-    //$(ig_likes_text_id).html(no_of_likes)
+    $('#ltm').html(likes_per_minute);
+    $('#iglu').html(x_limit_pct + ' %');
 }
 
 function like_instagram_picture(p_photo_id, p_static_url) {

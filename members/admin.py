@@ -189,7 +189,15 @@ class MemberAdmin(admin.ModelAdmin):
                                             ]
         }
         ),
-        ('New Friends Interactions', {'fields': ['daily_new_friends_interactions', 'daily_new_friends_interactions_date',
+        ('New Friends Interactions', {'fields': ['daily_new_friends_interactions',
+                                                 'daily_new_friends_interactions_date',
+                                            ]
+        }
+        ),
+        ('Instagram Limits Use', {'fields': ['likes_in_last_minute',
+                                                 'likes_in_last_minute_interval_start',
+                                                 'comments_in_last_minute',
+                                                 'comments_in_last_minute_interval_start',
                                             ]
         }
         ),

@@ -1985,3 +1985,59 @@ class SmartFeedHelper():
         return self.best_media_list
 
 
+def update_member_limits_f(req, logged_member):
+    """
+    Called by AJAX and every refresh
+    :param req:
+    :type req:
+    :return:
+    :rtype:
+    """
+    l_likes_in_last_minute = None
+    l_comments_in_last_minute = None
+
+    try:
+        l_likes_in_last_minute = logged_member.likes_in_last_minute
+        l_comments_in_last_minute = logged_member.comments_in_last_minute
+        l_likes_in_last_minute_interval_start = logged_member.likes_in_last_minute_interval_start
+        l_comments_in_last_minute_interval_start = logged_member.comments_in_last_minute_interval_start
+
+        if TEST_APP:
+            l_timedelta = timedelta(minutes=+5)
+        else:
+            l_timedelta = timedelta(hours=+1)
+
+        if l_likes_in_last_minute_interval_start:
+            l_diff = timezone.now() - l_likes_in_last_minute_interval_start
+            if l_diff > l_timedelta:
+                #hour has passed - reset the counters
+                logged_member.likes_in_last_minute = 0
+                logged_member.likes_in_last_minute_interval_start = timezone.now()
+                logged_member.save()
+                l_likes_in_last_minute = 0
+        else:
+            logged_member.likes_in_last_minute = 0
+            logged_member.likes_in_last_minute_interval_start = timezone.now()
+            logged_member.save()
+            l_likes_in_last_minute = 0
+
+        if l_comments_in_last_minute_interval_start:
+            l_diff = timezone.now() - l_likes_in_last_minute_interval_start
+            if l_diff > l_timedelta:
+                #hour has passed - reset the counters
+                logged_member.comments_in_last_minute = 0
+                logged_member.comments_in_last_minute_interval_start = timezone.now()
+                logged_member.save()
+                l_comments_in_last_minute = 0
+        else:
+            logged_member.comments_in_last_minute = 0
+            logged_member.comments_in_last_minute_interval_start = timezone.now()
+            logged_member.save()
+            l_comments_in_last_minute = 0
+
+    except ObjectDoesNotExist:
+        logged_member = None
+    except:
+        raise
+
+    return l_likes_in_last_minute, l_comments_in_last_minute

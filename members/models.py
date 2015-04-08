@@ -93,9 +93,18 @@ class Member(InstagramUser):
                                                verbose_name=_('Likes in LM'),
                                                help_text=_('How many likes user has given in last minute')
     )
+    likes_in_last_minute_interval_start = models.DateTimeField(null=True, blank=True,
+                                                               verbose_name=_('Likes period start'),
+                                                               help_text=_('When like limit period started')
+    )
+
     comments_in_last_minute = models.IntegerField(null=True, blank=True, default=0,
                                                   verbose_name=_('Comments in LM'),
                                                   help_text=_('How many comments user has given in last minute')
+    )
+    comments_in_last_minute_interval_start = models.DateTimeField(null=True, blank=True,
+                                                               verbose_name=_('Comments period start'),
+                                                               help_text=_('When comment limit period started')
     )
 
     membership = models.ManyToManyField('members.Membership', blank=True, null=True,
@@ -106,18 +115,18 @@ class Member(InstagramUser):
     smartfeed_last_seen_instagram_photo_id = models.CharField(max_length=100, blank=True, null=True)
 
     ig_api_limit_max = models.IntegerField(null=True, blank=True, default=0,
-                                                  verbose_name=_('IG API Limit Max'),
-                                                  help_text=_('How many IG requests are available per period')
+                                           verbose_name=_('IG API Limit Max'),
+                                           help_text=_('How many IG requests are available per period')
     )
 
     ig_api_limit_remaining = models.IntegerField(null=True, blank=True, default=0,
-                                                  verbose_name=_('IG API Limit Used'),
-                                                  help_text=_('How many IG requests are remaining for period')
+                                                 verbose_name=_('IG API Limit Used'),
+                                                 help_text=_('How many IG requests are remaining for period')
     )
 
     daily_new_friends_interactions = models.IntegerField(null=True, blank=True, default=0,
-                                                  verbose_name=_('Daily Interactions'),
-                                                  help_text=_('How many daily interactions a member had')
+                                                         verbose_name=_('Daily Interactions'),
+                                                         help_text=_('How many daily interactions a member had')
     )
 
     daily_new_friends_interactions_date = models.DateField(null=True, blank=True

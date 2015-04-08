@@ -64,12 +64,16 @@ var Dajaxice = {
     
     members: {
     
+    select_member_attribute: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.select_member_attribute', 'POST', callback_function, argv, custom_settings);
+    },
+
     select_member_category: function(callback_function, argv, custom_settings){
         return Dajaxice.call('members.select_member_category', 'POST', callback_function, argv, custom_settings);
     },
 
-    select_member_attribute: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('members.select_member_attribute', 'POST', callback_function, argv, custom_settings);
+    check_members_limits: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.check_members_limits', 'POST', callback_function, argv, custom_settings);
     }
 
 

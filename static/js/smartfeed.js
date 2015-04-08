@@ -26,6 +26,7 @@ function smart_feed_subscribe_callback(data) {
     var p_color = data.p_color;
     var button_id = '#';
     var button_group_id = '#button_group_' + p_instagram_user_id;
+    var x_limit_pct = data.x_limit_pct.toPrecision(2);
 
     green_span = '&nbsp;&nbsp;';
     yellow_span = '&nbsp;&nbsp;';
@@ -56,6 +57,7 @@ function smart_feed_subscribe_callback(data) {
         }
     }
 
+    $('#iglu').html(x_limit_pct + ' %');
     $(button_group_id).children().prop('disabled',false);
     //$('#instagram_following_' + p_instagram_user_id).fadeOut(600);
 

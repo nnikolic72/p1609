@@ -290,6 +290,10 @@ TEST_APP_FRIENDS_TR_ANALYZE_N_FRIENDS = 100
 TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS = 300
 
 
+#Instgram limits for signed calls
+INSTAGRAM_LIKES_PER_HOUR_LIMIT = 60
+INSTAGRAM_COMMENTS_PER_HOUR_LIMIT = 60
+
 # APP settings: inpiring users
 INSPIRING_USERS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find
 INSPIRING_USERS_SEARCH_N_PHOTOS = 500  # how many last photos to search while finding the best ones

@@ -48,3 +48,25 @@ function display_loading_text(p_div_id, p_static_url) {
 
     $(div_id).html(ajax_img);
 }
+
+
+function check_members_limits_callback (data) {
+    var x_ratelimit_remaining = data.x_ratelimit_remaining;
+    var x_ratelimit = data.x_ratelimit;
+    var x_limit_pct = data.x_limit_pct;
+    var likes_in_last_minute = data.likes_in_last_minute;
+    var comments_in_last_minute = data.comments_in_last_minute;
+
+    $('#ltm').html(likes_in_last_minute);
+    $('#ctm').html(comments_in_last_minute);
+    //$('#iglu').html(x_limit_pct + ' %');
+}
+
+
+function check_members_limits() {
+    Dajaxice.members.check_members_limits(check_members_limits_callback,
+        {}
+    );
+}
+check_members_limits();
+setInterval(check_members_limits, 60 * 1000); // 60 * 1000 miliseconds

@@ -1,12 +1,18 @@
+from __future__ import division
 import json
-
+from datetime import timedelta
+from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseNotFound
+from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 
 from dajaxice.decorators import dajaxice_register
 from attributes.models import Attribute
 from categories.models import Category
+from libs.instagram.tools import update_member_limits_f
 from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
+from squaresensor.settings.base import TEST_APP
 
 __author__ = 'n.nikolic'
 
@@ -121,4 +127,47 @@ def select_member_attribute(req, p_attribute_id, p_logged_member_id):
         dict(p_attribute_id=p_attribute_id,
              p_result=result,
              )
+    )
+
+@dajaxice_register
+def check_members_limits(req):
+
+    l_likes_in_last_minute = None
+    l_comments_in_last_minute = None
+
+    # Common for all members views ===================================================
+    l_categories = Category.objects.all()
+    l_attributes = Attribute.objects.all()
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+        if logged_member.is_editor(req):
+            show_describe_button = True
+    except ObjectDoesNotExist:
+        logged_member = None
+    except:
+        raise HttpResponseNotFound
+
+    l_likes_in_last_minute, l_comments_in_last_minute = update_member_limits_f(req, logged_member)
+
+    # END Common for all members views ===============================================
+
+    # Limit calculation --------------------------------------------------------------
+    #logged_member.get_api_limits(req)
+    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+    if x_ratelimit != 0:
+        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+    else:
+        x_limit_pct = 100
+    # END Limit calculation ----------------------------------------------------------
+
+    return json.dumps(
+        dict(
+            x_ratelimit_remaining=x_ratelimit_remaining,
+            x_ratelimit=x_ratelimit,
+            x_limit_pct=x_limit_pct,
+            likes_in_last_minute=l_likes_in_last_minute,
+            comments_in_last_minute=l_comments_in_last_minute,
+            )
     )

@@ -13,7 +13,7 @@ from django.views.generic import TemplateView
 from social_auth.db.django_models import UserSocialAuth
 from attributes.models import Attribute
 from categories.models import Category
-from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils
+from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, update_member_limits_f
 from .forms import MembershipForm
 
 
@@ -60,6 +60,7 @@ class MemberDashboardView(TemplateView):
 
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
+            l_likes_in_last_minute, l_comments_in_last_minute = update_member_limits_f(request, logged_member)
             show_describe_button = logged_member.is_editor(request)
             #instagram_user = Member.objects.get(django_user__username=request.user)
             queryset = Member.objects.filter(django_user__username=request.user)

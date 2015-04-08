@@ -1,3 +1,4 @@
+from __future__ import division
 import json
 
 from django.http import HttpResponseNotFound

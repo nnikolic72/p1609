@@ -26,9 +26,6 @@ function select_member_category(p_category_id, p_logged_member_id) {
     );
 }
 
-
-
-
 function select_member_attribute_callback(data) {
     //alert('select_member_attribute_callback');
 
@@ -52,4 +49,5 @@ function select_member_attribute(p_attribute_id, p_logged_member_id) {
         {'p_attribute_id': p_attribute_id, 'p_logged_member_id': p_logged_member_id}
     );
 }
+
 

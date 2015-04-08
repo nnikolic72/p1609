@@ -1,3 +1,4 @@
+from __future__ import division
 import json
 
 from dajaxice.decorators import dajaxice_register
@@ -241,6 +242,7 @@ def smart_feed_subscribe(req, p_instagram_user_id, p_color):
     action_result = 1
 
     # Limit calculation --------------------------------------------------------------
+    logged_member.refresh_api_limits(req)
     x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
     x_ratelimit_used = x_ratelimit - x_ratelimit_remaining

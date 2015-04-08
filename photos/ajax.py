@@ -1,5 +1,8 @@
+from __future__ import division
 import json
 from time import sleep
+from datetime import timedelta
+from django.utils import timezone
 
 from django.http import HttpResponseNotFound
 from django.template.loader import render_to_string
@@ -19,7 +22,8 @@ from photos.models import Photo
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, InstagramComments, MyLikes
 from dajaxice.decorators import dajaxice_register
 
-from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED
+from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED, TEST_APP, INSTAGRAM_LIKES_PER_HOUR_LIMIT, \
+    INSTAGRAM_COMMENTS_PER_HOUR_LIMIT
 
 __author__ = 'n.nikolic'
 
@@ -394,11 +398,51 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
         l_comment_form_input_id = u'new_comment_%s_%s' %(p_photo_id, p_inline)
     comment_text = form[l_comment_form_input_id]
 
-    l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
-    if INSTAGRAM_COMMENTS_ALLOWED == '1':
-        l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+    # checking number of comments in the last period
+    l_comments_in_last_minute = logged_member.comments_in_last_minute
+    l_comments_in_last_minute_interval_start = logged_member.comments_in_last_minute_interval_start
+    if TEST_APP:
+        l_timedelta = timedelta(minutes=+5)
     else:
-        l_result = False
+        l_timedelta = timedelta(hours=+1)
+
+    if l_comments_in_last_minute_interval_start:
+        #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
+        l_diff = l_comments_in_last_minute_interval_start - timezone.now()
+        if l_diff > l_timedelta:
+            #hour has passed - reset the counters
+            logged_member.comments_in_last_minute = 0
+            logged_member.comments_in_last_minute_interval_start = timezone.now()
+            logged_member.save()
+            l_comments_in_last_minute = 0
+
+    else:
+        logged_member.comments_in_last_minute = 1
+        logged_member.comments_in_last_minute_interval_start = timezone.now()
+        logged_member.save()
+        l_comments_in_last_minute = 1
+
+
+
+    if TEST_APP:
+        l_instagram_comments_per_hour_limit = 5
+    else:
+        l_instagram_comments_per_hour_limit = INSTAGRAM_COMMENTS_PER_HOUR_LIMIT
+
+    l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
+    if logged_member.comments_in_last_minute < l_instagram_comments_per_hour_limit:
+        if INSTAGRAM_COMMENTS_ALLOWED == '1':
+            l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+            l_comments_in_last_minute += 1
+            logged_member.comments_in_last_minute = l_comments_in_last_minute
+            logged_member.save()
+        else:
+            l_comments_in_last_minute += 1
+            logged_member.comments_in_last_minute = l_comments_in_last_minute
+            logged_member.save()
+            l_result = 'notallowed'
+    else:
+        l_result = 'limit'
 
     if (p_new_friends_interaction == 1):
         try:
@@ -434,19 +478,20 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
         x_limit_pct = 100
     # END Limit calculation ----------------------------------------------------------
     # END Common for all members views ===============================================
-    #Todo check comments per minute
-    comments_per_minute = 0
+
+
 
     return json.dumps(
         dict(p_photo_id=p_photo_id,
              l_comments_count=l_comments_count,
              p_new_friends_interaction=p_new_friends_interaction,
              p_photo_author_instagram_id=l_photo_author_instagram_id,
+             result=l_result,
 
              x_ratelimit_remaining=x_ratelimit_remaining,
              x_ratelimit=x_ratelimit,
              x_limit_pct=x_limit_pct,
-             comments_per_minute=comments_per_minute,
+             comments_per_minute=l_comments_in_last_minute,
              )
     )
 
@@ -486,8 +531,6 @@ def like_instagram_picture(req, p_photo_id):
     l_my_likes = MyLikes(p_instgram_user = logged_member.instagram_user_name,
                          p_photo_id = p_photo_id,
                          p_instagram_api= ig_session)
-    result = l_my_likes.like_instagram_media()
-
 
 
 
@@ -506,18 +549,50 @@ def like_instagram_picture(req, p_photo_id):
     x, no_of_likes = l_my_likes.has_user_liked_media()
 
     #Todo check likes per minute
-    likes_per_minute = 0
+    l_likes_in_last_minute = logged_member.likes_in_last_minute
+    l_likes_in_last_minute_interval_start = logged_member.likes_in_last_minute_interval_start
+    if TEST_APP:
+        l_timedelta = timedelta(minutes=+5)
+    else:
+        l_timedelta = timedelta(hours=+1)
 
+    if l_likes_in_last_minute_interval_start:
+        #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
+        l_diff = l_likes_in_last_minute_interval_start - timezone.now()
+        if l_diff > l_timedelta:
+            #hour has passed - reset the counters
+            logged_member.likes_in_last_minute = 0
+            logged_member.likes_in_last_minute_interval_start = timezone.now()
+            logged_member.save()
+            l_likes_in_last_minute = 0
+        else:
+            l_likes_in_last_minute += 1
+            logged_member.likes_in_last_minute = l_likes_in_last_minute
+            logged_member.save()
+    else:
+        logged_member.likes_in_last_minute = 1
+        logged_member.likes_in_last_minute_interval_start = timezone.now()
+        logged_member.save()
+        l_likes_in_last_minute = 1
+
+    if TEST_APP:
+        l_instagram_likes_per_hour_limit = 5
+    else:
+        l_instagram_likes_per_hour_limit = INSTAGRAM_LIKES_PER_HOUR_LIMIT
+
+    if logged_member.likes_in_last_minute < l_instagram_likes_per_hour_limit:
+        result = l_my_likes.like_instagram_media()
+    else:
+        result = 'limit'
 
     return json.dumps(
         dict(p_photo_id=p_photo_id,
              result=result,
              no_of_likes=no_of_likes,
 
-
              x_ratelimit_remaining=x_ratelimit_remaining,
              x_ratelimit=x_ratelimit,
              x_limit_pct=x_limit_pct,
-             likes_per_minute=likes_per_minute,
+             likes_per_minute=l_likes_in_last_minute,
              )
     )

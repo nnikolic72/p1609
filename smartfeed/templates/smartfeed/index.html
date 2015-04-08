@@ -29,20 +29,20 @@
                         <h4 class="text-center">{% trans 'Welcome to your SmartFeed!' %}<br><small>{%  blocktrans %}You have {{ squarefollowings_count }} SmartFollowings{% endblocktrans %}</small></h4>
                         <h3>{% trans 'Information' %}</h3>
                         <ul>
-                            <li>{% trans 'Your SmartFeed shows photos from your regular Instagram Feed' %}</li>
-                            <li>{% trans 'If you missed a photo you can always pick a day in the past and see your SmartFeed from that day' %}</li>
+                            <li>{% trans 'Your SmartFeed shows photos from your regular Instagram Feed.' %}</li>
+                            <li>{% trans 'If you missed a photo you can always pick a day in the past and see your SmartFeed from that day.' %}</li>
                             <li>{% trans 'Some photos from your Instagram feed, that are posted now or a few hours ago, may appear in your SmartFeed a few hours later.' %}</li>
-                            <li>{% trans 'You can always configure your SmartFollowings ' %}<a class="btn btn-xs btn-default" href="{% url 'smartfeed:configure' %}">here</a></li>
+                            <li>{% trans 'You can always configure your SmartFollowings ' %}<a class="btn btn-xs btn-default" href="{% url 'smartfeed:configure' %}">here</a>.</li>
                         </ul>
                         {% if period_verbose %}
                             <h5>{% trans 'Now showing photos from ' %}{{ period_verbose }}</h5>
                         {% else %}
                             <h5>{% trans 'Now showing:' %}</h5>
                             <ul>
-                                <li>{% trans 'New SmartFeed photos' %}</li>
-                                <li>{% trans 'All photos from Green SquareFollowings' %}</li>
-                                <li>{% trans 'All Yellow SmartFollowings posts are filtered to show the best' %}</li>
-                                <li>{% trans 'No photos from Red SquareFollowings' %}</li>
+                                <li>{% trans 'New SmartFeed photos.' %}</li>
+                                <li>{% trans 'All photos from Green SquareFollowings.' %}</li>
+                                <li>{% trans 'All Yellow SmartFollowings posts are filtered to show the best.' %}</li>
+                                <li>{% trans 'No photos from Red SquareFollowings.' %}</li>
                             </ul>
                         {% endif %}
                     </div>
@@ -156,23 +156,27 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-xs-12">
-                        {% if l_squarefollowings_count < 10 %}
-                            <p>You have only {{ l_squarefollowings_count }} SquareFollowings defined. Minimum is 10.</p>
-                            <p>Please go to your SmartFeed configuration page and import some of your Instagram followings.</p>
+                        {% if squarefollowings_count < 10 %}
+                            <div class="alert alert-info">
+                            <p>{% blocktrans %}You have only {{ squarefollowings_count }} SquareFollowings defined. Minimum is 10.{% endblocktrans %}</p>
+                            <p>{% trans 'Please go to your SmartFeed configuration page and import some of your Instagram followings.' %}</p>
                             <form method="get" action="{% url 'smartfeed:configure' %}">
                                 <button class="btn btn-default">{% trans 'SmartFeed Configuration' %}</button>
                             </form>
+                            </div>
                         {% else %}
+                            <div class="alert alert-info">
                             <p>{% trans 'Your SmartFeed is currently empty. There are no new photos available for SmartFeed.' %}</p>
                             <p>{% trans 'Options' %}:</p>
                             <ol>
-                                <li>{% trans 'Come back later when SmartFeed fills with new photos' %}</li>
-                                <li>{% trans 'Pick a day - view SmartFeed contents from that day, no matter if you have seen it before' %}</li>
-                                <li>{% trans 'Import more SquareFollowings' %}</li>
+                                <li>{% trans 'Come back later when SmartFeed fills with new photos.' %}</li>
+                                <li>{% trans 'Pick a day - view SmartFeed contents from that day, no matter if you have seen it before.' %}</li>
+                                <li>{% trans 'Import more SquareFollowings.' %}</li>
                             </ol>
                             <form method="get" action="{% url 'smartfeed:configure' %}">
                                 <button class="btn btn-default">{% trans 'SmartFeed Configuration' %}</button>
                             </form>
+                            </div>
                         {% endif %}
                     </div>
                 </div>

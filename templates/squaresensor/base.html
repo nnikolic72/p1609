@@ -112,14 +112,31 @@
                 <nav class="navbar navbar-default navbar-fixed-bottom">
                     <div class="container">
                         <button class="btn btn-xs statusbar-text"><span class="glyphicon glyphicon-step-backward" onclick="back_button();"></span></button>
-                        <button class="btn btn-xs statusbar-text">LTM <span class="badge" id="ltm">{{ logged_member.likes_in_last_minute }}</span></button>
-                        <button class="btn btn-xs statusbar-text">CTM <span class="badge" id="ctm">{{ logged_member.comments_in_last_minute }}</span></button>
+                        <button class="btn btn-xs statusbar-text">LTH <span class="badge" id="ltm">{{ logged_member.likes_in_last_minute }}</span></button>
+                        <button class="btn btn-xs statusbar-text">CTH <span class="badge" id="ctm">{{ logged_member.comments_in_last_minute }}</span></button>
                         <button class="btn btn-xs statusbar-text">IGLU <span class="badge" id="iglu">{{ x_limit_pct }}%</span></button>
                     </div>
                 </nav>
             </div>
         </div>
     {% endblock statusbar %}
+
+    <div class="modal fade" id="ErrorDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Information</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning"><div id="error-message"></div></div></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
 {% endblock bootstrap3_content %}
 
