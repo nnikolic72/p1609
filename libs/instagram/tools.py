@@ -16,7 +16,8 @@ from squaresensor.settings.base import TEST_APP, TEST_APP_FRIENDS_TR_ANALYZE_N_F
     FOLLOWINGS_TR_MAX_FF_RATIO, FOLLOWINGS_TR_LAST_POST_BEFORE_DAYS, FRIENDS_TR_ANALYZE_N_FRIENDS, \
     FOLLOWINGS_TR_ANALYZE_N_FOLLOWINGS, TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS, INSPIRING_USERS_FIND_TOP_N_PHOTOS, \
     INSPIRING_USERS_SEARCH_N_PHOTOS, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS, MEMBERS_FIND_TOP_N_PHOTOS, \
-    MEMBERS_SEARCH_N_PHOTOS, FOLLOWINGS_FIND_TOP_N_PHOTOS, FOLLOWINGS_SEARCH_N_PHOTOS, INSTAGRAM_API_THRESHOLD
+    MEMBERS_SEARCH_N_PHOTOS, FOLLOWINGS_FIND_TOP_N_PHOTOS, FOLLOWINGS_SEARCH_N_PHOTOS, INSTAGRAM_API_THRESHOLD, \
+    INSTAGRAM_CLIENT_SECRET
 
 __author__ = 'n.nikolic'
 from sys import exc_info
@@ -222,16 +223,26 @@ class MyLikes:
 
         result = 'error'
         l_user_private = False  # @UnusedVariable
+
+        l_client_secret = INSTAGRAM_CLIENT_SECRET
         '''Check if media is already liked'''
         has_user_liked_media, no_of_likes = self.has_user_liked_media()  # @UnusedVariable
         if has_user_liked_media:
             '''If already liked - unlike'''
+
             try:
-                self.instagram_session.api.unlike_media(media_id=self.photo_id)
+                self.instagram_session.api.client_secret = l_client_secret
+                self.instagram_session.api.client_ips = '127.0.0.1'
+                self.instagram_session.api.unlike_media(
+                    media_id=self.photo_id,
+                    include_secret=True,
+                    )
                 result = 'unlike'
-            except InstagramAPIError as e:
+            except  InstagramAPIError as e:
                 if (e.status_code == 400):
                     l_user_private = True                  # @UnusedVariable
+                if (e.status_code == 403):
+                    raise InstagramAPIError                 # @UnusedVariable
                 logging.exception("get_instagram_user: ERR-00032 Instagram API Error %s : %s" % (e.status_code, e.error_message))
             except InstagramClientError as e:
                 logging.exception("get_instagram_user: ERR-00033 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
@@ -243,11 +254,19 @@ class MyLikes:
         else:
             '''if not already liked - like'''
             try:
-                self.instagram_session.api.like_media(media_id=self.photo_id)
+                self.instagram_session.api.client_secret = l_client_secret
+                self.instagram_session.api.client_ips = '127.0.0.1'
+
+                self.instagram_session.api.like_media(
+                    media_id=self.photo_id,
+                    include_secret=True,
+                    )
                 result = 'like'
             except InstagramAPIError as e:
                 if (e.status_code == 400):
                     l_user_private = True                # @UnusedVariable
+                if (e.status_code == 403):
+                    raise InstagramAPIError                 # @UnusedVariable
                 logging.exception("get_instagram_user: ERR-00036 Instagram API Error %s : %s" % (e.status_code, e.error_message))
             except InstagramClientError as e:
                 logging.exception("get_instagram_user: ERR-00037 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
@@ -1628,12 +1647,16 @@ class InstagramComments():
     def send_instagram_comment(self, p_comment_text):
 
         l_return = False
+        l_client_secret = INSTAGRAM_CLIENT_SECRET
 
         try:
             if self.instagram_session:
+                self.instagram_session.api.client_secret = l_client_secret
+                self.instagram_session.api.client_ips = '127.0.0.1'
                 l_media_comments = self.instagram_session.api.create_media_comment (
                     media_id=self.instagram_photo_id,
-                    text=p_comment_text
+                    text=p_comment_text,
+                    include_secret=True,
                 )
                 l_return = True
 

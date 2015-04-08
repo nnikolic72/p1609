@@ -1,4 +1,5 @@
 import json
+from time import sleep
 
 from django.http import HttpResponseNotFound
 from django.template.loader import render_to_string
@@ -487,7 +488,7 @@ def like_instagram_picture(req, p_photo_id):
                          p_instagram_api= ig_session)
     result = l_my_likes.like_instagram_media()
 
-    x, no_of_likes = l_my_likes.has_user_liked_media()
+
 
 
     # Limit calculation --------------------------------------------------------------
@@ -501,6 +502,8 @@ def like_instagram_picture(req, p_photo_id):
         x_limit_pct = 100
     # END Limit calculation ----------------------------------------------------------
     # END Common for all members views ===============================================
+    sleep(0.5)
+    x, no_of_likes = l_my_likes.has_user_liked_media()
 
     #Todo check likes per minute
     likes_per_minute = 0
