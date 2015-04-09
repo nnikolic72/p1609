@@ -519,6 +519,52 @@ class BestFollowers():
 
         return l_is_user_active
 
+    def get_all_instagram_followers(self, request, logged_member):
+        """
+        Get all Instagram followers for instagram user self.l_instgram_user_id
+        """
+        l_instagram_followers = None
+        l_user_private = None
+
+        try:
+            l_instagram_followers, x_next = self.l_instagram_api.api.user_followed_by(
+                self.l_instgram_user_id
+            )
+        except InstagramAPIError as e:
+            if (e.status_code == 400):
+                l_user_private = True
+            logging.exception("get_best_instagram_followers: ERR-00050 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+        except InstagramClientError as e:
+            logging.exception("get_best_instagram_followers: ERR-00051 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
+        except IndexError:
+            logging.exception("get_best_instagram_followers: ERR-00052 Instagram search unsuccessful: %s" % (exc_info()[0]))
+        except:
+            logging.exception("get_best_instagram_followers: ERR-00053 Unexpected error: %s" % (exc_info()[0]))
+            raise
+
+        if (len(l_instagram_followers) < self.l_analyze_n_photos) and (not l_user_private):
+            if l_instagram_followers:
+                while x_next:
+                    try:
+                        l_next_followers, x_next = self.l_instagram_api.api.user_followed_by(with_next_url = x_next)
+                    except InstagramAPIError as e:
+                        logging.exception("get_best_instagram_followers: ERR-00054 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+                    except InstagramClientError as e:
+                        logging.exception("get_best_instagram_followers: ERR-00055 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
+                    except IndexError:
+                        logging.exception("get_best_instagram_followers: ERR-00056 Instagram search unsuccessful: %s" % (exc_info()[0]))
+                    except:
+                        logging.exception("get_best_instagram_followers: ERR-00057 Unexpected error: %s" % (exc_info()[0]))
+                        raise
+
+
+                    l_instagram_followers.extend(l_next_followers)
+                    if len (l_instagram_followers) >= self.l_analyze_n_photos:
+                        break
+
+        return l_instagram_followers
+
+
     def get_best_instagram_followers(self):
         '''Analyze followers and find the best ones'''
 
@@ -560,7 +606,6 @@ class BestFollowers():
                     except:
                         logging.exception("get_best_instagram_followers: ERR-00057 Unexpected error: %s" % (exc_info()[0]))
                         raise
-
 
                     l_instagram_followers.extend(l_next_followers)
                     if len (l_instagram_followers) >= self.l_analyze_n_photos:

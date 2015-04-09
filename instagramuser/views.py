@@ -14,7 +14,7 @@ from django.views.generic.base import TemplateView
 from attributes.models import Attribute
 from categories.models import Category
 from instagramuser.models import InspiringUser, Following, Follower, FollowerBelongsToCategory, \
-    FollowerBelongsToAttribute
+    FollowerBelongsToAttribute, InspiringUserBelongsToCategory, InspiringUserBelongsToAttribute
 from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdminUtils, MyLikes
 
 from squaresensor.settings.base import IS_APP_LIVE, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS
@@ -655,7 +655,8 @@ class FindFriendsView(TemplateView):
         l_member_attributes = MemberBelongsToAttribute.objects.filter(instagram_user=logged_member).values('attribute')
 
         l_followers_set = Follower.objects.filter(inspiringuser__isnull=False,
-                                                  is_user_active=True
+                                                  is_user_active=True,
+                                                  deactivated_by_mod=False
                                                   ).exclude(member=logged_member).order_by('-interaction_count')
 
         l_followers_categories = FollowerBelongsToCategory.objects.\
@@ -711,6 +712,81 @@ class FindFriendsView(TemplateView):
                           friends_and_photos=l_friends_and_photos,
                           show_describe_button=show_describe_button,
                           new_friends_interaction=1,
+
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )
+
+
+class InspiringUserIndexAllView(TemplateView):
+    """
+    display list of all inspiring artists on Squaresensor with stats
+    """
+
+    template_name = 'instagramuser/index-all-inspiring-artists.html'
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handle get request - display photos and all controls
+
+        :param request:
+        :type request:
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+        # Limit calculation --------------------------------------------------------------
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+        # END Common for all members views ===============================================
+        l_inspiring_users_queryset = InspiringUser.objects.all().order_by('instagram_user_name')
+
+        l_inspiring_users_list = []
+        for inspiring_user in l_inspiring_users_queryset:
+            l_inspiring_user_categories = InspiringUserBelongsToCategory.objects.filter(instagram_user=inspiring_user)
+            l_inspiring_user_attributes = InspiringUserBelongsToAttribute.objects.filter(instagram_user=inspiring_user)
+
+            l_inspiring_user_categories_list = []
+            for category in l_inspiring_user_categories:
+                l_inspiring_user_categories_list.extend([category.category.title])
+
+            l_inspiring_user_attributes_list = []
+            for attribute in l_inspiring_user_attributes:
+                l_inspiring_user_attributes_list.extend([attribute.attribute.title])
+
+            l_inspiring_users_list.append([inspiring_user, l_inspiring_user_categories_list, l_inspiring_user_attributes_list])
+
+
+        return render(request,
+                      self.template_name,
+                      dict(
+                          inspiring_users_list=l_inspiring_users_list,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

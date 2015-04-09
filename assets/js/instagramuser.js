@@ -49,3 +49,50 @@ function analyze_user() {
     Dajaxice.instagramuser.analyze_user(analyze_user_callback, {'form': data});
 
 }
+
+function skip_new_friend_callback(data) {
+    //alert('skip_new_friend_callback');
+
+    var p_instagram_user_id = data.p_instagram_user_id;
+    var result = data.result;
+    var new_friend_id = "#new_friend_" + p_instagram_user_id;
+
+    $('html, body').animate({
+        scrollTop: $(new_friend_id).offset().top - 50
+    }, 600);
+    $(new_friend_id).hide();
+
+}
+
+function skip_new_friend(p_instagram_user_id) {
+    //alert('skip_new_friend');
+
+    var button_id = '#skip_button_' + p_instagram_user_id;
+    $(button_id).attr('disabled','disabled');
+
+    Dajaxice.instagramuser.skip_new_friend(skip_new_friend_callback, {'p_instagram_user_id': p_instagram_user_id});
+}
+
+
+function remove_new_friend_callback(data) {
+    //alert('remove_new_friend_callback');
+
+    var p_instagram_user_id = data.p_instagram_user_id;
+    var result = data.result;
+    var new_friend_id = "#new_friend_" + p_instagram_user_id;
+
+    $('html, body').animate({
+        scrollTop: $(new_friend_id).offset().top - 50
+    }, 600);
+    $(new_friend_id).hide();
+
+}
+
+function remove_new_friend(p_instagram_user_id) {
+    //alert('remove_new_friend');
+
+    var button_id = '#remove_button_' + p_instagram_user_id;
+    $(button_id).attr('disabled','disabled');
+
+    Dajaxice.instagramuser.remove_new_friend(remove_new_friend_callback, {'p_instagram_user_id': p_instagram_user_id});
+}

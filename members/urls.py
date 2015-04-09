@@ -9,7 +9,8 @@ from .views import (
     MemberLogoutView,
     MemberMyAccountView,
     MemberNewMembershipView,
-    MemberNewMembershipResultView
+    MemberNewMembershipResultView,
+    MemberNewFriendsResponseView
 )
 
 
@@ -21,4 +22,5 @@ urlpatterns = patterns('',
     url(r'^account/$', login_required(MemberMyAccountView.as_view()), name='my_account'),
     url(r'^new-membership/$', login_required(MemberNewMembershipView.as_view()), name='new_membership'),
     url(r'^new-membership-result/$', login_required(MemberNewMembershipResultView.as_view()), name='new_membership_result'),
+    url(r'^new-friends-response/$', login_required(MemberNewFriendsResponseView.as_view()), name='new_friends_response'),
 )

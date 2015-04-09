@@ -9,6 +9,14 @@ var Dajaxice = {
     
     instagramuser: {
     
+    skip_new_friend: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('instagramuser.skip_new_friend', 'POST', callback_function, argv, custom_settings);
+    },
+
+    remove_new_friend: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('instagramuser.remove_new_friend', 'POST', callback_function, argv, custom_settings);
+    },
+
     analyze_user: function(callback_function, argv, custom_settings){
         return Dajaxice.call('instagramuser.analyze_user', 'POST', callback_function, argv, custom_settings);
     }

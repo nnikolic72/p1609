@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
@@ -175,8 +176,8 @@ class InstagramUser(models.Model):
     def save(self, *args, **kwargs):
         """ On save, update timestamps """
         if not self.id:
-            self.creation_date = datetime.today()
-        self.last_update_date = datetime.today()
+            self.creation_date = timezone.now()
+        self.last_update_date = timezone.now()
         return super(InstagramUser, self).save(*args, **kwargs)
 
     class Meta:
@@ -272,6 +273,15 @@ class FollowerBelongsToAttribute(models.Model):
     weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
 
+class NewFriendContactedByMember(models.Model):
+    member = models.ForeignKey('members.Member', null=True, blank=True)
+    friend = models.ForeignKey('instagramuser.Follower', null=True, blank=True)
+    contact_date = models.DateTimeField(null=True, blank=True)
+    response_date = models.DateField(null=True, blank=True)
+    contact_count = models.IntegerField(default=0, null=False, blank=False)
+    interaction_type = models.CharField(default='C', max_length=1, null=True, blank=True)
+
+
 class Follower(InstagramUser):
     """
 
@@ -283,6 +293,8 @@ class Follower(InstagramUser):
     is_potential_friend = models.BooleanField(default=False, null=False, blank=False)
     inspiringuser = models.ManyToManyField('instagramuser.InspiringUser', null=True, blank=True)
     member = models.ManyToManyField('members.Member', null=True, blank=True)
+    deactivated_by_mod = models.BooleanField(default=False, null=False, blank=False)
+
     interaction_count = models.IntegerField(default=0, null=False, blank=False)
 
     class Meta:

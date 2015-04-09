@@ -149,8 +149,17 @@
                         {% trans 'Configure My Account' %}
                     </button>
                 </form>
+                <form action="{% url 'members:new_friends_response' %}" method="get">
+                    <button type="submit"
+                            id="new_friends_response"
+                            onclick="display_ajax_img('new_friends_response', '{{ STATIC_URL }}')"
+                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                        {% trans 'New Friends Response' %}
+                    </button>
+                </form>
             </div>
         </div>
+
     </div>
 
     {% if show_describe_button %}
@@ -163,7 +172,15 @@
                                 id="add-inspiring-user"
                                 onclick="display_ajax_img('add-inspiring-user', '{{ STATIC_URL }}')"
                                 class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                            {% trans 'Add Inspiring User' %}
+                            {% trans 'Add Inspiring Artist' %}
+                        </button>
+                    </form>
+                    <form action="{% url 'instagramuser:index_all_inspiring_artists' %}" method="get">
+                        <button type="submit"
+                                id="index_all_inspiring_artists"
+                                onclick="display_ajax_img('index_all_inspiring_artists', '{{ STATIC_URL }}')"
+                                class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                            {% trans 'All Inspiring Artists' %}
                         </button>
                     </form>
                 </div>

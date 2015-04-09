@@ -13,11 +13,13 @@ from django.views.generic import TemplateView
 from social_auth.db.django_models import UserSocialAuth
 from attributes.models import Attribute
 from categories.models import Category
-from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, update_member_limits_f
+from instagramuser.models import Follower, NewFriendContactedByMember
+from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, update_member_limits_f, BestFollowers
 from .forms import MembershipForm
 
 
 from .models import Member, Membership
+from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS
 
 
 class MemberHomePageView(TemplateView):
@@ -184,7 +186,7 @@ class MemberMyAccountView(TemplateView):
                       self.template_name,
                       dict(
                           #logged_members_categories=l_logged_members_categories,
-                        #logged_members_attributes=l_logged_members_categories,
+                          #logged_members_attributes=l_logged_members_categories,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
@@ -233,13 +235,13 @@ class MemberNewMembershipView(TemplateView):
                       self.template_name,
                       dict(form=form,
 
-                          logged_member=logged_member,
-                          x_ratelimit_remaining=x_ratelimit_remaining,
-                          x_ratelimit=x_ratelimit,
-                          x_limit_pct=x_limit_pct,
-                          categories=l_categories,
-                          attributes=l_attributes,
-                          )
+                           logged_member=logged_member,
+                           x_ratelimit_remaining=x_ratelimit_remaining,
+                           x_ratelimit=x_ratelimit,
+                           x_limit_pct=x_limit_pct,
+                           categories=l_categories,
+                           attributes=l_attributes,
+                           )
         )
 
 
@@ -320,6 +322,89 @@ class MemberNewMembershipResultView(TemplateView):
         return render(request,
                       self.template_name,
                       dict(
+
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )
+
+
+class MemberNewFriendsResponseView(TemplateView):
+
+    template_name = 'members/new-friends-response.html'
+
+    def get(self, request, *args, **kwargs):
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+        # END Common for all members views ===============================================
+
+        l_token = logged_member.get_member_token(request)
+        instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+        instagram_session.init_instagram_API()
+
+        l_members_followers_obj = BestFollowers(
+            p_instgram_user_id = logged_member.instagram_user_id,
+            p_analyze_n_photos=IMPORT_MAX_INSTAGRAM_FOLLOWERS,
+            p_instagram_api=instagram_session
+        )
+        l_members_followers = l_members_followers_obj.get_all_instagram_followers(request, logged_member)
+
+        l_contacted_new_friends = NewFriendContactedByMember.objects.filter(
+            member=logged_member,
+        ).exclude(interaction_type='S')
+
+        l_new_friends_since_last_check = 0
+        l_total_new_squaresensor_friends = 0
+        l_contacted_new_friends_cnt = 0
+        l_new_friends_list = []
+        l_existing_friends_list = []
+        if l_contacted_new_friends.count() > 0:
+            l_found = False
+            for contacted_friend in l_contacted_new_friends:
+                l_contacted_new_friends_cnt += 1
+                for follower in l_members_followers:
+                    if follower.username == contacted_friend.friend.instagram_user_name:
+                        l_found = True
+                        l_total_new_squaresensor_friends += 1
+                        if contacted_friend.response_date == None:
+                            l_new_friends_list.extend([follower])
+                            l_new_friends_since_last_check += 1
+                        else:
+                            l_existing_friends_list.extend([follower])
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
+        return render(request,
+                      self.template_name,
+                      dict(
+                          new_friends_list=l_new_friends_list,
+                          existing_friends_list=l_existing_friends_list,
+                          contacted_new_friends_cnt=l_contacted_new_friends_cnt,
+                          new_friends_since_last_check=l_new_friends_since_last_check,
+                          total_new_squaresensor_friends=l_total_new_squaresensor_friends,
+
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

@@ -1,9 +1,15 @@
 from django.contrib import admin
+from django.utils.text import slugify
 from django.utils.translation import ugettext as _
-from django.core.exceptions import ObjectDoesNotExist
-from libs.instagram.tools import InstagramUserAdminUtils
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
-from models import InspiringUser, InspiringUserRaw, Follower, Following
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+
+from libs.instagram.tools import InstagramUserAdminUtils, InstagramSession
+
+from models import InspiringUser, InspiringUserRaw, Follower, Following, NewFriendContactedByMember
+from photos.models import Photo
 
 
 class CategoryInspiringUserInlineAdmin(admin.TabularInline):
@@ -192,7 +198,7 @@ class InspiringUserAdmin(admin.ModelAdmin):
                               'poly_max_days',
                               'poly_min_likes',
                               'poly_max_likes',
-        ]
+                              ]
         }
         ),
         ('GoodUser Processing Information', {'fields': ['last_processed_for_basic_info_date',
@@ -238,8 +244,95 @@ class InspiringUserAdmin(admin.ModelAdmin):
     ]
 
 
-class InspiringUserRawAdmin(admin.ModelAdmin):
-    '''Definition of Admin interface for GoodUsers model'''
+class InspiringUserRawResource(resources.ModelResource):
+
+    class Meta:
+        model = InspiringUserRaw
+        fields = ('id', 'instagram_user_name')
+        import_id_fields = ['id']
+
+
+class InspiringUserRawAdmin(ImportExportModelAdmin):
+    '''Definition of Admin interface for InspiringUser model'''
+
+
+    def process_raw_inspiring_users(self, request, queryset):
+        '''Action -> Create Inspiring Users from imported Inspiring Users CSV'''
+        l_counter_update = 0
+        l_counter_new = 0
+        l_counter_skipped = 0
+        l_errors = 0
+
+        instagram_session = InstagramSession(p_is_admin=True, p_token='')
+        instagram_session.init_instagram_API()
+
+        for inspiring_user in queryset:
+            l_process = True
+
+            try:
+                l_inspiring_user = InspiringUser.objects.get(instagram_user_name=inspiring_user.instagram_user_name)
+            except ObjectDoesNotExist:
+                l_inspiring_user = None
+            except MultipleObjectsReturned:
+                l_process = False
+
+            if l_process:
+                if l_inspiring_user:
+                    # InspiringUser exists, skip it
+                    pass
+                else:
+                    user_search = instagram_session.is_instagram_user_valid(inspiring_user.instagram_user_name)
+                    if user_search:
+                        if user_search[0].username == inspiring_user.instagram_user_name:
+                            instagram_user = instagram_session.get_instagram_user(user_search[0].id)
+                            # this is new category
+                            l_inspiring_user_new = InspiringUser(instagram_user_id=instagram_user.id)
+                            l_inspiring_user_new.number_of_followers = instagram_user.counts[u'followed_by']
+                            l_inspiring_user_new.number_of_followings = instagram_user.counts[u'follows']
+                            l_inspiring_user_new.number_of_media = instagram_user.counts[u'media']
+                            l_inspiring_user_new.instagram_user_name = instagram_user.username
+                            l_inspiring_user_new.instagram_user_full_name = instagram_user.full_name
+                            l_inspiring_user_new.instagram_profile_picture_URL = instagram_user.profile_picture
+                            l_inspiring_user_new.instagram_user_bio = instagram_user.bio
+                            l_inspiring_user_new.instagram_user_website_URL = instagram_user.website
+                            l_inspiring_user_new.instagram_user_name_valid = True
+                            l_inspiring_user_new.to_be_processed_for_basic_info = True
+                            l_inspiring_user_new.to_be_processed_for_photos = True
+                            try:
+                                l_inspiring_user_new.save()
+                                inspiring_user.to_be_processed = False
+                                inspiring_user.instagram_user_name_valid = True
+                                inspiring_user.save()
+                                l_counter_new += 1
+
+                                #process IG user and their photos
+                                q = InspiringUser.objects.filter(instagram_user_name=inspiring_user.instagram_user_name)
+                                if len(q) > 0:
+                                    ig_admin_utils = InstagramUserAdminUtils()
+                                    ig_admin_utils.process_instagram_user(request, q)
+                                    l_photos_queryset = Photo.objects.filter(inspiring_user_id=l_inspiring_user_new)
+                                    if (l_photos_queryset.count() > 0):
+                                        ig_admin_utils.process_photos_by_instagram_api(request, l_photos_queryset)
+                            except:
+                                l_errors += 1
+                        else:
+                            inspiring_user.to_be_processed = False
+                            inspiring_user.instagram_user_name_valid = False
+                            inspiring_user.save()
+
+            else:
+                inspiring_user.to_be_processed = False
+                inspiring_user.save()
+                l_counter_skipped += 1
+
+        buf = "%s new inspiring users, %s updated inspiring users. Total %s processed. %s skipped. %s errors." % \
+              (l_counter_new, l_counter_update, l_counter_update + l_counter_new, l_counter_skipped, l_errors)
+        self.message_user(request, buf)
+    process_raw_inspiring_users.short_description = 'Process RAW imported Inspiring Users'
+
+    actions = ('process_raw_inspiring_users', )
+
+    resource_class = InspiringUserRawResource
 
     list_display = ('instagram_user_name', 'to_be_processed',
                     'instagram_user_name_valid', 'creation_date',
@@ -443,7 +536,7 @@ class FollowingAdmin(admin.ModelAdmin):
         ]
         }
         ),
-       ('Maths', {'fields': ['poly_order',
+        ('Maths', {'fields': ['poly_order',
                               'poly_theta_0',
                               'poly_theta_1',
                               'poly_theta_2',
@@ -453,7 +546,7 @@ class FollowingAdmin(admin.ModelAdmin):
                               'poly_max_days',
                               'poly_min_likes',
                               'poly_max_likes',
-        ]
+                              ]
         }
         ),
         ('Source', {'fields': [ 'inspiringuser', 'member'
@@ -634,11 +727,11 @@ class FollowerAdmin(admin.ModelAdmin):
     )
 
     fieldsets = [
-        ('General Information', {'fields': [ 'instagram_user_name', 'user_type'
+        ('General Information', {'fields': [ 'instagram_user_name', 'user_type', 'deactivated_by_mod'
         ]
         }
         ),
-       ('Maths', {'fields': ['poly_order',
+        ('Maths', {'fields': ['poly_order',
                               'poly_theta_0',
                               'poly_theta_1',
                               'poly_theta_2',
@@ -648,7 +741,7 @@ class FollowerAdmin(admin.ModelAdmin):
                               'poly_max_days',
                               'poly_min_likes',
                               'poly_max_likes',
-        ]
+                              ]
         }
         ),
         ('Source', {'fields': [ 'inspiringuser', 'member', 'interaction_count'
@@ -674,7 +767,25 @@ class FollowerAdmin(admin.ModelAdmin):
         ),
         ]
 
+
+class NewFriendContactedByMemberAdmin(admin.ModelAdmin):
+    list_display = (
+        'member', 'friend', 'contact_date',
+        'response_date', 'contact_count',
+        'interaction_type'
+    )
+
+    fieldsets = [
+        ('General Information', {'fields': [ 'member', 'friend', 'contact_date',
+                                             'response_date', 'contact_count',
+                                             'interaction_type'
+        ]
+        }
+        ),
+        ]
+
 admin.site.register(Follower, FollowerAdmin)
 admin.site.register(Following, FollowingAdmin)
 admin.site.register(InspiringUser, InspiringUserAdmin)
 admin.site.register(InspiringUserRaw, InspiringUserRawAdmin)
+admin.site.register(NewFriendContactedByMember, NewFriendContactedByMemberAdmin)

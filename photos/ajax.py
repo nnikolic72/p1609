@@ -15,7 +15,8 @@ from social_auth.db.django_models import UserSocialAuth
 from attributes.models import Attribute
 from categories.models import Category
 from instagramuser.models import FollowingBelongsToCategory, FollowerBelongsToCategory, InspiringUserBelongsToCategory, \
-    FollowingBelongsToAttribute, FollowerBelongsToAttribute, InspiringUserBelongsToAttribute, Follower
+    FollowingBelongsToAttribute, FollowerBelongsToAttribute, InspiringUserBelongsToAttribute, Follower, \
+    NewFriendContactedByMember
 from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
 from photos.models import Photo
 
@@ -23,7 +24,7 @@ from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, Inst
 from dajaxice.decorators import dajaxice_register
 
 from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED, TEST_APP, INSTAGRAM_LIKES_PER_HOUR_LIMIT, \
-    INSTAGRAM_COMMENTS_PER_HOUR_LIMIT
+    INSTAGRAM_COMMENTS_PER_HOUR_LIMIT, TEST_APP_LIKE_PER_PERIOD_LIMIT, TEST_APP_COMMENT_PER_PERIOD_LIMIT
 
 __author__ = 'n.nikolic'
 
@@ -425,7 +426,7 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
 
 
     if TEST_APP:
-        l_instagram_comments_per_hour_limit = 5
+        l_instagram_comments_per_hour_limit = TEST_APP_COMMENT_PER_PERIOD_LIMIT
     else:
         l_instagram_comments_per_hour_limit = INSTAGRAM_COMMENTS_PER_HOUR_LIMIT
 
@@ -457,13 +458,22 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
             l_interacted_friend.interaction_count += 1
             l_interacted_friend.save()
             # increase member daily interactions count
-            l_today = datetime.today().date()
+            l_today = timezone.now().date()
             if l_today == logged_member.daily_new_friends_interactions_date:
                 logged_member.daily_new_friends_interactions += 1
             else:
                 logged_member.daily_new_friends_interactions_date = l_today
                 logged_member.daily_new_friends_interactions = 1
             logged_member.save()
+
+            l_new_friend_contacted = NewFriendContactedByMember(
+                member=logged_member,
+                friend=l_interacted_friend,
+                contact_date=timezone.now(),
+                contact_count=1,
+                interaction_type='C'
+            )
+            l_new_friend_contacted.save()
 
 
     l_comments_count = l_instagram_comments.get_comments_count()
@@ -576,7 +586,7 @@ def like_instagram_picture(req, p_photo_id):
         l_likes_in_last_minute = 1
 
     if TEST_APP:
-        l_instagram_likes_per_hour_limit = 5
+        l_instagram_likes_per_hour_limit = TEST_APP_LIKE_PER_PERIOD_LIMIT
     else:
         l_instagram_likes_per_hour_limit = INSTAGRAM_LIKES_PER_HOUR_LIMIT
 

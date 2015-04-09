@@ -4,6 +4,7 @@ import json
 from django.http import HttpResponseNotFound
 from django.template.loader import render_to_string
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils
@@ -14,7 +15,7 @@ from photos.models import Photo
 from categories.models import Category
 from attributes.models import Attribute
 from .forms import AddInspiringUserForm
-from instagramuser.models import InspiringUser
+from instagramuser.models import InspiringUser, Follower, NewFriendContactedByMember
 
 __author__ = 'n.nikolic'
 
@@ -100,7 +101,7 @@ def analyze_user(req, form):
                         'error': 1,
                         'error_message': 'Can not add Inspiring user in the database at this time.',
                         'html_text': '<p>Can not add Inspiring user in the database at this time.</p>'
-                        }
+                    }
                     )
             else:
                 return json.dumps({
@@ -119,7 +120,7 @@ def analyze_user(req, form):
                                      show_describe_button=show_describe_button,
                                      categories=l_categories,
                                      attributes=l_attributes,
-                                 )
+                                     )
     )
 
     return json.dumps({
@@ -127,5 +128,93 @@ def analyze_user(req, form):
         'error': 0,
         'error_message': '',
         'html_text': html_text
+    }
+    )
+
+@dajaxice_register
+def skip_new_friend(req, p_instagram_user_id):
+    """
+    Skip new friend while trying to find new friends
+    :param req:
+    :type req:
+    :param p_instagram_user_id:
+    :type p_instagram_user_id:
+    :return:
+    :rtype:
+    """
+
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+        if logged_member.is_editor(req):
+            show_describe_button = True
+    except ObjectDoesNotExist:
+        logged_member = None
+    except:
+        raise HttpResponseNotFound
+
+    try:
+        l_new_friend_to_skip = Follower.objects.get(instagram_user_id=p_instagram_user_id)
+    except ObjectDoesNotExist:
+        l_new_friend_to_skip = None
+        result = 'notfound'
+    except:
+        raise
+
+    if l_new_friend_to_skip:
+        l_new_friend_to_skip.member.add(logged_member)
+        l_new_interaction = NewFriendContactedByMember(
+            member=logged_member,
+            friend=l_new_friend_to_skip,
+            contact_date=timezone.now(),
+            contact_count=1,
+            interaction_type='S'
+        )
+        l_new_interaction.save()
+        result = 'skipped'
+
+    return json.dumps({
+        'p_instagram_user_id': p_instagram_user_id,
+        'result': result,
+        }
+    )
+
+
+
+@dajaxice_register
+def remove_new_friend(req, p_instagram_user_id):
+    """
+    Remove new friend, by moderator only, while trying to find new friends
+    :param req:
+    :type req:
+    :param p_instagram_user_id:
+    :type p_instagram_user_id:
+    :return:
+    :rtype:
+    """
+
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+        if logged_member.is_editor(req):
+            show_describe_button = True
+    except ObjectDoesNotExist:
+        logged_member = None
+    except:
+        raise HttpResponseNotFound
+
+    try:
+        l_new_friend_to_skip = Follower.objects.get(instagram_user_id=p_instagram_user_id)
+        l_new_friend_to_skip.deactivated_by_mod = True
+        l_new_friend_to_skip.save()
+        result='removed'
+    except ObjectDoesNotExist:
+        l_new_friend_to_skip = None
+        result = 'notfound'
+    except:
+        raise
+
+
+    return json.dumps({
+        'p_instagram_user_id': p_instagram_user_id,
+        'result': result,
         }
     )

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+{% block title %}{% trans 'New Friends Response' %}{% endblock title %}
+{% block page-title %}{% trans 'New Friends' %} <small>{% trans 'Response' %}</small>{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/members.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/members.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>{% trans 'Information:' %}</h4>
+                <ul>
+                    <li>{% blocktrans %}You have contacted {{ contacted_new_friends_cnt }} Instagram user{{ contacted_new_friends_cnt|pluralize }} through Squaresensor{% endblocktrans %}</li>
+                    <li>{% blocktrans %}There are {{ new_friends_since_last_check }} new friend{{ new_friends_since_last_check|pluralize }} since you last checked.{% endblocktrans %}</li>
+                    <li>{% blocktrans %}There are total of {{ new_friends_since_last_check }} new friend{{ new_friends_since_last_check|pluralize }} you found on SquareSensor.{% endblocktrans %}</li>
+                </ul>
+            </div>
+            <div class="col-xs-12">
+                <h4>{% trans 'This is a list of your new Instagram friends.' %} <small>{% trans 'You have found them through Squaresensor.' %}</small></h4>
+            </div>
+            {% if new_friends_list %}
+
+                {% for new_friend in new_friends_list %}
+                    <ul>
+                        <div class="col-xs-12">
+                            <li>@{{ new_friend.username }}</li>
+                        </div>
+                    </ul>
+                {% endfor %}
+            {% else %}
+                <div class="col-xs-12">
+                    <div class="alert alert-info">
+                        <p>{% trans 'There are no new responses. Try to contact more friends ' %}
+                            <a class="btn btn-xs btn-default" href="{% url 'instagramuser:new_friends' %}">here</a>
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>{% trans 'This is a complete list of Instagram friends you found on SquareSensor.' %}</h4>
+            </div>
+            {% if existing_friends_list %}
+
+                {% for existing_friend in existing_friends_list %}
+                    <div class="col-xs-12">
+                        {{ existing_friend.username }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-xs-12">
+                    <div class="alert alert-info">
+                        <p>{% trans 'You have no existing Instagram friends you found on SquareSensor. Try to contact more friends ' %}
+                            <a class="btn btn-xs btn-default" href="{% url 'instagramuser:new_friends' %}">here</a>
+
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}
