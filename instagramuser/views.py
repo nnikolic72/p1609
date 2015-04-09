@@ -412,7 +412,7 @@ class UsersBestPhotosView(TemplateView):
                 q.to_be_processed_for_photos = True
                 q.save()
             ig_admin_utils = InstagramUserAdminUtils()
-            ig_admin_utils.process_instagram_user(request, q)
+            ig_admin_utils.process_instagram_user(request, queryset)
 
 
             user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
