@@ -1003,8 +1003,10 @@ class InstagramUserAdminUtils():
                                         try:
                                             l_existing_follower = Follower.objects.get(instagram_user_id=follower.id)
                                             l_existing_follower.inspiringuser.add(obj)
+                                            l_new_friend = l_existing_follower
                                         except ObjectDoesNotExist:
                                             l_existing_follower = None
+                                            l_new_friend = None
 
                                         #add categories
                                     if obj.user_type == 'inspiring':
