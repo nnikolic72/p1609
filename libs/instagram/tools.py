@@ -652,7 +652,7 @@ class BestFollowers():
                 except IndexError:
                     logging.exception("get_best_instagram_followers: ERR-00060 Instagram search unsuccessful: %s" % (exc_info()[0]))
                 except:
-                    logging.exception("get_best_instagram_followers: ERR-00061 Unexpected error: %s" % (exc_info()[0]))
+                    logging.debug("get_best_instagram_followers: ERR-00061 Unexpected error: %s" % (exc_info()[0]))
                     raise
 
                 if (not l_user_private):
