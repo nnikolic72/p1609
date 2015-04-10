@@ -976,26 +976,37 @@ class InstagramUserAdminUtils():
                             if l_instagram_friends:
                                 '''Found followers - save them to our database'''
                                 for follower in l_instagram_friends:
-                                    instagram_utils = InstagramUserAdminUtils()
-                                    l_new_friend = \
-                                        Follower(instagram_user_id=follower.id,
-                                                 instagram_user_name=follower.username, instagram_user_name_valid=True,
-                                                 instagram_user_full_name=follower.full_name,
-                                                 instagram_profile_picture_URL=follower.profile_picture,
-                                                 instagram_user_bio=follower.bio,
-                                                 instagram_user_website_URL=follower.website,
-                                                 is_user_active=True,
-                                                 number_of_followers=follower.counts[u'followed_by'],
-                                                 number_of_followings=follower.counts[u'follows'],
-                                                 number_of_media=follower.counts[u'media'],
-                                                 instagram_user_profile_page_URL=instagram_utils.generate_instagram_profile_page_URL(follower.username),
-                                                 iconosquare_user_profile_page_URL=instagram_utils.generate_iconosquare_profile_page_URL(follower.id),
-                                                 is_potential_friend=True
-                                        )
+                                    l_exists = Follower.objects.filter(instagram_user_id=follower.id)
 
-                                    l_new_friend.save()
-                                    l_new_friend.inspiringuser.add(obj)
-                                    #add categories
+
+                                    instagram_utils = InstagramUserAdminUtils()
+                                    if l_exists.count() == 0:
+                                        l_new_friend = \
+                                            Follower(instagram_user_id=follower.id,
+                                                     instagram_user_name=follower.username, instagram_user_name_valid=True,
+                                                     instagram_user_full_name=follower.full_name,
+                                                     instagram_profile_picture_URL=follower.profile_picture,
+                                                     instagram_user_bio=follower.bio,
+                                                     instagram_user_website_URL=follower.website,
+                                                     is_user_active=True,
+                                                     number_of_followers=follower.counts[u'followed_by'],
+                                                     number_of_followings=follower.counts[u'follows'],
+                                                     number_of_media=follower.counts[u'media'],
+                                                     instagram_user_profile_page_URL=instagram_utils.generate_instagram_profile_page_URL(follower.username),
+                                                     iconosquare_user_profile_page_URL=instagram_utils.generate_iconosquare_profile_page_URL(follower.id),
+                                                     is_potential_friend=True
+                                            )
+
+                                        l_new_friend.save()
+                                        l_new_friend.inspiringuser.add(obj)
+                                    else:
+                                        try:
+                                            l_existing_follower = Follower.objects.get(instagram_user_id=follower.id)
+                                            l_existing_follower.inspiringuser.add(obj)
+                                        except ObjectDoesNotExist:
+                                            l_existing_follower = None
+
+                                        #add categories
                                     if obj.user_type == 'inspiring':
                                         l_categories = InspiringUserBelongsToCategory.objects.filter(
                                             instagram_user=obj,
