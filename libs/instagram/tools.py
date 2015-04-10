@@ -79,7 +79,10 @@ class InstagramSession():
             if self.api:
                 temp = self.api.user_search(q='instagram', count=1)  # @UnusedVariable
         except InstagramAPIError as e:
-            logging.exception("init_instagram_API: ERR-00001 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            if (e.status_code == 400):
+                l_user_private = True  # @UnusedVariable
+            else:
+                logging.exception("init_instagram_API: ERR-00001 Instagram API Error %s : %s" % (e.status_code, e.error_message))
             #self.message_user(request, buf, level=messages.WARNING)
 
         except InstagramClientError as e:
@@ -100,7 +103,10 @@ class InstagramSession():
             try:
                 user_search = self.api.user_search(q=p_gooduser_name, count=1)
             except InstagramAPIError as e:
-                logging.exception("is_instagram_user_valid: ERR-00004 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+                if (e.status_code == 400):
+                    l_user_private = True  # @UnusedVariable
+                else:
+                    logging.exception("is_instagram_user_valid: ERR-00004 Instagram API Error %s : %s" % (e.status_code, e.error_message))
 
             except InstagramClientError as e:
                 logging.exception("is_instagram_user_valid: ERR-00005 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
@@ -117,7 +123,10 @@ class InstagramSession():
         try:
             l_photo = self.api.media(media_id = p_photo_id)
         except InstagramAPIError as e:
-            logging.exception("is_instagram_photo_valid: ERR-00018 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            if (e.status_code == 400):
+                l_user_private = True  # @UnusedVariable
+            else:
+                logging.exception("is_instagram_photo_valid: ERR-00018 Instagram API Error %s : %s" % (e.status_code, e.error_message))
 
         except InstagramClientError as e:
             logging.exception("is_instagram_photo_valid: ERR-00019 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
@@ -165,9 +174,11 @@ class InstagramSession():
             try:
                 instagram_user = self.api.user(user_search_result)
             except InstagramAPIError as e:
-                logging.exception("get_instagram_user: ERR-00014 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+
                 if (e.status_code == 400):
                     l_user_private = True  # @UnusedVariable
+                else:
+                    logging.exception("get_instagram_user: ERR-00014 Instagram API Error %s : %s" % (e.status_code, e.error_message))
             except InstagramClientError as e:
                 logging.exception("get_instagram_user: ERR-00015 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
             except IndexError:
@@ -241,9 +252,10 @@ class MyLikes:
             except  InstagramAPIError as e:
                 if (e.status_code == 400):
                     l_user_private = True                  # @UnusedVariable
-                if (e.status_code == 403):
-                    raise InstagramAPIError                 # @UnusedVariable
-                logging.exception("get_instagram_user: ERR-00032 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+                    if (e.status_code == 403):
+                        raise InstagramAPIError                 # @UnusedVariable
+                    else:
+                        logging.exception("get_instagram_user: ERR-00032 Instagram API Error %s : %s" % (e.status_code, e.error_message))
             except InstagramClientError as e:
                 logging.exception("get_instagram_user: ERR-00033 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
             except IndexError:
@@ -265,9 +277,10 @@ class MyLikes:
             except InstagramAPIError as e:
                 if (e.status_code == 400):
                     l_user_private = True                # @UnusedVariable
-                if (e.status_code == 403):
-                    raise InstagramAPIError                 # @UnusedVariable
-                logging.exception("get_instagram_user: ERR-00036 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+                    if (e.status_code == 403):
+                        raise InstagramAPIError                 # @UnusedVariable
+                    else:
+                        logging.exception("get_instagram_user: ERR-00036 Instagram API Error %s : %s" % (e.status_code, e.error_message))
             except InstagramClientError as e:
                 logging.exception("get_instagram_user: ERR-00037 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
             except IndexError:
@@ -292,7 +305,8 @@ class MyLikes:
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True            # @UnusedVariable
-            logging.exception("get_instagram_user: ERR-00040 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            else:
+                logging.exception("get_instagram_user: ERR-00040 Instagram API Error %s : %s" % (e.status_code, e.error_message))
         except InstagramClientError as e:
             logging.exception("get_instagram_user: ERR-00041 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
         except IndexError:
@@ -347,7 +361,8 @@ class BestPhotos:
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True
-            logging.exception("get_instagram_photos: ERR-00008 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            else:
+                logging.exception("get_instagram_photos: ERR-00008 Instagram API Error %s : %s" % (e.status_code, e.error_message))
         except InstagramClientError as e:
             logging.exception("get_instagram_photos: ERR-00009 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
             raise
@@ -533,7 +548,8 @@ class BestFollowers():
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True
-            logging.exception("get_best_instagram_followers: ERR-00050 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            else:
+                logging.exception("get_best_instagram_followers: ERR-00050 Instagram API Error %s : %s" % (e.status_code, e.error_message))
         except InstagramClientError as e:
             logging.exception("get_best_instagram_followers: ERR-00051 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
         except IndexError:
@@ -548,7 +564,10 @@ class BestFollowers():
                     try:
                         l_next_followers, x_next = self.l_instagram_api.api.user_followed_by(with_next_url = x_next)
                     except InstagramAPIError as e:
-                        logging.exception("get_best_instagram_followers: ERR-00054 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+                        if (e.status_code == 400):
+                            l_user_private = True
+                        else:
+                            logging.exception("get_best_instagram_followers: ERR-00050 Instagram API Error %s : %s" % (e.status_code, e.error_message))
                     except InstagramClientError as e:
                         logging.exception("get_best_instagram_followers: ERR-00055 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
                     except IndexError:
@@ -583,7 +602,8 @@ class BestFollowers():
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True
-            logging.exception("get_best_instagram_followers: ERR-00050 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            else:
+                logging.exception("get_best_instagram_followers: ERR-00050 Instagram API Error %s : %s" % (e.status_code, e.error_message))
         except InstagramClientError as e:
             logging.exception("get_best_instagram_followers: ERR-00051 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
         except IndexError:
@@ -621,10 +641,12 @@ class BestFollowers():
                 try:
                     l_user_data = self.l_instagram_api.api.user(follower.id)
                 except InstagramAPIError as e:
-                    logging.exception("get_best_instagram_followers: ERR-00058 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+
                     if (e.status_code == 400):
                         l_user_private = True
                         self.l_private_followers += 1
+                    else:
+                        logging.debug("get_best_instagram_followers: ERR-00058 Instagram API Error %s : %s" % (e.status_code, e.error_message))
                 except InstagramClientError as e:
                     logging.exception("get_best_instagram_followers: ERR-00059 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
                 except IndexError:
@@ -731,7 +753,8 @@ class BestFollowings():
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True
-            logging.exception("get_instagram_followings: ERR-00060 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            else:
+                logging.exception("get_instagram_followings: ERR-00060 Instagram API Error %s : %s" % (e.status_code, e.error_message))
         except InstagramClientError as e:
             logging.exception("get_instagram_followings: ERR-00061 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
         except IndexError:
@@ -781,7 +804,8 @@ class BestFollowings():
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True
-            logging.exception("get_best_instagram_followings: ERR-00060 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            else:
+                logging.exception("get_best_instagram_followings: ERR-00060 Instagram API Error %s : %s" % (e.status_code, e.error_message))
         except InstagramClientError as e:
             logging.exception("get_best_instagram_followings: ERR-00061 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
         except IndexError:
@@ -820,10 +844,12 @@ class BestFollowings():
                 try:
                     l_user_data = self.l_instagram_api.api.user(following.id)
                 except InstagramAPIError as e:
-                    logging.exception("get_best_instagram_followings: ERR-00068 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+
                     if (e.status_code == 400):
                         l_user_private = True
                         self.l_private_followings += 1
+                    else:
+                        logging.exception("get_best_instagram_followings: ERR-00068 Instagram API Error %s : %s" % (e.status_code, e.error_message))
                 except InstagramClientError as e:
                     logging.exception("get_best_instagram_followings: ERR-00069 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
                 except IndexError:
@@ -1925,7 +1951,8 @@ class SmartFeedHelper():
         except InstagramAPIError as e:
             if (e.status_code == 400):
                 l_user_private = True            # @UnusedVariable
-            logging.exception("get_instagram_user: ERR-00040 Instagram API Error %s : %s" % (e.status_code, e.error_message))
+            else:
+                logging.exception("get_instagram_user: ERR-00040 Instagram API Error %s : %s" % (e.status_code, e.error_message))
         except InstagramClientError as e:
             logging.exception("get_instagram_user: ERR-00041 Instagram Client Error %s : %s" % (e.status_code, e.error_message))
         except IndexError:
