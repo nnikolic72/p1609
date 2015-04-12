@@ -413,7 +413,10 @@ class BestPhotos:
         p_media - Instagram API media object - list of Instagram photos of the user
         '''
         l_polynomial_result = None
-        l_max_days, l_min_days, l_max_likes, l_min_likes = None
+        l_max_days = None
+        l_min_days = None
+        l_max_likes = None
+        l_min_likes = None
 
         if self.l_user_has_photos and self.l_latest_photos:
             '''Convert Instagram media object to list'''
@@ -1115,6 +1118,7 @@ class InstagramUserAdminUtils():
         self.l_private_followings = 0
         self.l_already_followings = 0
         buf = None
+        ig_session = None
 
         #queryset = queryset.filter(to_be_processed_for_friends=True)
 
@@ -1211,7 +1215,7 @@ class InstagramUserAdminUtils():
                                             l_existing.save()
 
                         else:
-                            buf = "Not enough Instagram API reuqests available (available %s, needed %)" % \
+                            buf = "Not enough Instagram API requests available (available %s, needed %s)" % \
                                   (self.l_instagram_api_limit_start, (l_analyze_n_followers + 50))
                             pass
 
@@ -1400,7 +1404,6 @@ class InstagramUserAdminUtils():
 
                 obj.save()
                 message_best_photos = 'Success'
-
 
             '''Analyze followers of this user for friends'''
             if obj.to_be_processed_for_friends == True:
@@ -1704,6 +1707,7 @@ class InstagramComments():
 
         l_media_comments = None
         l_instagram_thumbnail_url = None
+        l_photo_caption = None
 
         try:
             if self.instagram_session:
