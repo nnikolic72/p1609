@@ -402,10 +402,8 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
     # checking number of comments in the last period
     l_comments_in_last_minute = logged_member.comments_in_last_minute
     l_comments_in_last_minute_interval_start = logged_member.comments_in_last_minute_interval_start
-    if TEST_APP:
-        l_timedelta = timedelta(minutes=+5)
-    else:
-        l_timedelta = timedelta(hours=+1)
+
+    l_timedelta = timedelta(hours=+1)
 
     if l_comments_in_last_minute_interval_start:
         #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
@@ -561,10 +559,7 @@ def like_instagram_picture(req, p_photo_id):
     #Todo check likes per minute
     l_likes_in_last_minute = logged_member.likes_in_last_minute
     l_likes_in_last_minute_interval_start = logged_member.likes_in_last_minute_interval_start
-    if TEST_APP:
-        l_timedelta = timedelta(minutes=+5)
-    else:
-        l_timedelta = timedelta(hours=+1)
+    l_timedelta = timedelta(hours=+1)
 
     if l_likes_in_last_minute_interval_start:
         #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
