@@ -414,7 +414,7 @@ class BestPhotos:
         '''
         l_polynomial_result = None
 
-        if self.l_user_has_photos:
+        if self.l_user_has_photos and self.l_latest_photos:
             '''Convert Instagram media object to list'''
             l_media_list = []
             for x_media in self.l_latest_photos:
