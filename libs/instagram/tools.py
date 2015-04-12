@@ -413,6 +413,7 @@ class BestPhotos:
         p_media - Instagram API media object - list of Instagram photos of the user
         '''
         l_polynomial_result = None
+        l_max_days, l_min_days, l_max_likes, l_min_likes = None
 
         if self.l_user_has_photos and self.l_latest_photos:
             '''Convert Instagram media object to list'''
