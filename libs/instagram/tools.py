@@ -530,7 +530,7 @@ class BestFollowers():
 
             if l_best_photos.l_latest_photos:
                 l_photo = l_best_photos.l_latest_photos[0] # get the last photo
-                l_time_delta = timezone.now() - l_photo.created_time
+                l_time_delta = datetime.today() - l_photo.created_time
 
                 if l_time_delta <= timedelta(days=n):
                     l_is_user_active = True
@@ -734,7 +734,7 @@ class BestFollowings():
 
             if l_best_photos.l_latest_photos:
                 l_photo = l_best_photos.l_latest_photos[0] # get the last photo
-                l_time_delta = timezone.now() - l_photo.created_time
+                l_time_delta = datetime.today() - l_photo.created_time
 
                 if l_time_delta <= timedelta(days=n):
                     l_is_user_active = True
@@ -2003,7 +2003,7 @@ class SmartFeedHelper():
                 l_safety += 1
                 l_author_instagram_id = x_media.user.id
                 l_likes_cnt = x_media.like_count
-                l_time_delta = timezone.now() - x_media.created_time
+                l_time_delta = datetime.today() - x_media.created_time
                 l_days = l_time_delta.days
 
                 if self.date_from and self.date_to:
