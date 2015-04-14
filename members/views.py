@@ -85,15 +85,16 @@ class MemberDashboardView(TemplateView):
             if logged_member.instagram_profile_picture_URL:
                 profile_photo_url = logged_member.instagram_profile_picture_URL
 
-            l_categories = Category.objects.all()
-            l_attributes = Attribute.objects.all()
+
 
         except ObjectDoesNotExist:
             logged_member = None
 
 
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
         # Limit calculation --------------------------------------------------------------
-        logged_member.refresh_api_limits()
+        logged_member.refresh_api_limits(request)
         x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
         x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
@@ -252,6 +253,7 @@ class MemberNewMembershipResultView(TemplateView):
 
     def post(self, request, *args, **kwargs):
 
+        l_membership_end_time = None
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
         l_attributes = Attribute.objects.all()
@@ -292,13 +294,12 @@ class MemberNewMembershipResultView(TemplateView):
                 l_membership_end_time = l_membership_start_time + relativedelta(months=+1)
             if membership_duration == 'YEA':
                 l_membership_end_time = l_membership_start_time + relativedelta(years=+1)
-            if recurring_membership == True:
+            if recurring_membership:
                 l_recurring_membership = True
             else:
                 l_recurring_membership = False
 
             #old_membership = logged_member.membership
-
 
             l_new_membership = Membership(
                 membership_type=membership_type,

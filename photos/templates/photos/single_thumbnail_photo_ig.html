@@ -38,7 +38,7 @@
                 ">
                     <small><span class="glyphicon glyphicon-heart-empty
                     "></span>
-                        <div class="badge">{{ photo.like_count }}</div></small>
+                        <span class="badge">{{ photo.like_count }}</span></small>
                 </button>
             </div>
             <div class="col-xs-2">
@@ -52,7 +52,7 @@
             <div class="col-xs-5">
                 <button class="btn btn-xs btn-default squaresensor-image-button btn-block" onclick="load_instagram_comments('{{ photo.id }}', {{ new_friends_interaction }});">
                     <small><span class="glyphicon glyphicon-comment"></span>
-                        <div class="badge" id="instagram_comments_text_{{ photo.id }}">{{ photo.comment_count }}</div></small>
+                        <span class="badge" id="instagram_comments_text_{{ photo.id }}">{{ photo.comment_count }}</span></small>
                 </button>
             </div>
         </div>

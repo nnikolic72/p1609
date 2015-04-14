@@ -24,7 +24,8 @@ from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, Inst
 from dajaxice.decorators import dajaxice_register
 
 from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED, TEST_APP, INSTAGRAM_LIKES_PER_HOUR_LIMIT, \
-    INSTAGRAM_COMMENTS_PER_HOUR_LIMIT, TEST_APP_LIKE_PER_PERIOD_LIMIT, TEST_APP_COMMENT_PER_PERIOD_LIMIT
+    INSTAGRAM_COMMENTS_PER_HOUR_LIMIT, TEST_APP_LIKE_PER_PERIOD_LIMIT, TEST_APP_COMMENT_PER_PERIOD_LIMIT, \
+    INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS
 
 __author__ = 'n.nikolic'
 
@@ -403,7 +404,7 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
     l_comments_in_last_minute = logged_member.comments_in_last_minute
     l_comments_in_last_minute_interval_start = logged_member.comments_in_last_minute_interval_start
 
-    l_timedelta = timedelta(hours=+1)
+    l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
 
     if l_comments_in_last_minute_interval_start:
         #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
@@ -559,7 +560,7 @@ def like_instagram_picture(req, p_photo_id):
     #Todo check likes per minute
     l_likes_in_last_minute = logged_member.likes_in_last_minute
     l_likes_in_last_minute_interval_start = logged_member.likes_in_last_minute_interval_start
-    l_timedelta = timedelta(hours=+1)
+    l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
 
     if l_likes_in_last_minute_interval_start:
         #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)

@@ -295,6 +295,7 @@ TEST_APP_COMMENT_PER_PERIOD_LIMIT = 60
 #Instgram limits for signed calls
 INSTAGRAM_LIKES_PER_HOUR_LIMIT = 60
 INSTAGRAM_COMMENTS_PER_HOUR_LIMIT = 60
+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS = 1  # when Instagram resets their limits
 
 # APP settings: inpiring users
 INSPIRING_USERS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find

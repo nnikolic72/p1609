@@ -17,7 +17,7 @@ from squaresensor.settings.base import TEST_APP, TEST_APP_FRIENDS_TR_ANALYZE_N_F
     FOLLOWINGS_TR_ANALYZE_N_FOLLOWINGS, TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS, INSPIRING_USERS_FIND_TOP_N_PHOTOS, \
     INSPIRING_USERS_SEARCH_N_PHOTOS, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS, MEMBERS_FIND_TOP_N_PHOTOS, \
     MEMBERS_SEARCH_N_PHOTOS, FOLLOWINGS_FIND_TOP_N_PHOTOS, FOLLOWINGS_SEARCH_N_PHOTOS, INSTAGRAM_API_THRESHOLD, \
-    INSTAGRAM_CLIENT_SECRET
+    INSTAGRAM_CLIENT_SECRET, INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS
 
 __author__ = 'n.nikolic'
 from sys import exc_info
@@ -421,7 +421,7 @@ class BestPhotos:
             '''Convert Instagram media object to list'''
             l_media_list = []
             for x_media in self.l_latest_photos:
-                l_time_delta = timezone.now() - x_media.created_time
+                l_time_delta = datetime.today() - x_media.created_time
                 l_media_list.append([x_media.id, x_media.like_count,
                                      x_media.comment_count,
                                      l_time_delta.days,
@@ -2090,10 +2090,7 @@ def update_member_limits_f(req, logged_member):
         l_likes_in_last_minute_interval_start = logged_member.likes_in_last_minute_interval_start
         l_comments_in_last_minute_interval_start = logged_member.comments_in_last_minute_interval_start
 
-        if TEST_APP:
-            l_timedelta = timedelta(minutes=+5)
-        else:
-            l_timedelta = timedelta(hours=+1)
+        l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
 
         if l_likes_in_last_minute_interval_start:
             l_diff = timezone.now() - l_likes_in_last_minute_interval_start
