@@ -11,6 +11,8 @@ from libs.instagram.tools import InstagramUserAdminUtils, InstagramSession
 from models import InspiringUser, InspiringUserRaw, Follower, Following, NewFriendContactedByMember
 from photos.models import Photo
 
+from .tasks import process_instagram_user
+
 
 class CategoryInspiringUserInlineAdmin(admin.TabularInline):
     model = InspiringUser.categories.through
@@ -18,6 +20,7 @@ class CategoryInspiringUserInlineAdmin(admin.TabularInline):
 
 class AttributeInspiringUserInlineAdmin(admin.TabularInline):
     model = InspiringUser.attributes.through
+
 
 # Register your models here.
 class InspiringUserAdmin(admin.ModelAdmin):
@@ -27,14 +30,15 @@ class InspiringUserAdmin(admin.ModelAdmin):
         '''Action -> Do what is needed to process a GoodUser with Instagram API
            Process only users that are marked to be processed -> to_be_processed==True
         '''
-
-        instagram_utils = InstagramUserAdminUtils()
-        buf = instagram_utils.process_instagram_user(request, queryset)
-
+        buf = 'Finished.'
+        #instagram_utils = InstagramUserAdminUtils()
+        inspirig_users_id_list = []
+        for inspiring_user in queryset:
+            inspirig_users_id_list.extend([inspiring_user.instagram_user_id])
+        process_instagram_user.delay(None, inspirig_users_id_list)
 
         self.message_user(request, buf)
     process_inspiringuser.short_description = 'Process Inspiring User by Instagram API'
-
 
     def set_inspiringusers_process_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
@@ -46,7 +50,6 @@ class InspiringUserAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_inspiringusers_process_true.short_description = 'Set "To Be Processed for basic info" to "Yes"'
 
-
     def set_inspiringusers_process_false(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to False.
            Process only GoodUsers that have flag to_be_processed set to True.
@@ -56,9 +59,6 @@ class InspiringUserAdmin(admin.ModelAdmin):
         message = admin_utils.set_instagram_users_process_true(request, queryset)
         self.message_user(request, message)
     set_inspiringusers_process_false.short_description = 'Set "To Be Processed for basic info" to "No"'
-
-
-
 
     def set_inspiringusers_process_photos_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
@@ -70,7 +70,6 @@ class InspiringUserAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_inspiringusers_process_photos_true.short_description = 'Set "To Be Processed for photos" to "Yes"'
 
-
     def set_inspiringusers_process_photos_false(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to False.
            Process only GoodUsers that have flag to_be_processed set to True.
@@ -81,8 +80,6 @@ class InspiringUserAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_inspiringusers_process_photos_false.short_description = 'Set "To Be Processed for photos" to "No"'
 
-
-
     def set_inspiringusers_process_friends_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
            Process only GoodUsers that have flag to_be_processed set to False.
@@ -92,7 +89,6 @@ class InspiringUserAdmin(admin.ModelAdmin):
         message = admin_utils.set_instagram_users_process_friends_true(request, queryset)
         self.message_user(request, message)
     set_inspiringusers_process_friends_true.short_description = 'Set "To Be Processed for Friends" to "Yes"'
-
 
     def set_inspiringusers_process_friends_false(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to False.
@@ -268,6 +264,7 @@ class InspiringUserRawAdmin(ImportExportModelAdmin):
 
         for inspiring_user in queryset:
             l_process = True
+            l_inspiring_user = None
 
             try:
                 l_inspiring_user = InspiringUser.objects.get(instagram_user_name=inspiring_user.instagram_user_name)
@@ -311,7 +308,7 @@ class InspiringUserRawAdmin(ImportExportModelAdmin):
                                     ig_admin_utils = InstagramUserAdminUtils()
                                     ig_admin_utils.process_instagram_user(request, q)
                                     l_photos_queryset = Photo.objects.filter(inspiring_user_id=l_inspiring_user_new)
-                                    if (l_photos_queryset.count() > 0):
+                                    if l_photos_queryset.count() > 0:
                                         ig_admin_utils.process_photos_by_instagram_api(request, l_photos_queryset)
                             except:
                                 l_errors += 1

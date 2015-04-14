@@ -71,5 +71,10 @@ File must be saved in encoding "UTF-8 without BOM"
 4369 (epmd), 25672 (Erlang distribution)
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
+// Starting Celery
+celery -A squaresensor worker -l info
+// Starting Celery on Heroku as a worker
+worker: celery -A squaresensor worker -l info
+
 // Group
 Inspiring User Editor

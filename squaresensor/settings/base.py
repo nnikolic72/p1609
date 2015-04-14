@@ -106,6 +106,17 @@ if not BROKER_URL:
         BROKER_URL = None
 
 try:
+    CELERY_RESULT_BACKEND = os.environ['CELERY_RESULT_BACKEND']
+except:
+    CELERY_RESULT_BACKEND = None
+if not BROKER_URL:
+    try:
+        CELERY_RESULT_BACKEND = config.get('rabbitmq', 'CELERY_RESULT_BACKEND')
+    except:
+        CELERY_RESULT_BACKEND = None
+
+
+try:
     IS_APP_LIVE = environ.get('IS_APP_LIVE')
 except:
     IS_APP_LIVE = None
