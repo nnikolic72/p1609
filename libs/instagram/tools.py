@@ -92,8 +92,7 @@ class InstagramSession():
         except:
             logging.exception("init_instagram_API: ERR-00003 Unexpected error: ")
             raise
-            #self.message_user(request, buf, level=messages.ERROR)
-
+            # self.message_user(request, buf, level=messages.ERROR)
 
     def is_instagram_user_valid(self, p_gooduser_name):
         '''Check if you can find Instagram user'''
@@ -422,7 +421,7 @@ class BestPhotos:
             '''Convert Instagram media object to list'''
             l_media_list = []
             for x_media in self.l_latest_photos:
-                l_time_delta = datetime.today() - x_media.created_time
+                l_time_delta = timezone.now() - x_media.created_time
                 l_media_list.append([x_media.id, x_media.like_count,
                                      x_media.comment_count,
                                      l_time_delta.days,
@@ -531,7 +530,7 @@ class BestFollowers():
 
             if l_best_photos.l_latest_photos:
                 l_photo = l_best_photos.l_latest_photos[0] # get the last photo
-                l_time_delta = datetime.today() - l_photo.created_time
+                l_time_delta = timezone.now() - l_photo.created_time
 
                 if l_time_delta <= timedelta(days=n):
                     l_is_user_active = True
@@ -659,7 +658,7 @@ class BestFollowers():
                     logging.debug("get_best_instagram_followers: ERR-00061 Unexpected error: %s" % (exc_info()[0]))
                     raise
 
-                if (not l_user_private):
+                if not l_user_private:
                     l_friends_media_count = l_user_data.counts[u'media']
                     l_friends_followings = l_user_data.counts[u'follows']
                     l_friends_followers = l_user_data.counts[u'followed_by']
@@ -735,7 +734,7 @@ class BestFollowings():
 
             if l_best_photos.l_latest_photos:
                 l_photo = l_best_photos.l_latest_photos[0] # get the last photo
-                l_time_delta = datetime.today() - l_photo.created_time
+                l_time_delta = timezone.now() - l_photo.created_time
 
                 if l_time_delta <= timedelta(days=n):
                     l_is_user_active = True
@@ -1268,9 +1267,7 @@ class InstagramUserAdminUtils():
             p_instagram_user.instagram_user_name_valid = False
             buf = "analyze_gooduser: ERR-00008 Could not find user %s on Instagram." % (p_instagram_user.instagram_user_name)
 
-
         return p_instagram_user, buf
-
 
     def process_instagram_user(self, request, queryset):
         '''Do what is needed to process a Instagram User with Instagram API
@@ -1312,7 +1309,7 @@ class InstagramUserAdminUtils():
                 '''get Instagram user data'''
                 obj, message_basic_info = self.analyze_instagram_user(ig_session, obj)
                 l_counter_for_basic_info += 1
-                obj.last_processed_for_basic_info_date = datetime.today()
+                obj.last_processed_for_basic_info_date = timezone.now()
                 obj.save()
 
             '''Analyze photos of this user'''
@@ -1355,7 +1352,7 @@ class InstagramUserAdminUtils():
                         obj.poly_order = 2
                     l_top_photos = l_best_photos.top_photos_list
                     obj.times_processed_for_photos = obj.times_processed_for_photos + 1
-                    obj.last_processed_for_photos_date = datetime.today()
+                    obj.last_processed_for_photos_date = timezone.now()
                 obj.save()
 
                 '''Delete old best photos for this user'''
@@ -1410,7 +1407,7 @@ class InstagramUserAdminUtils():
                 message_find_friends = self.analyze_instagram_user_find_friends(request, obj)
                 obj.to_be_processed_for_friends = False
                 obj.times_processed_for_friends = obj.times_processed_for_friends + 1
-                obj.last_processed_for_friends_date = datetime.today()
+                obj.last_processed_for_friends_date = timezone.now()
                 obj.save()
                 l_counter_for_friends += 1
 
@@ -1420,7 +1417,7 @@ class InstagramUserAdminUtils():
                 l_counter_for_followings += 1
                 obj.times_processed_for_followings = obj.times_processed_for_followings + 1
                 obj.to_be_processed_for_followings = False
-                obj.last_processed_for_followings_date = datetime.today()
+                obj.last_processed_for_followings_date = timezone.now()
                 obj.save()
                 #message_followings = 'Success'
                 pass
@@ -1764,6 +1761,7 @@ class InstagramComments():
         return l_return
 
     def get_comments_count(self):
+        l_comment_count = None
         try:
             self.l_instagram_media = self.instagram_session.api.media(media_id=self.instagram_photo_id)
             l_comment_count = self.l_instagram_media.comment_count
@@ -2005,7 +2003,7 @@ class SmartFeedHelper():
                 l_safety += 1
                 l_author_instagram_id = x_media.user.id
                 l_likes_cnt = x_media.like_count
-                l_time_delta = datetime.today() - x_media.created_time
+                l_time_delta = timezone.now() - x_media.created_time
                 l_days = l_time_delta.days
 
                 if self.date_from and self.date_to:
