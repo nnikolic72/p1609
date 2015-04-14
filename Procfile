@@ -1,1 +1,1 @@
-web: gunicorn squaresensor.wsgi --timeout=120 --log-file -
+web: gunicorn squaresensor.wsgi --timeout=240 --log-file -
