@@ -10,14 +10,20 @@
     </div>
     <div class="col-xs-12 col-sm-3">
         <form action="{% url 'instagramuser:alltimebest' p_username=inspiring_user.instagram_user.instagram_user_name p_mode='view' %}">
-            <button type="submit" class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+            <button type="submit"
+                    id="alltimebest_{{ inspiring_user.instagram_user.instagram_user_name }}"
+                    onclick="display_ajax_img('alltimebest_{{ inspiring_user.instagram_user.instagram_user_name }}', '{{ STATIC_URL }}')"
+                    class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
                 {% trans 'Best Photos' %}
             </button>
         </form>
     </div>
     <div class="col-xs-12 col-sm-3">
         <form action="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user.instagram_user_name %}" method="get">
-            <button type="submit" class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+            <button type="submit"
+                    id="recentbest_{{ inspiring_user.instagram_user.instagram_user_name }}"
+                    onclick="display_ajax_img('recentbest_{{ inspiring_user.instagram_user.instagram_user_name }}', '{{ STATIC_URL }}')"
+                    class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
                 {% trans 'Recent Best' %}
             </button>
         </form>

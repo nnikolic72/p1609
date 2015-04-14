@@ -2,16 +2,17 @@
 {% load static %}
 
 <div class="col-xs-12 col-sm-6">
-    <div class="panel panel-heading">
-        <div align="center">
-            {% if photo.instagram_low_resolution_URL %}
-            <img class="img-responsive img-thumbnail" src="{{ photo.instagram_low_resolution_URL }}"
-                 title="{{ photo.photo_rating }}">
-            {% endif %}
+    <div class="container-fluid squaresensor-image-panel-body">
+        <div class="row">
+            <div align="center">
+                {% if photo.instagram_low_resolution_URL %}
+                    <img class="img-responsive img-thumbnail" src="{{ photo.instagram_low_resolution_URL }}"
+                         title="{{ photo.photo_rating }}">
+                {% endif %}
+            </div>
         </div>
 
-
-        <div class="panel panel-body squaresensor-image-panel-body">
+        <div class="row">
 
             <div class="col-xs-4 text-left">
                 <button id="like_button_{{ photo.instagram_photo_id }}"
@@ -110,7 +111,7 @@
         <div class="modal-content">
             <div class="container-fluid">
                 <div id="myModal_comments_text_{{ photo.instagram_photo_id }}">
-<p>Komentari</p>
+                    <p>Komentari</p>
                 </div>
             </div>
         </div>
