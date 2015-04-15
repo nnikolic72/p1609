@@ -192,7 +192,7 @@ function add_response_username(p_username, p_photo_id) {
 
 
 function load_instagram_commenter_comments_callback(data) {
-    alert('load_instagram_commenter_comments_callback');
+    //alert('load_instagram_commenter_comments_callback');
     var p_photo_id = data.p_photo_id;
     var html_text = data.html_text;
     //var p_new_friends_interaction = data.p_new_friends_interaction;
