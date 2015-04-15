@@ -10,7 +10,8 @@ from .views import (
     MemberMyAccountView,
     MemberNewMembershipView,
     MemberNewMembershipResultView,
-    MemberNewFriendsResponseView
+    MemberNewFriendsResponseView,
+    CommenterIndexView
 )
 
 
@@ -20,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^disabled/$', MemberDisabledView.as_view(), name='disabled'),
     url(r'^logout/$', login_required(MemberLogoutView.as_view()), name='logout'),
     url(r'^account/$', login_required(MemberMyAccountView.as_view()), name='my_account'),
+    url(r'^commenter/$', login_required(CommenterIndexView.as_view()), name='commenter_index'),
     url(r'^new-membership/$', login_required(MemberNewMembershipView.as_view()), name='new_membership'),
     url(r'^new-membership-result/$', login_required(MemberNewMembershipResultView.as_view()), name='new_membership_result'),
     url(r'^new-friends-response/$', login_required(MemberNewFriendsResponseView.as_view()), name='new_friends_response'),

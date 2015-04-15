@@ -354,11 +354,14 @@ class BestPhotos:
         Nothing
         '''
         recent_media = None
+        media_feed = None
+        x_next = None
         l_user_private = False
+
         try:
             recent_media, x_next = self.instagram_session.api.user_recent_media(user_id=self.l_instgram_user_id)
         except InstagramAPIError as e:
-            if (e.status_code == 400):
+            if e.status_code == 400:
                 l_user_private = True
             else:
                 logging.exception("get_instagram_photos: ERR-00008 Instagram API Error %s : %s" % (e.status_code, e.error_message))
@@ -402,7 +405,6 @@ class BestPhotos:
             self.l_latest_photos = recent_media
         else:
             self.l_user_has_photos = None
-
 
     def get_top_photos(self):
         '''Using linear regression find top photos in media pool of Instagram UserWarning
@@ -484,9 +486,23 @@ class BestPhotos:
 
         return l_polynomial_result, l_max_days, l_min_days, l_max_likes, l_min_likes
 
+    def get_unanswered_author_comments(self, p_author_instagram_user_id):
+        """
+        Returns a list of lists consisting of comment author name and comment caption
+        processed for emoji
+        :param p_author_instagram_user_id:
+        :type p_author_instagram_user_id:
+        :param p_instagram_photo_id:
+        :type p_instagram_photo_id:
+        :return:
+        :rtype:
+        """
+
+
+
 
 class BestFollowers():
-    '''Class for finding the best Instagram followers - Friends
+    """Class for finding the best Instagram followers - Friends
 
         Configuration for searching new friends:
         FRIENDS_TR_ANALYZE_N_FRIENDS
@@ -499,7 +515,7 @@ class BestFollowers():
         FRIENDS_TR_MAX_FOLLOWERS
         FRIENDS_TR_MIN_FF_RATIO
         FRIENDS_TR_MAX_FF_RATIO
-    '''
+    """
     l_instgram_user_id = None
     l_analyze_n_photos = None
     l_instagram_api = None
@@ -741,12 +757,12 @@ class BestFollowings():
 
         return l_is_user_active
 
-
     def get_instagram_followings(self):
         """
         Returns instagram followings for instagram user l_instgram_user_id
         """
         l_instagram_followings = None
+        l_next_followings = None
         l_user_private = False
 
         try:
@@ -788,9 +804,8 @@ class BestFollowings():
 
         return l_instagram_followings
 
-
     def get_best_instagram_followings(self):
-        '''Analyze followers and find the best ones'''
+        """Analyze followers and find the best ones"""
 
         l_instagram_followings = []
         l_best_instagram_followings = []
@@ -1270,9 +1285,9 @@ class InstagramUserAdminUtils():
         return p_instagram_user, buf
 
     def process_instagram_user(self, request, queryset):
-        '''Do what is needed to process a Instagram User with Instagram API
+        """Do what is needed to process a Instagram User with Instagram API
            Process only users that are marked to be processed -> to_be_processed==True
-        '''
+        """
 
         queryset = queryset.filter(
             Q(to_be_processed_for_basic_info=True) | \
@@ -1805,7 +1820,7 @@ class InstagramComments():
             for x_word in l_comment_words:
                 if x_word[0] == '#':
                     # this is hashtag - replace with our hashtag link
-                    l_hashtag_text= x_word[1:]
+                    l_hashtag_text = x_word[1:]
                     if len(l_hashtag_text)<0:
                         x_word = '<a href="%s">%s</a>' % \
                                  (reverse('hashtags:hashtag_name', kwargs={'p_hashtag_name':l_hashtag_text}),
@@ -1813,7 +1828,7 @@ class InstagramComments():
                                  )
                 if x_word[0] == '@':
                     # this is user - replace with our user link
-                    l_username_text= x_word[1:]
+                    l_username_text = x_word[1:]
                     l_username_text = l_username_text.strip(" .!#$%^&*()+=,;'"":/?")
                     try:
                         l_inspiring_user = InspiringUser.objects.get(instagram_user_name=l_username_text)
@@ -1918,6 +1933,61 @@ class InstagramComments():
                 l_new_resulting_list.append(x)
 
         return l_new_resulting_list
+
+    def get_unanswered_comments(self, p_instagram_user_id):
+        """
+        Returns list of photos with unanswered comments
+        p_instagram_user_id - photo owner id
+        """
+
+        l_media_comments, foo1, foo2 = self.get_all_comments()
+
+        l_unanswered_comments_list = []
+        l_order = 0
+        l_unanswered_comments_and_posts = []
+
+        #First scan all non owner comments
+        for comment in l_media_comments:
+            l_order += 1
+            #check if comment is from owner of post
+            l_is_owners_comment = False
+            if comment.user.id == p_instagram_user_id:
+                l_is_owners_comment = True
+                continue
+
+            l_unanswered_comments_and_posts.append([l_order, comment])
+
+        l_return_unanswered_comments = []
+        for unanswered_comment in l_unanswered_comments_and_posts:
+            # check if some next comment contains reference to unanswered comment owner
+            # if it does - it is answered
+
+            l_order = 0
+            is_answered = False
+            for comment in l_media_comments:
+                l_order += 1
+
+                if l_order <= unanswered_comment[0]:
+                    continue
+
+                # we found later comment
+                # check if it is owner's
+                if comment.user.id == p_instagram_user_id:
+                    # it is owner's comment - check if it contains any reference to unanswered comment's username
+                    # if it does - we consider the comment answered
+                    l_comment_words = comment.text.split()
+                    for x_word in l_comment_words:
+                        if x_word[0] == '@':
+                            l_username_text = x_word[1:]
+                            l_username_text = l_username_text.strip(" .!#$%^&*()+=,;'"":/?")
+                            if l_username_text == unanswered_comment[1].user.username:
+                                is_answered = True
+                                break
+
+            if not is_answered:
+                l_return_unanswered_comments.extend([unanswered_comment])
+
+        return l_return_unanswered_comments
 
 
 class SmartFeedHelper():

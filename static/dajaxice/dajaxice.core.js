@@ -30,20 +30,28 @@ var Dajaxice = {
     
     photos: {
     
-    load_instagram_comments: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('photos.load_instagram_comments', 'POST', callback_function, argv, custom_settings);
+    load_instagram_commenter_comments: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.load_instagram_commenter_comments', 'POST', callback_function, argv, custom_settings);
+    },
+
+    send_instagram_commenter_comment: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.send_instagram_commenter_comment', 'POST', callback_function, argv, custom_settings);
+    },
+
+    send_instagram_comment: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.send_instagram_comment', 'POST', callback_function, argv, custom_settings);
     },
 
     save_attributes_and_categories: function(callback_function, argv, custom_settings){
         return Dajaxice.call('photos.save_attributes_and_categories', 'POST', callback_function, argv, custom_settings);
     },
 
-    like_instagram_picture: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('photos.like_instagram_picture', 'POST', callback_function, argv, custom_settings);
+    load_instagram_comments: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.load_instagram_comments', 'POST', callback_function, argv, custom_settings);
     },
 
-    send_instagram_comment: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('photos.send_instagram_comment', 'POST', callback_function, argv, custom_settings);
+    like_instagram_picture: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.like_instagram_picture', 'POST', callback_function, argv, custom_settings);
     }
 
 

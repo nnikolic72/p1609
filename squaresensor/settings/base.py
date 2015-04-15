@@ -269,8 +269,6 @@ STATICFILES_FINDERS = (
 
 STATIC_URL = '/static/'
 
-
-
 IGNORABLE_404_URLS = (
     re.compile(r'^/apple-touch-icon.*\.png$'),
     re.compile(r'^/favicon\.ico$'),
@@ -308,6 +306,10 @@ TEST_APP_COMMENT_PER_PERIOD_LIMIT = 60
 INSTAGRAM_LIKES_PER_HOUR_LIMIT = 60
 INSTAGRAM_COMMENTS_PER_HOUR_LIMIT = 60
 INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS = 1  # when Instagram resets their limits
+
+#Commenting parameters
+COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT = 10
+COMMENTER_NO_OF_PICS_MEMBER_LIMIT = 50
 
 # APP settings: inpiring users
 INSPIRING_USERS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find

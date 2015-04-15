@@ -100,8 +100,6 @@ class InspiringUserAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_inspiringusers_process_friends_false.short_description = 'Set "To Be Processed for Friends" to "No"'
 
-
-
     def set_inspiringusers_process_followings_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
            Process only GoodUsers that have flag to_be_processed set to False.
@@ -111,7 +109,6 @@ class InspiringUserAdmin(admin.ModelAdmin):
         message = admin_utils.set_instagram_users_process_friends_true(request, queryset)
         self.message_user(request, message)
     set_inspiringusers_process_followings_true.short_description = 'Set "To Be Processed for Friends" to "Yes"'
-
 
     def set_inspiringusers_process_followings_false(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to False.
@@ -174,7 +171,6 @@ class InspiringUserAdmin(admin.ModelAdmin):
                set_inspiringusers_process_followings_false,
                set_inspiringusers_process_followings_true,
     )
-
 
     '''Determine what is dispalayed on GoodUser Admin Edit form'''
     fieldsets = [

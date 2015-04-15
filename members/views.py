@@ -14,12 +14,14 @@ from social_auth.db.django_models import UserSocialAuth
 from attributes.models import Attribute
 from categories.models import Category
 from instagramuser.models import Follower, NewFriendContactedByMember
-from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, update_member_limits_f, BestFollowers
+from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, update_member_limits_f, BestFollowers, \
+    BestPhotos, InstagramComments
 from .forms import MembershipForm
 
 
 from .models import Member, Membership
-from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS
+from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
+    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT
 
 
 class MemberHomePageView(TemplateView):
@@ -407,6 +409,92 @@ class MemberNewFriendsResponseView(TemplateView):
                           new_friends_since_last_check=l_new_friends_since_last_check,
                           total_new_squaresensor_friends=l_total_new_squaresensor_friends,
 
+
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )
+
+
+class CommenterIndexView(TemplateView):
+
+    template_name = 'members/commenter-index.html'
+
+    def get(self, request, *args, **kwargs):
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+        # END Common for all members views ===============================================
+
+        l_token = logged_member.get_member_token(request)
+        instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+        instagram_session.init_instagram_API()
+
+        if logged_member.is_monthly_member or logged_member.is_yearly_member:
+            l_search_photos_amount = COMMENTER_NO_OF_PICS_MEMBER_LIMIT
+        else:
+            l_search_photos_amount = COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT
+
+        l_member_photos_obj = BestPhotos(
+            instgram_user_id=logged_member.instagram_user_id,
+            top_n_photos=None,
+            search_photos_amount=l_search_photos_amount,
+            instagram_api=instagram_session
+        )
+        l_member_photos_obj.get_instagram_photos()
+        l_member_latest_photos = l_member_photos_obj.l_latest_photos
+
+        l_unanswered_comments_and_posts_list = []
+        for photo in l_member_latest_photos:
+            if photo.comment_count > 0:
+                l_instagram_comments = InstagramComments(
+                    p_photo_id=photo.id,
+                    p_instagram_session=instagram_session
+                )
+
+                l_unanswered_comments_list = l_instagram_comments.get_unanswered_comments(
+                    logged_member.instagram_user_id
+                )
+
+                l_unanswered_comments_list_length = len(l_unanswered_comments_list)
+
+                if l_unanswered_comments_list_length > 0:
+                    l_unanswered_comments_and_posts_list.append(
+                        [photo.get_thumbnail_url(),
+                         l_unanswered_comments_list,
+                         len(l_unanswered_comments_list),
+                         photo.id
+                        ]
+                    )
+
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
+        return render(request,
+                      self.template_name,
+                      dict(
+                          unanswered_comments_media_list=l_unanswered_comments_and_posts_list,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

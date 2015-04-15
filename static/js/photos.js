@@ -180,3 +180,72 @@ function like_instagram_picture(p_photo_id, p_static_url) {
         { 'p_photo_id': p_photo_id }
     );
 }
+
+function add_response_username(p_username, p_photo_id) {
+    var textarea_id = '#' + 'response_' + p_photo_id;
+
+    var textarea_value = $(textarea_id).val();
+
+    textarea_value += '@' + p_username + ' ';
+    $(textarea_id).val(textarea_value);
+}
+
+
+function load_instagram_commenter_comments_callback(data) {
+    alert('load_instagram_commenter_comments_callback');
+    var p_photo_id = data.p_photo_id;
+    var html_text = data.html_text;
+    //var p_new_friends_interaction = data.p_new_friends_interaction;
+
+    //alert(html_text);
+    var modal_comment_text_id = '#commenter_comment_block';
+
+    $(modal_comment_text_id).html(html_text);
+    toggler('comments_' + p_photo_id);
+}
+
+function load_instagram_commenter_comments(p_photo_id) {
+    //alert('load_instagram_commenter_comments');
+    //p_new_friends_interaction = typeof p_new_friends_interaction !== 'undefined' ? p_new_friends_interaction : 0;
+
+    Dajaxice.photos.load_instagram_commenter_comments(load_instagram_commenter_comments_callback,
+        {'p_photo_id': p_photo_id}
+    );
+}
+
+function send_instagram_commenter_comment_callback(data) {
+    //alert('send_instagram_commenter_comment_callback');
+    var p_photo_id = data.p_photo_id;
+    var p_photo_author_instagram_id = data.p_photo_author_instagram_id;
+    var comments_per_minute = data.comments_per_minute;
+    var x_limit_pct = data.x_limit_pct.toPrecision(2);
+    var result = data.result;
+
+    if(result=='limit') {
+        //hide_comments_modal(p_photo_id);
+        $('#error-message').html('Comment not sent. You have hit the hourly limit in commenting the posts. Please wait and try again later.');
+        $('#ErrorDialog').modal('show');
+    } else {
+         // Reload comments here
+        load_instagram_commenter_comments(p_photo_id);
+    }
+
+    $('#ctm').html(comments_per_minute);
+    $('#iglu').html(x_limit_pct + ' %');
+
+}
+
+function send_instagram_commenter_comment(p_photo_id, p_static_url) {
+    //alert('send_instagram_commenter_comment ' + p_photo_id);
+    var id_name = '#comment_form_' + p_photo_id;
+    var data = $(id_name).serializeObject();
+
+    var comment_text = $('#response_' + p_photo_id).val();
+    display_ajax_img('send_instagram_commenter_comment_' + p_photo_id, p_static_url);
+
+    //alert('send_instagram_comment ' + data);
+
+    Dajaxice.photos.send_instagram_commenter_comment(send_instagram_commenter_comment_callback,
+        {'form': data, 'p_photo_id': p_photo_id, 'p_comment_text': comment_text}
+    );
+}

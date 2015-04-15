@@ -107,6 +107,14 @@
                         {% trans 'Find Inspiring Artists' %}
                     </button>
                 </form>
+                <form action="{% url 'members:commenter_index' %}" method="get">
+                    <button type="submit"
+                            id="commenter_index"
+                            onclick="display_ajax_img('commenter_index', '{{ STATIC_URL }}')"
+                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                        {% trans 'Commenter' %}
+                    </button>
+                </form>
             </div>
         </div>
     </div>

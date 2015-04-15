@@ -49,6 +49,9 @@ function display_loading_text(p_div_id, p_static_url) {
     $(div_id).html(ajax_img);
 }
 
+function toggler(divId) {
+    $("#" + divId).toggle();
+}
 
 function check_members_limits_callback (data) {
     var x_ratelimit_remaining = data.x_ratelimit_remaining;

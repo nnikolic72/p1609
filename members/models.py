@@ -79,6 +79,24 @@ class Member(InstagramUser):
 
         return l_is_editor
 
+    @property
+    def is_monthly_member(self):
+
+        for membership_i in self.membership.all():
+            if membership_i.active_membership and membership_i.membership_type == 'YEA':
+                return True
+            else:
+                return False
+
+    @property
+    def is_yearly_member(self):
+
+        for membership_i in self.membership.all():
+            if membership_i.active_membership and membership_i.membership_type == 'PRO':
+                return True
+            else:
+                return False
+
     user_type = models.CharField(editable=False, default='member', max_length=50)
 
     categories = models.ManyToManyField(Category, through='MemberBelongsToCategory', null=True, blank=True)

@@ -20,12 +20,12 @@ from instagramuser.models import FollowingBelongsToCategory, FollowerBelongsToCa
 from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
 from photos.models import Photo
 
-from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, InstagramComments, MyLikes
+from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, InstagramComments, MyLikes, BestPhotos
 from dajaxice.decorators import dajaxice_register
 
 from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED, TEST_APP, INSTAGRAM_LIKES_PER_HOUR_LIMIT, \
     INSTAGRAM_COMMENTS_PER_HOUR_LIMIT, TEST_APP_LIKE_PER_PERIOD_LIMIT, TEST_APP_COMMENT_PER_PERIOD_LIMIT, \
-    INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS
+    INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT
 
 __author__ = 'n.nikolic'
 
@@ -353,7 +353,7 @@ def load_instagram_comments(req, p_photo_id, p_new_friends_interaction):
                                      instagram_thumbnail_url=instagram_thumbnail_url,
                                      photo_caption=photo_caption,
                                      p_new_friends_interaction=p_new_friends_interaction
-                                     )
+                                 )
     )
 
     return json.dumps({
@@ -474,7 +474,6 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
             )
             l_new_friend_contacted.save()
 
-
     l_comments_count = l_instagram_comments.get_comments_count()
 
     # Limit calculation --------------------------------------------------------------
@@ -487,8 +486,6 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
         x_limit_pct = 100
     # END Limit calculation ----------------------------------------------------------
     # END Common for all members views ===============================================
-
-
 
     return json.dumps(
         dict(p_photo_id=p_photo_id,
@@ -511,12 +508,8 @@ def like_instagram_picture(req, p_photo_id):
 
     :param req:
     :type req:
-    :param form:
-    :type form:
     :param p_photo_id:
     :type p_photo_id:
-    :param p_inline:
-    :type p_inline:
     :return:
     :rtype:
     """
@@ -537,22 +530,11 @@ def like_instagram_picture(req, p_photo_id):
     ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
     ig_session.init_instagram_API()
 
-    l_my_likes = MyLikes(p_instgram_user = logged_member.instagram_user_name,
-                         p_photo_id = p_photo_id,
-                         p_instagram_api= ig_session)
+    l_my_likes = MyLikes(p_instgram_user=logged_member.instagram_user_name,
+                         p_photo_id=p_photo_id,
+                         p_instagram_api=ig_session)
 
 
-
-    # Limit calculation --------------------------------------------------------------
-    logged_member.refresh_api_limits(req)
-    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
-
-    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
-    if x_ratelimit != 0:
-        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
-    else:
-        x_limit_pct = 100
-    # END Limit calculation ----------------------------------------------------------
     # END Common for all members views ===============================================
     sleep(0.5)
     x, no_of_likes = l_my_likes.has_user_liked_media()
@@ -591,6 +573,17 @@ def like_instagram_picture(req, p_photo_id):
     else:
         result = 'limit'
 
+    # Limit calculation --------------------------------------------------------------
+    logged_member.refresh_api_limits(req)
+    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+    if x_ratelimit != 0:
+        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+    else:
+        x_limit_pct = 100
+    # END Limit calculation ----------------------------------------------------------
+
     return json.dumps(
         dict(p_photo_id=p_photo_id,
              result=result,
@@ -601,4 +594,174 @@ def like_instagram_picture(req, p_photo_id):
              x_limit_pct=x_limit_pct,
              likes_per_minute=l_likes_in_last_minute,
              )
+    )
+
+@dajaxice_register
+def send_instagram_commenter_comment(req, form, p_photo_id, p_comment_text):
+    """
+    Send instagram comment
+    :param req:
+    :param form:
+    :param p_photo_id:
+    :return:
+    """
+
+    l_comments_count = None
+
+    # Common for all members views ===================================================
+    l_categories = Category.objects.all()
+    l_attributes = Attribute.objects.all()
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+        if logged_member.is_editor(req):
+            show_describe_button = True
+    except ObjectDoesNotExist:
+        logged_member = None
+    except:
+        raise HttpResponseNotFound
+
+    tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
+    ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
+    ig_session.init_instagram_API()
+
+    l_instagram_photo = ig_session.get_instagram_photo_info(p_photo_id)
+    l_photo_author_instagram_id = l_instagram_photo.user.id
+
+
+    comment_text = p_comment_text
+
+    # checking number of comments in the last period
+    l_comments_in_last_minute = logged_member.comments_in_last_minute
+    l_comments_in_last_minute_interval_start = logged_member.comments_in_last_minute_interval_start
+
+    l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
+
+    if l_comments_in_last_minute_interval_start:
+        #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
+        l_diff = l_comments_in_last_minute_interval_start - timezone.now()
+        if l_diff > l_timedelta:
+            #hour has passed - reset the counters
+            logged_member.comments_in_last_minute = 0
+            logged_member.comments_in_last_minute_interval_start = timezone.now()
+            logged_member.save()
+            l_comments_in_last_minute = 0
+
+    else:
+        logged_member.comments_in_last_minute = 1
+        logged_member.comments_in_last_minute_interval_start = timezone.now()
+        logged_member.save()
+        l_comments_in_last_minute = 1
+
+    if TEST_APP:
+        l_instagram_comments_per_hour_limit = TEST_APP_COMMENT_PER_PERIOD_LIMIT
+    else:
+        l_instagram_comments_per_hour_limit = INSTAGRAM_COMMENTS_PER_HOUR_LIMIT
+
+    l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
+    if logged_member.comments_in_last_minute < l_instagram_comments_per_hour_limit:
+        if INSTAGRAM_COMMENTS_ALLOWED == '1':
+            l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+            l_comments_in_last_minute += 1
+            logged_member.comments_in_last_minute = l_comments_in_last_minute
+            logged_member.save()
+        else:
+            l_comments_in_last_minute += 1
+            logged_member.comments_in_last_minute = l_comments_in_last_minute
+            logged_member.save()
+            l_result = 'notallowed'
+    else:
+        l_result = 'limit'
+
+    l_comments_count = l_instagram_comments.get_comments_count()
+
+    # Limit calculation --------------------------------------------------------------
+    x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+    x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+    if x_ratelimit != 0:
+        x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+    else:
+        x_limit_pct = 100
+    # END Limit calculation ----------------------------------------------------------
+    # END Common for all members views ===============================================
+
+    return json.dumps(
+        dict(p_photo_id=p_photo_id,
+             p_photo_author_instagram_id=l_photo_author_instagram_id,
+             result=l_result,
+
+             x_ratelimit_remaining=x_ratelimit_remaining,
+             x_ratelimit=x_ratelimit,
+             x_limit_pct=x_limit_pct,
+             comments_per_minute=l_comments_in_last_minute,
+             )
+    )
+
+
+@dajaxice_register
+def load_instagram_commenter_comments(req, p_photo_id):
+
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+        show_describe_button = logged_member.is_editor(req)
+    except ObjectDoesNotExist:
+        logged_member = None
+    except:
+        raise HttpResponseNotFound
+    # END Common for all members views ===============================================
+
+    l_token = logged_member.get_member_token(req)
+    instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+    instagram_session.init_instagram_API()
+
+    if logged_member.is_monthly_member or logged_member.is_yearly_member:
+        l_search_photos_amount = COMMENTER_NO_OF_PICS_MEMBER_LIMIT
+    else:
+        l_search_photos_amount = COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT
+
+    l_member_photos_obj = BestPhotos(
+        instgram_user_id=logged_member.instagram_user_id,
+        top_n_photos=None,
+        search_photos_amount=l_search_photos_amount,
+        instagram_api=instagram_session
+    )
+    l_member_photos_obj.get_instagram_photos()
+    l_member_latest_photos = l_member_photos_obj.l_latest_photos
+
+    l_unanswered_comments_and_posts_list = []
+    for photo in l_member_latest_photos:
+        if photo.comment_count > 0:
+            l_instagram_comments = InstagramComments(
+                p_photo_id=photo.id,
+                p_instagram_session=instagram_session
+            )
+
+            l_unanswered_comments_list = l_instagram_comments.get_unanswered_comments(
+                logged_member.instagram_user_id
+            )
+
+            l_unanswered_comments_list_length = len(l_unanswered_comments_list)
+
+            if l_unanswered_comments_list_length > 0:
+                l_unanswered_comments_and_posts_list.append(
+                    [photo.get_thumbnail_url(),
+                     l_unanswered_comments_list,
+                     len(l_unanswered_comments_list),
+                     photo.id
+                    ]
+                )
+
+
+    html_text = render_to_string('members/commenter-index-ajax.html',
+                                 dict(
+                                     unanswered_comments_media_list=l_unanswered_comments_and_posts_list,
+                                     )
+    )
+
+    return json.dumps({
+        'error': 0,
+        'error_message': '',
+        'html_text': html_text,
+        'p_photo_id': p_photo_id,
+        }
     )
