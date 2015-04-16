@@ -21,9 +21,15 @@
 {% block content %}
     {{ block.super }}
     <div id="commenter_comment_block">
+        {%  if unanswered_comments_media_list %}
         {% for photo in unanswered_comments_media_list %}
             {% include 'photos/commenter_photo_block.html' %}
         {% endfor %}
+    {% else %}
+            <div class="alert alert-info" role="alert">
+                {% trans 'You have no unanswered comments!' %}
+            </div>
+    {% endif %}
     </div>
 
 {% endblock content %}

@@ -33,13 +33,13 @@ function inline_comment_toggler(divId, p_photo_id, p_instagram_user_name, commen
 
 }
 
-function display_ajax_img(p_div_id, p_static_url) {
-    var div_id = '#' + p_div_id;
-    var ajax_img = '<img class="img-responsive center-block" src="' + p_static_url + 'img/ajax_loader-small.gif">';
+//function display_ajax_img(p_div_id, p_static_url) {
+//    var div_id = '#' + p_div_id;
+//    var ajax_img = '<img class="img-responsive center-block" src="' + p_static_url + 'img/ajax_loader-small.gif">';
 
 
-    $(div_id).html(ajax_img);
-}
+//    $(div_id).html(ajax_img);
+//}
 
 function display_loading_text(p_div_id, p_static_url) {
     var div_id = '#' + p_div_id;
@@ -65,6 +65,12 @@ function check_members_limits_callback (data) {
     //$('#iglu').html(x_limit_pct + ' %');
 }
 
+function scroll_to_id(p_id) {
+    var div_id = "#" + p_id;
+    $('html, body').animate({
+        scrollTop: $(div_id).offset().top - 50
+    }, 600);
+}
 
 function check_members_limits() {
     Dajaxice.members.check_members_limits(check_members_limits_callback,

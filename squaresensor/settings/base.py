@@ -96,7 +96,7 @@ if not INSTAGRAM_SECRET_KEY:
 
 # RabbitMQ URI
 try:
-    BROKER_URL = os.environ['RABBITMQ_BIGWIG_URL']
+    BROKER_URL = os.environ['RABBITMQ_BIGWIG_TX_URL']
 except:
     BROKER_URL = None
 if not BROKER_URL:
@@ -106,7 +106,7 @@ if not BROKER_URL:
         BROKER_URL = None
 
 try:
-    CELERY_RESULT_BACKEND = os.environ['RABBITMQ_BIGWIG_URL']
+    CELERY_RESULT_BACKEND = os.environ['RABBITMQ_BIGWIG_RX_URL']
 except:
     CELERY_RESULT_BACKEND = None
 if not BROKER_URL:

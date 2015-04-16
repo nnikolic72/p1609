@@ -22,6 +22,14 @@
         {% dajaxice_js_import %}
         <script src="{{ STATIC_URL }}js/vendor/jquery.ba-serializeobject.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="{{ STATIC_URL }}js/base.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            function display_ajax_img(p_div_id, p_static_url) {
+                var div_id = '#' + p_div_id;
+                var ajax_img = '<img class="img-responsive center-block" src="' + '{{ STATIC_URL }}' + 'img/ajax_loader-small.gif">';
+                $(div_id).html(ajax_img);
+            }
+        </script>
+
     {% endblock script %}
 {% endblock %}
 
@@ -89,19 +97,20 @@
         </div>
     </div>
 
-    <div class="container squaresensor-content-panel">
-    <div class="row">
-        <div class="col-xs-12 col-md-8 squaresensor-sub-panel center-block">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
 
-            <!-- Main content-->
-            {% block content %}
-            {% endblock content %}
-        </div>
+                <!-- Main content-->
+                {% block content %}
+                {% endblock content %}
+            </div>
 
-        <div class="col-xs-12 col-md-4 squaresensor-sub-panel center-block">
-            {% block aside %}
-                <p>Reklame u base.html</p>
-            {% endblock aside %}
+            <div class="col-xs-12">
+                {% block aside %}
+                    <p>Reklame u base.html</p>
+                {% endblock aside %}
+            </div>
         </div>
     </div>
 

@@ -429,9 +429,13 @@ class CommenterIndexView(TemplateView):
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
         l_attributes = Attribute.objects.all()
+        is_monthly_member = None
+        is_yearly_member = None
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member
+            is_yearly_member = logged_member.is_yearly_member
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -495,7 +499,11 @@ class CommenterIndexView(TemplateView):
                       self.template_name,
                       dict(
                           unanswered_comments_media_list=l_unanswered_comments_and_posts_list,
+                          search_photos_amount=l_search_photos_amount,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
+                          membership_allowance=COMMENTER_NO_OF_PICS_MEMBER_LIMIT,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
