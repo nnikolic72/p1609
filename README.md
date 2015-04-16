@@ -19,6 +19,7 @@ heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.test --app square
 heroku config:set DJANGO_SETTINGS_MODULE=squaresensor.settings.prod --app squaresensor-prod
 heroku config:set SECRET_KEY="jdsjdsdhsjdh"
 heroku config:set IS_APP_LIVE=1 --app squaresensor-dev
+heroku config:set IS_PAYMENT_LIVE=1 --app squaresensor-dev
 
 // Needed to set on squaresensor heroku
 heroku config:set CLIENT_ID="" --app squaresensor-dev

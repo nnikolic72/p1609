@@ -150,6 +150,22 @@ class Member(InstagramUser):
     daily_new_friends_interactions_date = models.DateField(null=True, blank=True
     )
 
+    help_first_time_wizard = models.BooleanField(default=True, null=False, blank=False)
+    help_members_dashboard = models.BooleanField(default=True, null=False, blank=False)
+    help_members_commenter = models.BooleanField(default=True, null=False, blank=False)
+    help_photos_modal_comment_section = models.BooleanField(default=True, null=False, blank=False)
+    help_photos_allbest = models.BooleanField(default=True, null=False, blank=False)
+    help_smartfeed_index = models.BooleanField(default=True, null=False, blank=False)
+    help_smartfeed_configure = models.BooleanField(default=True, null=False, blank=False)
+    help_instagramuser_find_new_friends = models.BooleanField(default=True, null=False, blank=False)
+    help_instagramuser_index_inspiring_artists2 = models.BooleanField(default=True, null=False, blank=False)
+    help_categories_index = models.BooleanField(default=True, null=False, blank=False)
+    help_attributes_index = models.BooleanField(default=True, null=False, blank=False)
+    help_reserved1 = models.BooleanField(default=True, null=False, blank=False)
+    help_reserved2 = models.BooleanField(default=True, null=False, blank=False)
+    help_reserved3 = models.BooleanField(default=True, null=False, blank=False)
+    help_reserved4 = models.BooleanField(default=True, null=False, blank=False)
+    help_reserved5 = models.BooleanField(default=True, null=False, blank=False)
 
     class Meta(InstagramUser.Meta):
         ordering = ('django_user__username',)

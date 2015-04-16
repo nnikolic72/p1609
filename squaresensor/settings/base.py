@@ -34,6 +34,18 @@ INSTAGRAM_AUTH_EXTRA_ARGUMENTS = {'scope': 'likes comments relationships'}
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
+try:
+    IS_PAYMENT_LIVE = os.environ['IS_PAYMENT_LIVE']
+except:
+    IS_PAYMENT_LIVE = None
+if not IS_PAYMENT_LIVE:
+    try:
+        IS_PAYMENT_LIVE = config.get('squaresensor', 'IS_PAYMENT_LIVE')
+    except:
+        IS_PAYMENT_LIVE = None
+
+
 try:
     INSTAGRAM_COMMENTS_ALLOWED = os.environ['INSTAGRAM_COMMENTS_ALLOWED']
 except:
@@ -310,6 +322,10 @@ INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS = 1  # when Instagram resets their limit
 #Commenting parameters
 COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT = 10
 COMMENTER_NO_OF_PICS_MEMBER_LIMIT = 50
+
+#Find New Friends parameters
+FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS = 10
+FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS = 50
 
 # APP settings: inpiring users
 INSPIRING_USERS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find

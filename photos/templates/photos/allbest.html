@@ -21,16 +21,24 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
-                <div class="alert alert-success alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h3>{% trans 'Information' %}</h3>
-                    <ul>
-                        <li>{% trans 'This page shows the best posts of Instagram user @' %}{{ photo_owner.instagram_user_name }}</li>
-                        <li>{% trans 'This selection is done by SquareSensor intelligent technology' %}</li>
-                        <li>{% trans 'Selection is not definitive - it is only informative' %}</li>
-                    </ul>
-
-                </div>
+                {% if logged_member.help_photos_allbest == True %}
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3>{% trans 'Information' %}</h3>
+                        <ul>
+                            <li>{% trans 'This page shows the best posts of Instagram user @' %}{{ photo_owner.instagram_user_name }}</li>
+                            <li>{% trans 'This selection is done by SquareSensor intelligent technology' %}</li>
+                            <li>{% trans 'Selection is not definitive - it is only informative' %}</li>
+                        </ul>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                data-dismiss="alert"
+                                aria-label="Close"
+                                onclick="dismiss_help('help_photos_allbest')"
+                                style="margin-top: 20px;"
+                                >{% trans 'Do not show again' %}</button>
+                    </div>
+                {% endif %}
             </div>
             <div class="row">
                 {% if photos %}
@@ -43,9 +51,15 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="row">
-                <div class="col-xs-12 text-center">
-                    <a class="btn btn-default" href="{% url 'instagramuser:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}" >{% trans 'Refresh' %}</a>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-xs-12 col-sm-4 col-sm-offset-4 text-center">
+                    <form class="form" method="get" action="{% url 'instagramuser:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}">
+                        <button type="button" class="btn btn-default btn-block"
+                                id="alltimebest-refresh"
+                                onclick="display_ajax_img('alltimebest-refresh', '{{ STATIC_URL }}')"
+                                >
+                            {% trans 'Refresh' %}</button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -8,10 +8,12 @@ function import_instagram_followings_callback(data) {
 
     //alert('import_instagram_followings_callback ');
     $(instagram_followings_placeholder).html(html_text);
+    $('#import_instagram_followings').button('reset');
 }
 
 function import_instagram_followings(p_instagram_user_id) {
     //alert('import_instagram_followings ' + p_instagram_user_id);
+    $('#import_instagram_followings').button('loading');
 
     Dajaxice.smartfeed.import_instagram_followings(import_instagram_followings_callback,
         {'p_instagram_user_id': p_instagram_user_id}

@@ -23,7 +23,7 @@
     <div class="container-fluid">
         <div class="row">
 
-            <div class="col-xs-12 col-sm-5 text-center well">
+            <div class="col-xs-12 col-sm-4 col-sm-offset-1 text-center well">
                 <h4 class="lead">Purchase Monthly Squaresensor Membership</h4>
                 <h3>Price: 5 EUR</h3>
                 <p class="text-left">Benefits:</p>
@@ -32,14 +32,16 @@
                     <li>{% trans 'Commenter analyzes last 50 posts for unanswered comments instead of 10 in free membership plan.' %}</li>
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
+                {% if is_payment_live == '1' %}
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                     <input type="hidden" name="cmd" value="_s-xclick">
                     <input type="hidden" name="hosted_button_id" value="CQ7K6T55KCY98">
                     <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
                     <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                 </form>
+                {% endif %}
             </div>
-            <div class="col-xs-12 col-sm-5 col-sm-offset-2 text-center well bg-success">
+            <div class="col-xs-12 col-sm-4 col-sm-offset-1 text-center well bg-success">
                 <h4 class="lead">Purchase Yearly Premium Squaresensor Membership</h4>
                 <h3>Price: 50 EUR</h3>
                 <p class="text-left">Benefits:</p>
@@ -49,18 +51,15 @@
                     <li>{% trans 'Commenter analyzes last 50 posts for unanswered comments instead of 10 in free membership plan.' %}</li>
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
+                {% if is_payment_live == '1' %}
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                     <input type="hidden" name="cmd" value="_s-xclick">
                     <input type="hidden" name="hosted_button_id" value="YVUZYTTGC4UF2">
                     <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
                     <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                 </form>
-
+                {% endif %}
             </div>
         </div>
     </div>
 {% endblock content %}
-
-{% block aside %}
-    {{ block.super }}
-{% endblock aside %}

@@ -22,9 +22,15 @@
     {{ block.super }}
     <div class="container-fluid">
         {% include "instagramuser/instagram_user_profile.html" %}
+        {% if photos %}
         {% for photo in photos %}
             {% include 'photos/single_thumbnail_photo_ig.html' %}
         {% endfor %}
+    {% else %}
+            <div class="alert alert-info">
+            <p>{% trans 'No photos available from this user at the moment.' %}</p>
+            </div>
+    {% endif %}
     </div>
 {% endblock content %}
 

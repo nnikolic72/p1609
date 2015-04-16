@@ -79,3 +79,20 @@ function check_members_limits() {
 }
 check_members_limits();
 setInterval(check_members_limits, 60 * 1000); // 60 * 1000 miliseconds
+
+function status_bar_help() {
+    $('#StatusBarHelpDialog').modal('show');
+}
+
+function dismiss_help_callback(data) {
+
+}
+
+function dismiss_help(p_help_name) {
+    //alert('dismiss_help');
+
+    Dajaxice.members.dismiss_help(dismiss_help_callback,
+        {'p_help_name': p_help_name }
+    );
+
+}

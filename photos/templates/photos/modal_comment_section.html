@@ -6,6 +6,7 @@
     <h4 class="modal-title" id="myModalLabel">{% trans 'Comments' %}</h4>
 </div>
 <div class="modal-body">
+    {% if logged_member.help_photos_modal_comment_section == True %}
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4>{% trans 'Comments Information' %}</h4>
@@ -17,7 +18,15 @@
             <li>{% trans 'Please do not spam and be polite! You are interacting with real people.' %}</li>
             <li>{% trans 'Please do not post more than three hashtags in one comment' %}</li>
         </ul>
+        <button type="button"
+                class="btn btn-default btn-sm"
+                data-dismiss="alert"
+                aria-label="Close"
+                onclick="dismiss_help('help_photos_modal_comment_section')"
+                style="margin-top: 20px;"
+                >{% trans 'Do not show again' %}</button>
     </div>
+    {% endif %}
     <div align="center">
         <img class="img-responsive img-thumbnail" src="{{ instagram_thumbnail_url }}">
         <p>{% if photo_caption %}{{ photo_caption }}{% else %}{% trans '[No caption]' %}{% endif %}</p>

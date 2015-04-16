@@ -23,6 +23,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
+                {% if logged_member.help_smartfeed_configure == True %}
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
@@ -62,24 +63,34 @@
                         <li>{% trans 'SquareFollowings levels are changed by clicking on three buttons next to Instagram user name.' %}</li>
                         <li><b>{% trans 'You can change SquareFollowing level at any point on this screen.' %}</b></li>
                     </ul>
+                    <button type="button"
+                            class="btn btn-default btn-sm"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            onclick="dismiss_help('help_smartfeed_configure')"
+                            style="margin-top: 20px;"
+                            >{% trans 'Do not show again' %}</button>
                 </div>
+                {% endif %}
             </div>
         </div>
 
         <div class="row" style="margin-bottom: 20px;">
             <div class="col-xs-12 text-center">
-                <a href="#"><button data-loading-text="Loading..." class="btn btn-success"
+                <button data-loading-text="Loading..."
+                        id="import_instagram_followings"
+                        class="btn btn-success"
                                     onclick="import_instagram_followings('{{ logged_member.instagram_user_id }}')">
                     {% trans 'Import My Instagram Followings' %}
                 </button>
-                </a>
+
             </div>
         </div>
         <div class="row">
             <div id="instagram_followings_placeholder"></div>
         </div>
 
-        <div class="container-fluid">
+        <div class="container-fluid" style="margin-top: 50px;">
             {% if l_squarefollowing_queryset %}
                 <h4 class="text-center">{% trans 'Your SmartFeed Subscriptions' %}</h4>
                 {% for squarefollowing in l_squarefollowing_queryset %}

@@ -90,6 +90,10 @@ var Dajaxice = {
 
     check_members_limits: function(callback_function, argv, custom_settings){
         return Dajaxice.call('members.check_members_limits', 'POST', callback_function, argv, custom_settings);
+    },
+
+    dismiss_help: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.dismiss_help', 'POST', callback_function, argv, custom_settings);
     }
 
 

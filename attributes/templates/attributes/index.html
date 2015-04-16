@@ -22,6 +22,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
+                {% if logged_member.help_attributes_index == True %}
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
@@ -31,7 +32,15 @@
                         <li>{% trans 'Each style name has a number of Inspiring Artists assigned to it.' %}</li>
                         <li>{% trans "Zero by SquareSensor style name means there are no Inspiring Artists currently assigned in this style." %}</li>
                     </ul>
+                    <button type="button"
+                            class="btn btn-default btn-sm"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            onclick="dismiss_help('help_attributes_index')"
+                            style="margin-top: 20px;"
+                            >{% trans 'Do not show again' %}</button>
                 </div>
+                {% endif %}
             </div>
         </div>
         {%  if attributes_list  %}

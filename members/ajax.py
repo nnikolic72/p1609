@@ -171,3 +171,82 @@ def check_members_limits(req):
             comments_in_last_minute=l_comments_in_last_minute,
             )
     )
+
+@dajaxice_register
+def dismiss_help(req, p_help_name):
+
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+        if logged_member.is_editor(req):
+            show_describe_button = True
+    except ObjectDoesNotExist:
+        logged_member = None
+    except:
+        raise HttpResponseNotFound
+
+    if p_help_name == 'help_members_dashboard':
+        logged_member.help_members_dashboard = False
+        logged_member.save()
+
+    if p_help_name == 'help_members_commenter':
+        logged_member.help_members_commenter = False
+        logged_member.save()
+
+    if p_help_name == 'help_photos_modal_comment_section':
+        logged_member.help_photos_modal_comment_section = False
+        logged_member.save()
+
+    if p_help_name == 'help_photos_allbest':
+        logged_member.help_photos_allbest = False
+        logged_member.save()
+
+    if p_help_name == 'help_smartfeed_index':
+        logged_member.help_smartfeed_index = False
+        logged_member.save()
+
+    if p_help_name == 'help_smartfeed_configure':
+        logged_member.help_smartfeed_configure = False
+        logged_member.save()
+
+    if p_help_name == 'help_instagramuser_find_new_friends':
+        logged_member.help_instagramuser_find_new_friends = False
+        logged_member.save()
+
+    if p_help_name == 'help_instagramuser_index_inspiring_artists2':
+        logged_member.help_instagramuser_index_inspiring_artists2 = False
+        logged_member.save()
+
+    if p_help_name == 'help_categories_index':
+        logged_member.help_categories_index = False
+        logged_member.save()
+
+    if p_help_name == 'help_attributes_index':
+        logged_member.help_attributes_index = False
+        logged_member.save()
+
+
+    if p_help_name == 'help_reserved1':
+        logged_member.help_reserved1 = False
+        logged_member.save()
+
+    if p_help_name == 'help_reserved2':
+        logged_member.help_reserved2 = False
+        logged_member.save()
+
+    if p_help_name == 'help_reserved3':
+        logged_member.help_reserved3 = False
+        logged_member.save()
+
+    if p_help_name == 'help_reserved4':
+        logged_member.help_reserved4 = False
+        logged_member.save()
+
+    if p_help_name == 'help_reserved5':
+        logged_member.help_reserved5 = False
+        logged_member.save()
+
+    return json.dumps(
+        dict(
+
+            )
+    )

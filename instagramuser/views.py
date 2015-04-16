@@ -17,7 +17,8 @@ from instagramuser.models import InspiringUser, Following, Follower, FollowerBel
     FollowerBelongsToAttribute, InspiringUserBelongsToCategory, InspiringUserBelongsToAttribute
 from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdminUtils, MyLikes
 
-from squaresensor.settings.base import IS_APP_LIVE, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS
+from squaresensor.settings.base import IS_APP_LIVE, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS, \
+    FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS, FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS
 from .forms import AddInspiringUserForm
 from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
 from photos.models import Photo
@@ -514,6 +515,7 @@ class AnyUserRecentBestView(TemplateView):
 
         l_good_photos = None
         liked_photos = None
+        l_instagram_user = None
 
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
@@ -645,6 +647,11 @@ class FindFriendsView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+
+            if logged_member.is_monthly_member or logged_member.is_yearly_member:
+                max_interactions = FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS
+            else:
+                max_interactions = FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -712,6 +719,7 @@ class FindFriendsView(TemplateView):
                           friends_and_photos=l_friends_and_photos,
                           show_describe_button=show_describe_button,
                           new_friends_interaction=1,
+                          max_interactions=max_interactions,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

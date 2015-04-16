@@ -50,4 +50,15 @@ function select_member_attribute(p_attribute_id, p_logged_member_id) {
     );
 }
 
+function dismiss_help_callback(data) {
 
+}
+
+function dismiss_help(p_help_name) {
+    //alert('select_member_attribute');
+
+    Dajaxice.members.dismiss_help(dismiss_help_callback,
+        {'p_help_name': p_help_name }
+    );
+
+}

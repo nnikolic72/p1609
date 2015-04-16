@@ -54,13 +54,14 @@
                             <td>{% if logged_member.membership.active_membership == True %}{% trans 'Active' %}{% else %}{% trans 'Inactive' %}{% endif %}</td>
                         </tr>
                         <tr>
-                        <td>
-                            <form action="{% url 'members:new_membership' %}" method="get">
-                                <button type="submit" class="btn btn-success">
-                                    {% trans 'Become a member' %}
-                                </button>
-                            </form>
-                        </td>
+                            <td>
+                                <form action="{% url 'members:new_membership' %}" method="get">
+                                    <button type="submit" class="btn btn-success btn-block">
+                                        {% trans 'Become a member' %}
+                                    </button>
+                                </form>
+                            </td>
+                        <td></td>
                         </tr>
                     {% else %}
                         <tr>
@@ -75,13 +76,22 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
+                <div class="alert alert-info">
+                    <h4>{% trans 'Information' %}</h4>
+                    <p>{% trans 'Here you can describe your Instagram gallery posts.' %}</p>
+                    <p>{% trans 'You can describe your preferred subjects and your preferred photography styles.' %}</p>
+                    <p>{% trans 'By accurately selecting Categories and Styles you increase the chances to find new friends using Squaresensor!' %}</p>
+                    <p>{% trans 'Select at least three Categories and three styles, and no more than ten.' %}</p>
+                </div>
+            </div>
+            <div class="col-xs-12" style="margin-top: 20px;">
                 <h4>{% trans 'My Categories' %} <small>{% trans 'Click to select/deselect' %}</small></h4>
             </div>
         </div>
         <div class="row">
             {% for category in categories %}
 
-                <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom: 5px;">
                     <button type="button"
                             id="category_button_{{ category.id }}"
                             onclick="select_member_category({{ category.id }}, {{ logged_member.id }});"
@@ -100,14 +110,14 @@
         </div>
 
 
-        <div class="row">
+        <div class="row" style="margin-top: 20px;">
             <div class="col-xs-12">
                 <h4>{% trans 'My Styles' %} <small>{% trans 'Click to select/deselect' %}</small></h4>
             </div>
         </div>
         <div class="row">
             {% for attribute in attributes %}
-                <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="col-xs-12 col-sm-6 col-md-4"  style="margin-bottom: 5px;">
                     <button type="button"
                             id="attribute_button_{{ attribute.id }}"
                             onclick="select_member_attribute({{ attribute.id }}, {{ logged_member.id }});"

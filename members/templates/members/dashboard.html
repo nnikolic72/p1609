@@ -24,21 +24,30 @@
 {% block content %}
     <div class="row">
         <div class="col-xs-12 text-left">
-            <div class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="text-center">{% trans 'Welcome to your Dashboard!' %}</h4>
-                <h3>{% trans 'Information' %}</h3>
-                <ul>
-                    <li>{% trans 'This is your Squaresenfor home page.' %}</li>
-                    <li>{% trans 'You can access all features from this page by clicking on buttons below.' %}</li>
-                </ul>
-            </div>
+            {% if logged_member.help_members_dashboard == True %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="text-center">{% trans 'Welcome to your Dashboard!' %}</h4>
+                    <h3>{% trans 'Information' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is your Squaresenfor home page.' %}</li>
+                        <li>{% trans 'You can access all features from this page by clicking on buttons below.' %}</li>
+                    </ul>
+                    <button type="button"
+                            class="btn btn-default btn-sm"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            onclick="dismiss_help('help_members_dashboard')"
+                            style="margin-top: 20px;"
+                            >{% trans 'Do not show again' %}</button>
+                </div>
+            {% endif %}
         </div>
 
         <div class="col-xs-12 text-center">
-            <div class="squaresensor-sub-panel">
-                <h4>{% trans 'My Instagram data' %}</h4>
-            </div>
+
+                <h4 style="margin-top: 40px; margin-bottom: 20px;">{% trans 'My Instagram data' %}</h4>
+
         </div>
 
         <div class="col-xs-12 col-sm-3 center-block" align="center">
@@ -99,9 +108,9 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" style="margin-top: 40px;">
         <div class="col-xs-12 text-center">
-            <h4>{% trans 'Activities' %}</h4>
+            <h4>{% trans 'Squaresensor Activities' %}</h4>
         </div>
         <div class="col-xs-12 col-sm-6 text-center">
             <form action="{% url 'smartfeed:index' %}" method="get">
@@ -140,43 +149,43 @@
                         id="commenter_index"
                         onclick="display_ajax_img('commenter_index', '{{ STATIC_URL }}')"
                         class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                    {% trans 'Commenter' %}
+                    {% trans 'Responder' %}
                 </button>
             </form>
 
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" style="margin-top: 40px;">
         <div class="col-xs-12 text-center">
             <h4>{% trans 'My Account' %}</h4>
         </div>
-        <div class="col-xs-12 text-center">
+        <div class="col-xs-12 col-sm-4 text-center">
             <form action="{% url 'members:my_account' %}" method="get">
                 <button type="submit"
                         id="configure-my-account"
                         onclick="display_ajax_img('configure-my-account', '{{ STATIC_URL }}')"
-                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                        class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
                     {% trans 'Configure My Account' %}
                 </button>
             </form>
         </div>
-        <div class="col-xs-12 text-center">
+        <div class="col-xs-12 col-sm-4 text-center">
             <form action="{% url 'smartfeed:configure' %}" method="get">
                 <button type="submit"
                         id="configure-smartfeed"
                         onclick="display_ajax_img('configure-smartfeed', '{{ STATIC_URL }}')"
-                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                        class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
                     {% trans 'Configure SmartFeed' %}
                 </button>
             </form>
         </div>
-        <div class="col-xs-12 text-center">
+        <div class="col-xs-12 col-sm-4 text-center">
             <form action="{% url 'members:new_friends_response' %}" method="get">
                 <button type="submit"
                         id="new_friends_response"
                         onclick="display_ajax_img('new_friends_response', '{{ STATIC_URL }}')"
-                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                        class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
                     {% trans 'New Friends Response' %}
                 </button>
             </form>
@@ -184,27 +193,30 @@
     </div>
 
     {% if show_describe_button %}
-        <div class="row">
+        <div class="row" style="margin-top: 40px;">
             <div class="col-xs-12 text-center">
-                <div class="squaresensor-sub-panel">
-                    <h5>{% trans 'Admin' %}</h5>
-                    <form action="{% url 'instagramuser:addinspiring' %}" method="get">
-                        <button type="submit"
-                                id="add-inspiring-user"
-                                onclick="display_ajax_img('add-inspiring-user', '{{ STATIC_URL }}')"
-                                class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                            {% trans 'Add Inspiring Artist' %}
-                        </button>
-                    </form>
-                    <form action="{% url 'instagramuser:index_all_inspiring_artists' %}" method="get">
-                        <button type="submit"
-                                id="index_all_inspiring_artists"
-                                onclick="display_ajax_img('index_all_inspiring_artists', '{{ STATIC_URL }}')"
-                                class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                            {% trans 'All Inspiring Artists' %}
-                        </button>
-                    </form>
-                </div>
+
+                <h4>{% trans 'Admin' %}</h4>
+            </div>
+            <div class="col-xs-12 col-sm-6 text-center">
+                <form action="{% url 'instagramuser:addinspiring' %}" method="get">
+                    <button type="submit"
+                            id="add-inspiring-user"
+                            onclick="display_ajax_img('add-inspiring-user', '{{ STATIC_URL }}')"
+                            class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                        {% trans 'Add Inspiring Artist' %}
+                    </button>
+                </form>
+            </div>
+            <div class="col-xs-12 col-sm-6 text-center">
+                <form action="{% url 'instagramuser:index_all_inspiring_artists' %}" method="get">
+                    <button type="submit"
+                            id="index_all_inspiring_artists"
+                            onclick="display_ajax_img('index_all_inspiring_artists', '{{ STATIC_URL }}')"
+                            class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                        {% trans 'All Inspiring Artists' %}
+                    </button>
+                </form>
             </div>
         </div>
     {% endif %}

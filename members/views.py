@@ -21,7 +21,7 @@ from .forms import MembershipForm
 
 from .models import Member, Membership
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
-    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT
+    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE
 
 
 class MemberHomePageView(TemplateView):
@@ -238,6 +238,7 @@ class MemberNewMembershipView(TemplateView):
         return render(request,
                       self.template_name,
                       dict(form=form,
+                           is_payment_live=IS_PAYMENT_LIVE,
 
                            logged_member=logged_member,
                            x_ratelimit_remaining=x_ratelimit_remaining,

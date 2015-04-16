@@ -4,10 +4,10 @@
 <div class="col-xs-12 col-sm-6">
     <div class="container-fluid squaresensor-image-panel-body">
         <div class="row">
-            <div align="center">
-                {% if photo.instagram_low_resolution_URL %}
-                    <img class="img-responsive img-thumbnail" src="{{ photo.instagram_low_resolution_URL }}"
-                         title="{{ photo.photo_rating }}">
+            <div align="center" style="margin-top: 10px; margin-bottom: 10px;">
+                {% if photo.instagram_standard_resolution_URL %}
+                    <img class="img-responsive img-thumbnail" src="{{ photo.instagram_standard_resolution_URL }}"
+                         title="{{ photo.instagram_caption }}">
                 {% endif %}
             </div>
         </div>
