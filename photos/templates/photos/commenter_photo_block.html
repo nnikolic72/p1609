@@ -4,12 +4,7 @@
 {% load emoji_tags %}
 
     <div class="container-fluid squaresensor-inspiring-user-panel" id="photo_{{ photo.3 }}">
-        <div class="alert alert-info">
-            {% blocktrans %}Showing posts with unanswered comments. Analyzed last {{ search_photos_amount }} photos.{% endblocktrans %}
-            {% if not is_monthly_member and not is_yearly_member %}
-                <br>{% blocktrans %}Become a premium member{% endblocktrans %} <a class="btn btn-sm btn-default" href="{% url 'members:new_membership' %}">{% trans 'here' %}</a> {% blocktrans %}to receive information about more ({{ membership_allowance }}) posts with unanswered comments.{% endblocktrans %}
-            {% endif %}
-        </div>
+
         <div class="row" style="margin-bottom: 20px;">
             <div class="col-xs-12 col-sm-6">
                 <img src="{{ photo.0 }}" class="img-responsive img-thumbnail center-block" style="margin-bottom: 20px;">

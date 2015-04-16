@@ -23,9 +23,21 @@
 
 {% block content %}
     <div class="row">
+        <div class="col-xs-12 text-left">
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="text-center">{% trans 'Welcome to your Dashboard!' %}</h4>
+                <h3>{% trans 'Information' %}</h3>
+                <ul>
+                    <li>{% trans 'This is your Squaresenfor home page.' %}</li>
+                    <li>{% trans 'You can access all features from this page by clicking on buttons below.' %}</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="col-xs-12 text-center">
             <div class="squaresensor-sub-panel">
-                <h4>{% trans 'My Instagram stats' %}</h4>
+                <h4>{% trans 'My Instagram data' %}</h4>
             </div>
         </div>
 
@@ -35,7 +47,7 @@
         </div>
         <div class="col-xs-12 col-sm-9">
             <div class="container-fluid">
-                <div class="row text-center">
+                <div class="row text-center" style="margin-bottom: 20px;">
                     <div class="col-xs-12 col-lg-4 btn-block">
                         <span class="btn btn-primary">Posts <span class="badge">{{ logged_member.number_of_media }}</span></span>
                     </div>
@@ -89,85 +101,86 @@
 
     <div class="row">
         <div class="col-xs-12 text-center">
-            <div class="squaresensor-sub-panel">
-                <h5>{% trans 'Activities' %}</h5>
-                <form action="{% url 'instagramuser:new_friends' %}" method="get">
-                    <button type="submit"
-                            id="find-new-friends"
-                            onclick="display_ajax_img('find-new-friends', '{{ STATIC_URL }}')"
-                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                        {% trans 'Find New Friends' %}
-                    </button>
-                </form>
-                <form action="{% url 'instagramuser:index_inspiring_artists' %}" method="get">
-                    <button type="submit"
-                            id="find-inspiring-artists"
-                            onclick="display_ajax_img('find-inspiring-artists', '{{ STATIC_URL }}')"
-                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                        {% trans 'Find Inspiring Artists' %}
-                    </button>
-                </form>
-                <form action="{% url 'members:commenter_index' %}" method="get">
-                    <button type="submit"
-                            id="commenter_index"
-                            onclick="display_ajax_img('commenter_index', '{{ STATIC_URL }}')"
-                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                        {% trans 'Commenter' %}
-                    </button>
-                </form>
-            </div>
+            <h4>{% trans 'Activities' %}</h4>
         </div>
-    </div>
+        <div class="col-xs-12 col-sm-6 text-center">
+            <form action="{% url 'smartfeed:index' %}" method="get">
+                <button type="submit"
+                        id="view-smartfeed"
+                        onclick="display_ajax_img('view-smartfeed', '{{ STATIC_URL }}')"
+                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    {% trans 'View SmartFeed' %}
+                </button>
+            </form>
+        </div>
+        <div class="col-xs-12 col-sm-6 text-center">
+            <form action="{% url 'instagramuser:new_friends' %}" method="get">
+                <button type="submit"
+                        id="find-new-friends"
+                        onclick="display_ajax_img('find-new-friends', '{{ STATIC_URL }}')"
+                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    {% trans 'Find New Friends' %}
+                </button>
+            </form>
+        </div>
+        <div class="col-xs-12 col-sm-6 text-center">
+            <form action="{% url 'instagramuser:index_inspiring_artists' %}" method="get">
+                <button type="submit"
+                        id="find-inspiring-artists"
+                        onclick="display_ajax_img('find-inspiring-artists', '{{ STATIC_URL }}')"
+                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    {% trans 'Find Inspiring Artists' %}
+                </button>
+            </form>
+        </div>
 
+        <div class="col-xs-12 col-sm-6 text-center">
+            <form action="{% url 'members:commenter_index' %}" method="get">
+                <button type="submit"
+                        id="commenter_index"
+                        onclick="display_ajax_img('commenter_index', '{{ STATIC_URL }}')"
+                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    {% trans 'Commenter' %}
+                </button>
+            </form>
 
-
-    <div class="row">
-        <div class="col-xs-12 text-center">
-            <div class="squaresensor-sub-panel">
-                <h5>{% trans 'SmartFeed' %}</h5>
-                <form action="{% url 'smartfeed:index' %}" method="get">
-                    <button type="submit"
-                            id="view-smartfeed"
-                            onclick="display_ajax_img('view-smartfeed', '{{ STATIC_URL }}')"
-                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                        {% trans 'View' %}
-                    </button>
-                </form>
-                <form action="{% url 'smartfeed:configure' %}" method="get">
-                    <button type="submit"
-                            id="configure-smartfeed"
-                            onclick="display_ajax_img('configure-smartfeed', '{{ STATIC_URL }}')"
-                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                        {% trans 'Configure' %}
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-xs-12 text-center">
-            <div class="squaresensor-sub-panel">
-                <h5>{% trans 'My Account' %}</h5>
-                <form action="{% url 'members:my_account' %}" method="get">
-                    <button type="submit"
-                            id="configure-my-account"
-                            onclick="display_ajax_img('configure-my-account', '{{ STATIC_URL }}')"
-                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                        {% trans 'Configure My Account' %}
-                    </button>
-                </form>
-                <form action="{% url 'members:new_friends_response' %}" method="get">
-                    <button type="submit"
-                            id="new_friends_response"
-                            onclick="display_ajax_img('new_friends_response', '{{ STATIC_URL }}')"
-                            class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                        {% trans 'New Friends Response' %}
-                    </button>
-                </form>
-            </div>
+            <h4>{% trans 'My Account' %}</h4>
         </div>
-
+        <div class="col-xs-12 text-center">
+            <form action="{% url 'members:my_account' %}" method="get">
+                <button type="submit"
+                        id="configure-my-account"
+                        onclick="display_ajax_img('configure-my-account', '{{ STATIC_URL }}')"
+                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    {% trans 'Configure My Account' %}
+                </button>
+            </form>
+        </div>
+        <div class="col-xs-12 text-center">
+            <form action="{% url 'smartfeed:configure' %}" method="get">
+                <button type="submit"
+                        id="configure-smartfeed"
+                        onclick="display_ajax_img('configure-smartfeed', '{{ STATIC_URL }}')"
+                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    {% trans 'Configure SmartFeed' %}
+                </button>
+            </form>
+        </div>
+        <div class="col-xs-12 text-center">
+            <form action="{% url 'members:new_friends_response' %}" method="get">
+                <button type="submit"
+                        id="new_friends_response"
+                        onclick="display_ajax_img('new_friends_response', '{{ STATIC_URL }}')"
+                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    {% trans 'New Friends Response' %}
+                </button>
+            </form>
+        </div>
     </div>
 
     {% if show_describe_button %}

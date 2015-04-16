@@ -22,14 +22,20 @@
     {{ block.super }}
     <div id="commenter_comment_block">
         {%  if unanswered_comments_media_list %}
-        {% for photo in unanswered_comments_media_list %}
-            {% include 'photos/commenter_photo_block.html' %}
-        {% endfor %}
-    {% else %}
+            <div class="alert alert-info">
+                {% blocktrans %}Showing posts with unanswered comments. Analyzed last {{ search_photos_amount }} photos.{% endblocktrans %}
+                {% if not is_monthly_member and not is_yearly_member %}
+                    <br>{% blocktrans %}Become a premium member{% endblocktrans %} <a class="btn btn-sm btn-default" href="{% url 'members:new_membership' %}">{% trans 'here' %}</a> {% blocktrans %}to receive information about more ({{ membership_allowance }}) posts with unanswered comments.{% endblocktrans %}
+                {% endif %}
+            </div>
+            {% for photo in unanswered_comments_media_list %}
+                {% include 'photos/commenter_photo_block.html' %}
+            {% endfor %}
+        {% else %}
             <div class="alert alert-info" role="alert">
                 {% trans 'You have no unanswered comments!' %}
             </div>
-    {% endif %}
+        {% endif %}
     </div>
 
 {% endblock content %}
