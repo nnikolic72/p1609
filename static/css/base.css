@@ -25,7 +25,7 @@ h6 {
 
 body {
     padding-top: 70px;
-    padding-bottom: 50px;
+    padding-bottom: 70px;
 }
 
 body {
@@ -94,7 +94,7 @@ body {
 }
 @media (max-width: 767px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-        color: #777;
+        color: #ECECEA;
     }
     .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
     .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {

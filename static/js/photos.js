@@ -202,7 +202,12 @@ function load_instagram_commenter_comments_callback(data) {
 
     $(modal_comment_text_id).html(html_text);
     toggler('comments_' + p_photo_id);
-    scroll_to_id('commenter_comment_block');
+    if($("#" + 'comments_' + p_photo_id).length == 0) {
+        //it doesn't exist
+        scroll_to_id('commenter_comment_block');
+    } else {
+        scroll_to_id('comments_' + p_photo_id);
+    }
 }
 
 function load_instagram_commenter_comments(p_photo_id) {
@@ -227,7 +232,7 @@ function send_instagram_commenter_comment_callback(data) {
         $('#error-message').html('Comment not sent. You have hit the hourly limit in commenting the posts. Please wait and try again later.');
         $('#ErrorDialog').modal('show');
     } else {
-         // Reload comments here
+        // Reload comments here
         load_instagram_commenter_comments(p_photo_id);
     }
 
