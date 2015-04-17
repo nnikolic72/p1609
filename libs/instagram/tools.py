@@ -17,7 +17,7 @@ from squaresensor.settings.base import TEST_APP, TEST_APP_FRIENDS_TR_ANALYZE_N_F
     FOLLOWINGS_TR_ANALYZE_N_FOLLOWINGS, TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS, INSPIRING_USERS_FIND_TOP_N_PHOTOS, \
     INSPIRING_USERS_SEARCH_N_PHOTOS, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS, MEMBERS_FIND_TOP_N_PHOTOS, \
     MEMBERS_SEARCH_N_PHOTOS, FOLLOWINGS_FIND_TOP_N_PHOTOS, FOLLOWINGS_SEARCH_N_PHOTOS, INSTAGRAM_API_THRESHOLD, \
-    INSTAGRAM_CLIENT_SECRET, INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS
+    INSTAGRAM_CLIENT_SECRET, INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS, FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS
 
 __author__ = 'n.nikolic'
 from sys import exc_info
@@ -2189,6 +2189,17 @@ def update_member_limits_f(req, logged_member):
             logged_member.comments_in_last_minute_interval_start = timezone.now()
             logged_member.save()
             l_comments_in_last_minute = 0
+
+        # New friends limits
+        l_timedelta_day = timedelta(days=+FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS)
+        l_new_friends_in_last_day_interval_start = logged_member.new_friends_in_last_day_interval_start
+        if l_new_friends_in_last_day_interval_start:
+            l_diff = l_new_friends_in_last_day_interval_start - timezone.now()
+            if l_diff > l_timedelta_day:
+                # hour has passed - reset the counters
+                logged_member.new_friends_in_last_day = 0
+                logged_member.new_friends_in_last_day_interval_start = timezone.now()
+                logged_member.save()
 
     except ObjectDoesNotExist:
         logged_member = None

@@ -79,23 +79,19 @@ class Member(InstagramUser):
 
         return l_is_editor
 
-    @property
     def is_monthly_member(self):
+        l_is_monthly_member = False
+        for membership_i in Membership.objects.filter(member=self, membership_type='YEA', active_membership=True):
+            l_is_monthly_member = True
 
-        for membership_i in self.membership.all():
-            if membership_i.active_membership and membership_i.membership_type == 'YEA':
-                return True
-            else:
-                return False
+        return l_is_monthly_member
 
-    @property
     def is_yearly_member(self):
+        l_is_yearly_member = False
+        for membership_i in Membership.objects.filter(member=self, membership_type='PRO', active_membership=True):
+            l_is_yearly_member = True
 
-        for membership_i in self.membership.all():
-            if membership_i.active_membership and membership_i.membership_type == 'PRO':
-                return True
-            else:
-                return False
+        return l_is_yearly_member
 
     user_type = models.CharField(editable=False, default='member', max_length=50)
 
@@ -125,10 +121,19 @@ class Member(InstagramUser):
                                                                help_text=_('When comment limit period started')
     )
 
-    membership = models.ManyToManyField('members.Membership', blank=True, null=True,
-                                        verbose_name=_('Membership type'),
-                                        help_text=_('Membership type')
+    new_friends_in_last_day = models.IntegerField(null=True, blank=True, default=0,
+                                                  verbose_name=_('NewFriends in LD'),
+                                                  help_text=_('How many new friends member interacted during last day')
     )
+    new_friends_in_last_day_interval_start = models.DateTimeField(null=True, blank=True,
+                                                               verbose_name=_('NewFriends period start'),
+                                                               help_text=_('When new friends limit period started')
+    )
+
+    #membership = models.ManyToManyField('members.Membership', blank=True, null=True,
+    #                                    verbose_name=_('Membership type'),
+    #                                    help_text=_('Membership type')
+    #)
 
     smartfeed_last_seen_instagram_photo_id = models.CharField(max_length=100, blank=True, null=True)
 
@@ -181,6 +186,7 @@ class Membership(models.Model):
     def __unicode__(self):
         return str(self.pk)
 
+    member = models.ForeignKey('members.Member', null=True, blank=True)
     membership_type = models.CharField(max_length=200, null=False, blank=False,
                                        default="Free",
                                        verbose_name=_('Membership type'),

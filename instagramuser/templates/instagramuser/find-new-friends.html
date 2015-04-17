@@ -25,33 +25,37 @@
         <div class="row">
             <div class="col-xs-12">
                 {% if logged_member.help_instagramuser_find_new_friends == True %}
-                <div class="alert alert-success alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
-                    <h3>{% trans 'Guidelines:' %}</h3>
-                    <ul>
-                        <li>{% trans 'Pick one photo you like, per user, to interact with.' %}</li>
-                        <li>{% trans 'Please do not spam. Spamming is not allowed on Squaresensor.' %}</li>
-                        <li>{% trans "Please be supportive if you like people's work. If not - skip." %}</li>
-                        <li>{% trans 'Do not use more than three hashtags in your comments.' %}</li>
-                        <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
-                    </ul>
-                    <button type="button"
-                            class="btn btn-default btn-sm"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            onclick="dismiss_help('help_instagramuser_find_new_friends')"
-                            style="margin-top: 20px;"
-                            >{% trans 'Do not show again' %}</button>
-                </div>
+                        <h3>{% trans 'Guidelines:' %}</h3>
+                        <ul>
+                            <li>{% trans 'Pick one photo you like, per user, to interact with. Leave a supportive comment if you like their work.' %}</li>
+                            <li>{% trans 'Please do not spam. Spamming is not allowed on Squaresensor.' %}</li>
+                            <li>{% trans "Please be supportive if you like people's work. If not - skip." %}</li>
+                            <li>{% trans 'Do not use more than three hashtags in your comments. It is best not to use them a all, it can be quite annoying.' %}</li>
+                            <li>{% trans 'Important: We do not guarantee you will get new friends. People will decide that by themselves.' %}</li>
+                            <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
+                        </ul>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                data-dismiss="alert"
+                                aria-label="Close"
+                                onclick="dismiss_help('help_instagramuser_find_new_friends')"
+                                style="margin-top: 20px;"
+                                >{% trans 'Do not show again' %}</button>
+                    </div>
                 {% endif %}
                 <div class="alert alert-info">
-                    <p>{% blocktrans %}You can interact with max {{ max_interactions }} people today.{% endblocktrans %}</p>
-                    <p>{% blocktrans %}You have already interacted with X people today.{% endblocktrans %}</p>
-                {% if not logged_member.is_monthly_member and not logged_member.is_yearly_member %}
-                    <p><b>{% trans 'By becoming a Squaresensor member you will increase your daily limit. Click' %}
-                    <a class="btn btn-xs btn-default" href="{% url 'members:new_membership' %}">{% trans 'here' %}</a> {% trans 'for more information.' %}</b></p>
-                {% endif %}
+                    <p>{% blocktrans %}You can interact with max {{ max_interactions }} potential new friends today.{% endblocktrans %}</p>
+                    <p>{% blocktrans with interactions_remaining|pluralize as int_rem %}You have <span id="interactions_remaining_text">{{ interactions_remaining }}</span> interaction{{ int_rem }} remaining for today.{% endblocktrans %}</p>
+                    {% if hours_remaining %}
+                        <p>{% blocktrans with hours_remaining|pluralize as hours_rem %}Limit reset in <span id="interactions_remaining_text">{{ hours_remaining }}</span> hour{{ hours_rem }}.{% endblocktrans %}</p>
+                    {% endif %}
+                    {% if not logged_member.is_monthly_member and not logged_member.is_yearly_member %}
+                        <p><b>{% trans 'By becoming a Squaresensor member you will increase your daily limit. Click' %}
+                            <a class="btn btn-xs btn-default" href="{% url 'members:new_membership' %}">{% trans 'here' %}</a> {% trans 'for more information.' %}</b></p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -96,7 +100,14 @@
                 </div>
             {% endfor %}
 
-
+            <form action="{% url 'instagramuser:new_friends' %}" method="get">
+                <button class="btn btn-lg btn-success col-xs-12 col-sm-4 col-sm-offset-4"
+                        id="load_more_friends"
+                        onclick="display_ajax_img('load_more_friends', '')"
+                        >
+                    {% trans 'Load more' %}
+                </button>
+            </form>
         {% else %}
             <div class="alert alert-info" role="alert">
                 {% trans 'There are no new friends available in Squaresensor at the moment!' %}

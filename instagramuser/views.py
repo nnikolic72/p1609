@@ -1,5 +1,7 @@
 from __future__ import division
 import decimal
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, render_to_response
@@ -18,7 +20,8 @@ from instagramuser.models import InspiringUser, Following, Follower, FollowerBel
 from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdminUtils, MyLikes
 
 from squaresensor.settings.base import IS_APP_LIVE, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS, \
-    FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS, FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS
+    FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS, FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS, \
+    FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS
 from .forms import AddInspiringUserForm
 from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
 from photos.models import Photo
@@ -648,14 +651,26 @@ class FindFriendsView(TemplateView):
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
 
-            if logged_member.is_monthly_member or logged_member.is_yearly_member:
+            if logged_member.is_monthly_member() == True or logged_member.is_yearly_member() == True:
                 max_interactions = FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS
             else:
                 max_interactions = FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS
+
+            l_used_new_friends_limit = logged_member.new_friends_in_last_day
+            l_new_friends_remaining = max_interactions - l_used_new_friends_limit
+
+            l_new_friends_in_last_day_interval_start = logged_member.new_friends_in_last_day_interval_start
+            if l_new_friends_in_last_day_interval_start:
+                l_time_remaining = timezone.now() - l_new_friends_in_last_day_interval_start
+                days, seconds = l_time_remaining.days, l_time_remaining.seconds
+                l_hours_remaining = abs(days) * 24 + seconds // 3600
+                l_hours_remaining = FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS * 24 - l_hours_remaining
+            else:
+                l_hours_remaining = None
         except ObjectDoesNotExist:
             logged_member = None
         except:
-            raise HttpResponseNotFound
+            raise
 
         # load members categories
         l_member_categories = MemberBelongsToCategory.objects.filter(instagram_user=logged_member).values('category')
@@ -679,7 +694,10 @@ class FindFriendsView(TemplateView):
 
         l_followers_set_filtered = Follower.objects.filter(id__in=l_new_friends_list)
 
-        l_followers_set_filtered = l_followers_set_filtered[:5] # Get a number of new friends form membership level
+        if l_new_friends_remaining > 10:
+            l_followers_set_filtered = l_followers_set_filtered[:10] # Get a number of new friends form membership level
+        else:
+            l_followers_set_filtered = l_followers_set_filtered[:l_new_friends_remaining] # Get a number of new friends form membership level
 
         l_token = logged_member.get_member_token(request)
         instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
@@ -720,6 +738,8 @@ class FindFriendsView(TemplateView):
                           show_describe_button=show_describe_button,
                           new_friends_interaction=1,
                           max_interactions=max_interactions,
+                          interactions_remaining=l_new_friends_remaining,
+                          hours_remaining=l_hours_remaining,
 
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,

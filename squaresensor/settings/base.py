@@ -167,6 +167,7 @@ INSTALLED_APPS = (
     'photos',
     'smartfeed',
     'hashtags',
+    'ads',
 )
 
 
@@ -326,6 +327,7 @@ COMMENTER_NO_OF_PICS_MEMBER_LIMIT = 50
 #Find New Friends parameters
 FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS = 10
 FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS = 50
+FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS = 1
 
 # APP settings: inpiring users
 INSPIRING_USERS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find

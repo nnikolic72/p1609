@@ -145,22 +145,27 @@ function like_instagram_picture_callback(data) {
     var ig_likes_text_id = '#instagram_likes_text_' + p_photo_id;
     var html_text = '';
 
-    html_text += '<small><span class="glyphicon glyphicon-heart-empty"></span>';
-    html_text += '&nbsp;<div class="badge" id="instagram_likes_text_'+ p_photo_id + '">' + no_of_likes + '</div></small>';
-    $(button_id).html(html_text);
+    var current_likes_cnt = data.current_likes_cnt;
+
 
     if(result=='like') {
         $(button_id).removeClass('btn-default').addClass('btn-danger');
+        current_likes_cnt++;
     }
 
     if(result=='unlike') {
         $(button_id).removeClass('btn-danger').addClass('btn-default');
+        current_likes_cnt--;
     }
 
     if(result=='limit') {
         $('#error-message').html('Like not sent. You have hit the hourly limit in liking the posts. Please wait and try again later.');
         $('#ErrorDialog').modal('show');
     }
+
+    html_text += '<small><span class="glyphicon glyphicon-heart-empty"></span>';
+    html_text += '&nbsp;<div class="badge" id="instagram_likes_text_'+ p_photo_id + '">' + current_likes_cnt + '</div></small>';
+    $(button_id).html(html_text);
 
     $('#ltm').html(likes_per_minute);
     $('#iglu').html(x_limit_pct + ' %');
@@ -170,14 +175,17 @@ function like_instagram_picture(p_photo_id, p_static_url) {
     //alert('like_instagram_picture');
     // var id_name = '#comment_form_' + p_photo_id;
     // var data = $(id_name).serializeObject();
+    var ig_likes_text_id = '#instagram_likes_text_' + p_photo_id;
+    var current_likes_cnt = parseInt($(ig_likes_text_id).text(), 10);
     var button_id = '#like_button_' + p_photo_id;
     var html_text = '<div align=center><img class="img-responsive" src="' + p_static_url + 'img/ajax_loader-small.gif" style="height=11px;"></div>';
     $(button_id).removeClass('btn-danger');
     $(button_id).html(html_text);
     //alert('send_instagram_comment ' + data);
 
+
     Dajaxice.photos.like_instagram_picture(like_instagram_picture_callback,
-        { 'p_photo_id': p_photo_id }
+        { 'p_photo_id': p_photo_id, 'current_likes_cnt': current_likes_cnt }
     );
 }
 

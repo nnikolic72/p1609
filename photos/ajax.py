@@ -25,9 +25,11 @@ from dajaxice.decorators import dajaxice_register
 
 from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED, TEST_APP, INSTAGRAM_LIKES_PER_HOUR_LIMIT, \
     INSTAGRAM_COMMENTS_PER_HOUR_LIMIT, TEST_APP_LIKE_PER_PERIOD_LIMIT, TEST_APP_COMMENT_PER_PERIOD_LIMIT, \
-    INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT
+    INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, \
+    FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS
 
 __author__ = 'n.nikolic'
+
 
 @dajaxice_register
 def save_attributes_and_categories(req, form, p_photo_id):
@@ -68,7 +70,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                 l_ids = checkbox[11:]
                 l_photo_id_pos = l_ids.find('_')
                 l_photo_id = l_ids[:l_photo_id_pos]
-                l_category_id = l_ids[l_photo_id_pos+1:]
+                l_category_id = l_ids[l_photo_id_pos + 1:]
 
                 try:
                     l_category = Category.objects.get(id=l_category_id)
@@ -86,7 +88,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_member_category_already_added = MemberBelongsToCategory.objects.get(
                                 instagram_user=l_member,
                                 category=l_category,
-                                )
+                            )
                             l_member_category_already_added.frequency += 1
                             l_member_category_already_added.save()
                         except ObjectDoesNotExist:
@@ -106,7 +108,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_following_category_already_added = FollowingBelongsToCategory.objects.get(
                                 instagram_user=l_following,
                                 category=l_category,
-                                )
+                            )
                             l_following_category_already_added.frequency += 1
                             l_following_category_already_added.save()
                         except ObjectDoesNotExist:
@@ -126,7 +128,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_follower_category_already_added = FollowerBelongsToCategory.objects.get(
                                 instagram_user=l_follower,
                                 category=l_category,
-                                )
+                            )
                             l_follower_category_already_added.frequency += 1
                             l_follower_category_already_added.save()
                         except ObjectDoesNotExist:
@@ -146,7 +148,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_inspiring_user_category_already_added = InspiringUserBelongsToCategory.objects.get(
                                 instagram_user=l_inspiring_user,
                                 category=l_category,
-                                )
+                            )
                             l_inspiring_user_category_already_added.frequency += 1
                             l_inspiring_user_category_already_added.save()
                         except ObjectDoesNotExist:
@@ -160,7 +162,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             )
                             l_inspiring_user_category.save()
 
-                        #add photo to their good followers / new friends
+                        # add photo to their good followers / new friends
                         l_followers = Follower.objects.filter(inspiringuser=l_inspiring_user)
                         if l_followers:
                             for follower in l_followers:
@@ -168,7 +170,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                                     l_follower_category_already_added = FollowerBelongsToCategory.objects.get(
                                         instagram_user=follower,
                                         category=l_category,
-                                        )
+                                    )
                                     l_follower_category_already_added.frequency += 1
                                     l_follower_category_already_added.save()
                                 except ObjectDoesNotExist:
@@ -192,7 +194,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                 l_ids = checkbox[11:]
                 l_photo_id_pos = l_ids.find('_')
                 l_photo_id = l_ids[:l_photo_id_pos]
-                l_attribute_id = l_ids[l_photo_id_pos+1:]
+                l_attribute_id = l_ids[l_photo_id_pos + 1:]
 
                 try:
                     l_attribute = Attribute.objects.get(id=l_attribute_id)
@@ -210,7 +212,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_member_attribute_already_added = MemberBelongsToAttribute.objects.get(
                                 instagram_user=l_member,
                                 attribute=l_attribute,
-                                )
+                            )
                             l_member_attribute_already_added.frequency += 1
                             l_member_attribute_already_added.save()
                         except ObjectDoesNotExist:
@@ -230,7 +232,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_following_attribute_already_added = FollowingBelongsToAttribute.objects.get(
                                 instagram_user=l_following,
                                 attribute=l_attribute,
-                                )
+                            )
                             l_following_attribute_already_added.frequency += 1
                             l_following_attribute_already_added.save()
                         except ObjectDoesNotExist:
@@ -250,7 +252,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_follower_attribute_already_added = FollowerBelongsToAttribute.objects.get(
                                 instagram_user=l_follower,
                                 attribute=l_attribute,
-                                )
+                            )
                             l_follower_attribute_already_added.frequency += 1
                             l_follower_attribute_already_added.save()
                         except ObjectDoesNotExist:
@@ -270,7 +272,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_inspiring_user_attribute_already_added = InspiringUserBelongsToAttribute.objects.get(
                                 instagram_user=l_inspiring_user,
                                 attribute=l_attribute,
-                                )
+                            )
                             l_inspiring_user_attribute_already_added.frequency += 1
                             l_inspiring_user_attribute_already_added.save()
                         except ObjectDoesNotExist:
@@ -285,7 +287,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                             l_inspiring_user_attribute.save()
 
 
-                        #add photo to their good followers / new friends
+                        # add photo to their good followers / new friends
                         l_followers = Follower.objects.filter(inspiringuser=l_inspiring_user)
                         if l_followers:
                             for follower in l_followers:
@@ -293,7 +295,7 @@ def save_attributes_and_categories(req, form, p_photo_id):
                                     l_follower_attribute_already_added = FollowerBelongsToAttribute.objects.get(
                                         instagram_user=follower,
                                         attribute=l_attribute,
-                                        )
+                                    )
                                     l_follower_attribute_already_added.frequency += 1
                                     l_follower_attribute_already_added.save()
                                 except ObjectDoesNotExist:
@@ -322,8 +324,9 @@ def save_attributes_and_categories(req, form, p_photo_id):
 
     return json.dumps({
         'modal_name': l_modal_name,
-        }
+    }
     )
+
 
 @dajaxice_register
 def load_instagram_comments(req, p_photo_id, p_new_friends_interaction):
@@ -343,7 +346,7 @@ def load_instagram_comments(req, p_photo_id, p_new_friends_interaction):
 
     l_comments_list = l_instagram_comments.process_instagram_comments('thread', l_comments)
 
-    #for comment in l_comments:
+    # for comment in l_comments:
     #    comment.text = Emoji.replace_unicode(comment.text)
 
     html_text = render_to_string('photos/modal_comment_section.html',
@@ -361,7 +364,7 @@ def load_instagram_comments(req, p_photo_id, p_new_friends_interaction):
         'error_message': '',
         'html_text': html_text,
         'p_photo_id': p_photo_id,
-        }
+    }
     )
 
 
@@ -395,9 +398,9 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
     l_photo_author_instagram_id = l_instagram_photo.user.id
 
     if p_inline == '':
-        l_comment_form_input_id = u'new_comment_%s' %(p_photo_id)
+        l_comment_form_input_id = u'new_comment_%s' % (p_photo_id)
     else:
-        l_comment_form_input_id = u'new_comment_%s_%s' %(p_photo_id, p_inline)
+        l_comment_form_input_id = u'new_comment_%s_%s' % (p_photo_id, p_inline)
     comment_text = form[l_comment_form_input_id]
 
     # checking number of comments in the last period
@@ -407,7 +410,7 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
     l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
 
     if l_comments_in_last_minute_interval_start:
-        #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
+        # l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
         l_diff = l_comments_in_last_minute_interval_start - timezone.now()
         if l_diff > l_timedelta:
             #hour has passed - reset the counters
@@ -421,8 +424,6 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
         logged_member.comments_in_last_minute_interval_start = timezone.now()
         logged_member.save()
         l_comments_in_last_minute = 1
-
-
 
     if TEST_APP:
         l_instagram_comments_per_hour_limit = TEST_APP_COMMENT_PER_PERIOD_LIMIT
@@ -444,7 +445,7 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
     else:
         l_result = 'limit'
 
-    if (p_new_friends_interaction == 1):
+    if p_new_friends_interaction == 1:
         try:
             l_interacted_friend = Follower.objects.get(instagram_user_id=l_photo_author_instagram_id)
         except ObjectDoesNotExist:
@@ -474,6 +475,24 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
             )
             l_new_friend_contacted.save()
 
+            # update limits
+            l_timedelta_day = timedelta(days=+FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS)
+            l_new_friends_in_last_day_interval_start = logged_member.new_friends_in_last_day_interval_start
+            if l_new_friends_in_last_day_interval_start:
+                l_diff = l_new_friends_in_last_day_interval_start - timezone.now()
+                if l_diff > l_timedelta_day:
+                    # hour has passed - reset the counters
+                    logged_member.new_friends_in_last_day = 1
+                    logged_member.new_friends_in_last_day_interval_start = timezone.now()
+                    logged_member.save()
+                else:
+                    logged_member.new_friends_in_last_day += 1
+                    logged_member.save()
+            else:
+                logged_member.new_friends_in_last_day = 1
+                logged_member.new_friends_in_last_day_interval_start = timezone.now()
+                logged_member.save()
+
     l_comments_count = l_instagram_comments.get_comments_count()
 
     # Limit calculation --------------------------------------------------------------
@@ -498,12 +517,12 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
              x_ratelimit=x_ratelimit,
              x_limit_pct=x_limit_pct,
              comments_per_minute=l_comments_in_last_minute,
-             )
+        )
     )
 
 
 @dajaxice_register
-def like_instagram_picture(req, p_photo_id):
+def like_instagram_picture(req, p_photo_id, current_likes_cnt):
     """
 
     :param req:
@@ -536,10 +555,10 @@ def like_instagram_picture(req, p_photo_id):
 
 
     # END Common for all members views ===============================================
-    sleep(0.5)
+    # sleep(0.5)
     x, no_of_likes = l_my_likes.has_user_liked_media()
 
-    #Todo check likes per minute
+    # Todo check likes per minute
     l_likes_in_last_minute = logged_member.likes_in_last_minute
     l_likes_in_last_minute_interval_start = logged_member.likes_in_last_minute_interval_start
     l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
@@ -593,8 +612,10 @@ def like_instagram_picture(req, p_photo_id):
              x_ratelimit=x_ratelimit,
              x_limit_pct=x_limit_pct,
              likes_per_minute=l_likes_in_last_minute,
-             )
+             current_likes_cnt=current_likes_cnt,
+        )
     )
+
 
 @dajaxice_register
 def send_instagram_commenter_comment(req, form, p_photo_id, p_comment_text):
@@ -627,7 +648,6 @@ def send_instagram_commenter_comment(req, form, p_photo_id, p_comment_text):
     l_instagram_photo = ig_session.get_instagram_photo_info(p_photo_id)
     l_photo_author_instagram_id = l_instagram_photo.user.id
 
-
     comment_text = p_comment_text
 
     # checking number of comments in the last period
@@ -637,7 +657,7 @@ def send_instagram_commenter_comment(req, form, p_photo_id, p_comment_text):
     l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
 
     if l_comments_in_last_minute_interval_start:
-        #l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
+        # l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
         l_diff = l_comments_in_last_minute_interval_start - timezone.now()
         if l_diff > l_timedelta:
             #hour has passed - reset the counters
@@ -694,13 +714,12 @@ def send_instagram_commenter_comment(req, form, p_photo_id, p_comment_text):
              x_ratelimit=x_ratelimit,
              x_limit_pct=x_limit_pct,
              comments_per_minute=l_comments_in_last_minute,
-             )
+        )
     )
 
 
 @dajaxice_register
 def load_instagram_commenter_comments(req, p_photo_id):
-
     try:
         logged_member = Member.objects.get(django_user__username=req.user)
         show_describe_button = logged_member.is_editor(req)
@@ -751,11 +770,10 @@ def load_instagram_commenter_comments(req, p_photo_id):
                     ]
                 )
 
-
     html_text = render_to_string('members/commenter-index-ajax.html',
                                  dict(
                                      unanswered_comments_media_list=l_unanswered_comments_and_posts_list,
-                                     )
+                                 )
     )
 
     return json.dumps({
@@ -763,5 +781,5 @@ def load_instagram_commenter_comments(req, p_photo_id):
         'error_message': '',
         'html_text': html_text,
         'p_photo_id': p_photo_id,
-        }
+    }
     )

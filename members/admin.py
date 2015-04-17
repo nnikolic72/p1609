@@ -184,11 +184,6 @@ class MemberAdmin(admin.ModelAdmin):
                                             ]
         }
         ),
-        ('Membership Information', {'fields': ['membership'
-
-                                            ]
-        }
-        ),
         ('New Friends Interactions', {'fields': ['daily_new_friends_interactions',
                                                  'daily_new_friends_interactions_date',
                                             ]
@@ -198,6 +193,8 @@ class MemberAdmin(admin.ModelAdmin):
                                                  'likes_in_last_minute_interval_start',
                                                  'comments_in_last_minute',
                                                  'comments_in_last_minute_interval_start',
+                                                 'new_friends_in_last_day',
+                                                 'new_friends_in_last_day_interval_start',
                                             ]
         }
         ),
@@ -262,7 +259,7 @@ class MembershipAdmin(admin.ModelAdmin):
                     'membership_end_time', 'pk'
     )
     fieldsets = [
-        ('General Information', {'fields': ['membership_type',
+        ('General Information', {'fields': ['member', 'membership_type',
                                             'active_membership', 'recurring_membership',
                                             'membership_start_time', 'membership_end_time'
 
