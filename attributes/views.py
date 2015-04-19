@@ -45,6 +45,8 @@ class AttributeIndexView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -77,6 +79,8 @@ class AttributeIndexView(TemplateView):
                       dict(
                           attributes_list=l_attributes_result_list,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -115,6 +119,8 @@ class AttributeNameView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -148,6 +154,8 @@ class AttributeNameView(TemplateView):
                           inspiring_users=l_inspiring_users_belongs_to_attribute,
                           l_attribute=l_attribute,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,

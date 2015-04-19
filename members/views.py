@@ -67,6 +67,8 @@ class MemberDashboardView(TemplateView):
             l_likes_in_last_minute, l_comments_in_last_minute = update_member_limits_f(request, logged_member)
             show_describe_button = logged_member.is_editor(request)
             #instagram_user = Member.objects.get(django_user__username=request.user)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
             queryset = Member.objects.filter(django_user__username=request.user)
 
             for q in queryset:
@@ -111,6 +113,9 @@ class MemberDashboardView(TemplateView):
                       dict(photo_owner=logged_member,
                            logged_member=logged_member,
                            profile_photo_url=profile_photo_url,
+
+                           is_monthly_member=is_monthly_member,
+                           is_yearly_member=is_yearly_member,
                            x_ratelimit_remaining=x_ratelimit_remaining,
                            x_ratelimit=x_ratelimit,
                            x_limit_pct=x_limit_pct,
@@ -163,6 +168,8 @@ class MemberMyAccountView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -192,6 +199,8 @@ class MemberMyAccountView(TemplateView):
                           #logged_members_categories=l_logged_members_categories,
                           #logged_members_attributes=l_logged_members_categories,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -214,6 +223,8 @@ class MemberNewMembershipView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -240,6 +251,8 @@ class MemberNewMembershipView(TemplateView):
                       dict(form=form,
                            is_payment_live=IS_PAYMENT_LIVE,
 
+                           is_monthly_member=is_monthly_member,
+                           is_yearly_member=is_yearly_member,
                            logged_member=logged_member,
                            x_ratelimit_remaining=x_ratelimit_remaining,
                            x_ratelimit=x_ratelimit,
@@ -263,6 +276,8 @@ class MemberNewMembershipResultView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -323,11 +338,12 @@ class MemberNewMembershipResultView(TemplateView):
             except:
                 raise
 
-
         return render(request,
                       self.template_name,
                       dict(
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -350,6 +366,8 @@ class MemberNewFriendsResponseView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -369,7 +387,7 @@ class MemberNewFriendsResponseView(TemplateView):
 
         l_contacted_new_friends = NewFriendContactedByMember.objects.filter(
             member=logged_member,
-        ).exclude(interaction_type='S')
+            ).exclude(interaction_type='S')
 
         l_new_friends_since_last_check = 0
         l_total_new_squaresensor_friends = 0
@@ -410,7 +428,8 @@ class MemberNewFriendsResponseView(TemplateView):
                           new_friends_since_last_check=l_new_friends_since_last_check,
                           total_new_squaresensor_friends=l_total_new_squaresensor_friends,
 
-
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -435,8 +454,8 @@ class CommenterIndexView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
-            is_monthly_member = logged_member.is_monthly_member
-            is_yearly_member = logged_member.is_yearly_member
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -447,7 +466,7 @@ class CommenterIndexView(TemplateView):
         instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
         instagram_session.init_instagram_API()
 
-        if logged_member.is_monthly_member or logged_member.is_yearly_member:
+        if logged_member.is_monthly_member() or logged_member.is_yearly_member():
             l_search_photos_amount = COMMENTER_NO_OF_PICS_MEMBER_LIMIT
         else:
             l_search_photos_amount = COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT

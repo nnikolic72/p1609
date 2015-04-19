@@ -54,6 +54,8 @@ class SmartFeedIndexView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -109,6 +111,8 @@ class SmartFeedIndexView(TemplateView):
                           squarefollowings_count=l_squarefollowings_count,
                           new_friends_interaction=0,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -169,6 +173,8 @@ class SmartFeedConfigureCalendarView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -231,6 +237,8 @@ class SmartFeedConfigureCalendarView(TemplateView):
                           squarefollowings_count=l_squarefollowings_count,
                           new_friends_interaction=0,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -268,6 +276,8 @@ class SmartFeedConfigureView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -296,6 +306,8 @@ class SmartFeedConfigureView(TemplateView):
                       dict(
                           l_squarefollowing_queryset=l_squarefollowing_queryset,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,

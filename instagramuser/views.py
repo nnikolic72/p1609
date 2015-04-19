@@ -51,6 +51,8 @@ class AddInspiringUserView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -74,6 +76,8 @@ class AddInspiringUserView(TemplateView):
                       dict(
                           form=form,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -119,6 +123,8 @@ class InspiringUserIndexView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -141,6 +147,8 @@ class InspiringUserIndexView(TemplateView):
                       dict(
                           inspiring_users=l_inspiring_users_queryset,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -176,6 +184,8 @@ class InspiringUserNameView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -261,6 +271,8 @@ class InspiringUserNameView(TemplateView):
                           instagramuser=l_instagram_user,
                           new_friends_interaction=0,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           show_describe_button=False,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
@@ -300,6 +312,7 @@ class UsersBestPhotosView(TemplateView):
             self.instagram_user = Member.objects.get(django_user__username=p_username)
             self.queryset = Member.objects.filter(django_user__username=p_username)
             self.is_member = True
+
 
         except ObjectDoesNotExist:
             self.is_member = False
@@ -371,6 +384,8 @@ class UsersBestPhotosView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -485,6 +500,8 @@ class UsersBestPhotosView(TemplateView):
                           liked_photos=liked_photos,
                           new_friends_interaction=0,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -526,6 +543,8 @@ class AnyUserRecentBestView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -613,6 +632,8 @@ class AnyUserRecentBestView(TemplateView):
                           instagramuser=l_instagram_user,
                           new_friends_interaction=0,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           show_describe_button=False,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
@@ -650,6 +671,8 @@ class FindFriendsView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
 
             if logged_member.is_monthly_member() == True or logged_member.is_yearly_member() == True:
                 max_interactions = FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS
@@ -741,6 +764,8 @@ class FindFriendsView(TemplateView):
                           interactions_remaining=l_new_friends_remaining,
                           hours_remaining=l_hours_remaining,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
@@ -778,6 +803,8 @@ class InspiringUserIndexAllView(TemplateView):
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -816,6 +843,8 @@ class InspiringUserIndexAllView(TemplateView):
                       dict(
                           inspiring_users_list=l_inspiring_users_list,
 
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,
