@@ -733,7 +733,7 @@ def load_instagram_commenter_comments(req, p_photo_id):
     instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
     instagram_session.init_instagram_API()
 
-    if logged_member.is_monthly_member or logged_member.is_yearly_member:
+    if logged_member.is_monthly_member() == True or logged_member.is_yearly_member() == True:
         l_search_photos_amount = COMMENTER_NO_OF_PICS_MEMBER_LIMIT
     else:
         l_search_photos_amount = COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT
