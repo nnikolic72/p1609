@@ -1955,7 +1955,31 @@ class InstagramComments():
                 l_is_owners_comment = True
                 continue
 
-            l_unanswered_comments_and_posts.append([l_order, comment])
+            l_time_diff = datetime.today() - comment.created_at
+            l_time_diff_seconds = l_time_diff.seconds + (86400 * l_time_diff.days)
+            l_diff = None
+            if l_time_diff_seconds < 60:
+                # less than minute
+                l_diff = '<1 min'
+            else:
+                if l_time_diff_seconds < 3600:
+                    # less than hour
+                    l_minutes = l_time_diff_seconds // 60
+                    l_diff = '%s min' % (l_minutes)
+                else:
+                    if l_time_diff_seconds < 86400:
+                        l_hours = l_time_diff_seconds // 3660
+                        l_diff = '%s h' % (l_hours)
+                    else:
+                        if l_time_diff_seconds < 604800:
+                            l_days = l_time_diff_seconds // 86400
+                            l_diff = '%s days' % (l_days)
+                        else:
+                            if l_time_diff_seconds > 604800:
+                                l_days = l_time_diff_seconds // 86400
+                                l_diff = '%s days' % (l_days)
+
+            l_unanswered_comments_and_posts.append([l_order, comment, l_diff])
 
         l_return_unanswered_comments = []
         for unanswered_comment in l_unanswered_comments_and_posts:

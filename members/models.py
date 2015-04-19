@@ -93,6 +93,18 @@ class Member(InstagramUser):
 
         return l_is_yearly_member
 
+    def get_active_membership(self):
+        l_active_membership = None
+
+        try:
+            l_active_membership = Membership.objects.get(member=self, active_membership=True)
+        except ObjectDoesNotExist:
+            l_active_membership = None
+        except:
+            raise
+
+        return l_active_membership
+
     user_type = models.CharField(editable=False, default='member', max_length=50)
 
     categories = models.ManyToManyField(Category, through='MemberBelongsToCategory', null=True, blank=True)

@@ -32,44 +32,58 @@
                         <td><b>{% trans 'User type' %}</b></td>
                         <td>{{ logged_member.user_type }}</td>
                     </tr>
-                    {% if logged_member.membership %}
-                        <tr>
-                            <td><b>{% trans 'Membership type' %}</b></td>
-                            <td>{{ logged_member.membership.membership_type }}</td>
-                        </tr>
-                        <tr>
-                            <td><b>{% trans 'Recurring membership?' %}</b></td>
-                            <td>{{ logged_member.membership.recurring_membership }}</td>
-                        </tr>
-                        <tr>
-                            <td><b>{% trans 'Start time' %}</b></td>
-                            <td>{{ logged_member.membership.membership_start_time }}</td>
-                        </tr>
-                        <tr>
-                            <td><b>{% trans 'End time' %}</b></td>
-                            <td>{{ logged_member.membership.membership_end_time }}</td>
-                        </tr>
-                        <tr>
-                            <td><b>{% trans 'Status' %}</b></td>
-                            <td>{% if logged_member.membership.active_membership == True %}{% trans 'Active' %}{% else %}{% trans 'Inactive' %}{% endif %}</td>
-                        </tr>
-                        <tr>
-                            <td>
+
+                    <tr>
+                        <td><b>{% trans 'Membership type' %}</b></td>
+                        <td>{{ active_membership.membership_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'Recurring membership?' %}</b></td>
+                    <td>
+                        {% if active_membership.recurring_membership %}
+                            {% trans 'Yes' %}
+                        {% endif %}
+                        {% if not active_membership.recurring_membership %}
+                            {% trans 'No' %}
+                        {% endif %}
+                    </td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'Start time' %}</b></td>
+
+                        <td>{{ active_membership.membership_start_time }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'End time' %}</b></td>
+                        <td>{{ active_membership.membership_end_time }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'Status' %}</b></td>
+                        <td>
+                            {% if  is_monthly_member or is_yearly_member %}
+                                {% if  is_monthly_member %}
+                                    {% trans 'Monthly membership' %}
+                                {% endif %}
+                                {% if  is_yearly_member %}
+                                    {% trans 'Yearly membership' %}
+                                {% endif %}
+                            {% else %}
+                                {% trans 'No Membership' %}
+                            {% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if not is_monthly_member and not is_yearly_member %}
                                 <form action="{% url 'members:new_membership' %}" method="get">
                                     <button type="submit" class="btn btn-success btn-block">
                                         {% trans 'Become a member' %}
                                     </button>
                                 </form>
-                            </td>
+                            {% endif %}
+                        </td>
                         <td></td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td><b>{% trans 'Membership info' %}</b></td>
-                            <td>{% trans 'No active membership' %}
-                            </td>
-                        </tr>
-                    {% endif %}
+                    </tr>
+
 
                 </table>
             </div>

@@ -17,8 +17,8 @@
                         >{% trans 'Answer' %}</button>
             </div>
         </div>
-        <div class="row" style="display:none;" id="comments_{{ photo.3 }}">
 
+        <div class="row" style="display:none;" id="comments_{{ photo.3 }}">
             <div class="col-xs-12">
                 <form class="form" action="" method="post" id="comment_form_{{ photo.3 }}">
                     {% csrf_token %}
@@ -43,7 +43,8 @@
                             onclick="add_response_username('{{ comment.1.user.username }}', '{{ photo.3 }}');"
                             >
                         <span class="glyphicon glyphicon-pencil" ></span>
-                    </button> <b>{{ comment.1.user.username }}{% if comment.1.user.full_name %} ({{ comment.1.user.full_name }}){% endif %}:</b> {{ comment.1.text|emoji_replace_unicode }}
+                    </button>
+                    <small>{% if comment.2 %}({{ comment.2}})</small> {% endif %}<b>{{ comment.1.user.username }}</b>{% if comment.1.user.full_name %} ({{ comment.1.user.full_name }}){% endif %}: {{ comment.1.text|emoji_replace_unicode }}
                 </div>
             {% endfor %}
 

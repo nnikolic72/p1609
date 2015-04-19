@@ -170,6 +170,8 @@ class MemberMyAccountView(TemplateView):
             show_describe_button = logged_member.is_editor(request)
             is_monthly_member = logged_member.is_monthly_member()
             is_yearly_member = logged_member.is_yearly_member()
+            active_membership = logged_member.get_active_membership()
+
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -201,6 +203,7 @@ class MemberMyAccountView(TemplateView):
 
                           is_monthly_member=is_monthly_member,
                           is_yearly_member=is_yearly_member,
+                          active_membership=active_membership,
                           logged_member=logged_member,
                           x_ratelimit_remaining=x_ratelimit_remaining,
                           x_ratelimit=x_ratelimit,

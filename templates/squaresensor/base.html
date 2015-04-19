@@ -91,18 +91,26 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-xs-12 col-lg-8 col-lg-offset-1 squaresensor-content-panel" style="padding-bottom: 50px;">
+            <div class="col-xs-12 col-lg-8
+            {% if not is_monthly_member and not is_yearly_member %}
+            col-lg-offset-1
+            {% else %}
+            col-lg-offset-2
+            {% endif %}
+            squaresensor-content-panel" style="padding-bottom: 50px;">
 
                 <!-- Main content-->
                 {% block content %}
                 {% endblock content %}
             </div>
 
-            <div class="col-xs-12 col-lg-2 squaresensor-content-panel" style="padding-bottom: 50px;">
-                {% block aside %}
-                    <p>Reklame u base.html</p>
-                {% endblock aside %}
-            </div>
+            {% if not is_monthly_member and not is_yearly_member %}
+                <div class="col-xs-12 col-lg-2 squaresensor-content-panel" style="padding-bottom: 50px;">
+                    {% block aside %}
+                        <p>Reklame u base.html</p>
+                    {% endblock aside %}
+                </div>
+            {% endif %}
         </div>
     </div>
 

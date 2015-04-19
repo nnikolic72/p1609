@@ -54,7 +54,7 @@
             <div class="row" style="margin-top: 20px;">
                 <div class="col-xs-12 col-sm-4 col-sm-offset-4 text-center">
                     <form class="form" method="get" action="{% url 'instagramuser:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}">
-                        <button type="button" class="btn btn-default btn-block"
+                        <button type="submit" class="btn btn-default btn-block"
                                 id="alltimebest-refresh"
                                 onclick="display_ajax_img('alltimebest-refresh', '{{ STATIC_URL }}')"
                                 >
