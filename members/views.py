@@ -1,4 +1,5 @@
 from __future__ import division
+import logging
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
@@ -225,15 +226,15 @@ def show_me_the_money(sender, **kwargs):
         # Undertake some action depending upon `ipn_obj`.
         new_membership = Membership(membership_type='PRO')
         new_membership.save()
+        logging.debug('Paid invoice %s' % (ipn_obj.invoice))
 
     else:
         x = 2
         # something went wrong
 
+
 class MemberNewMembershipView(TemplateView):
     template_name = 'members/new-membership.html'
-
-
 
     def get(self, request, *args, **kwargs):
 
