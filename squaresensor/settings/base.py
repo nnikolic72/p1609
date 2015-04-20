@@ -36,6 +36,37 @@ INSTAGRAM_AUTH_EXTRA_ARGUMENTS = {'scope': 'likes comments relationships'}
 # SECURITY WARNING: keep the secret key used in production secret!
 
 try:
+    PAYPAL_TEST_ENV = os.environ['PAYPAL_TEST']
+except:
+    PAYPAL_TEST_ENV = None
+if not PAYPAL_TEST_ENV:
+    try:
+        PAYPAL_TEST_ENV = config.get('squaresensor', 'PAYPAL_TEST')
+    except:
+        PAYPAL_TEST_ENV = None
+
+PAYPAL_TEST = True
+if PAYPAL_TEST_ENV:
+    if PAYPAL_TEST_ENV == '1':
+        PAYPAL_TEST = True
+
+    if PAYPAL_TEST_ENV == '0':
+        PAYPAL_TEST = False
+else:
+    PAYPAL_TEST = True
+
+
+try:
+    PAYPAL_RECEIVER_EMAIL = os.environ['PAYPAL_RECEIVER_EMAIL']
+except:
+    PAYPAL_RECEIVER_EMAIL = None
+if not PAYPAL_RECEIVER_EMAIL:
+    try:
+        PAYPAL_RECEIVER_EMAIL = config.get('squaresensor', 'PAYPAL_RECEIVER_EMAIL')
+    except:
+        PAYPAL_RECEIVER_EMAIL = None
+
+try:
     IS_PAYMENT_LIVE = os.environ['IS_PAYMENT_LIVE']
 except:
     IS_PAYMENT_LIVE = None
@@ -44,7 +75,6 @@ if not IS_PAYMENT_LIVE:
         IS_PAYMENT_LIVE = config.get('squaresensor', 'IS_PAYMENT_LIVE')
     except:
         IS_PAYMENT_LIVE = None
-
 
 try:
     INSTAGRAM_COMMENTS_ALLOWED = os.environ['INSTAGRAM_COMMENTS_ALLOWED']
@@ -158,6 +188,7 @@ INSTALLED_APPS = (
     'djcelery',
     'crispy_forms',
     'emoji',
+    'paypal.standard.ipn',
 
     'lander',
     'instagramuser',

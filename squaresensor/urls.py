@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
     url(r'', include('social_auth.urls')),
     url(r'^emoji/', include('emoji.urls')),
+    url(r'^members/paypal/', include('paypal.standard.ipn.urls')),
 
     url(r'^', include('lander.urls', namespace='lander')),
     url(r'^members/', include('members.urls', namespace='members')),

@@ -3,13 +3,20 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.utils.datetime_safe import datetime
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import logout as auth_logout
 
 # Create your views here.
 from dateutil.relativedelta import relativedelta
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+
+from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.models import ST_PP_COMPLETED
+from paypal.standard.ipn.signals import valid_ipn_received
+
 from social_auth.db.django_models import UserSocialAuth
 from attributes.models import Attribute
 from categories.models import Category
@@ -18,10 +25,9 @@ from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, upda
     BestPhotos, InstagramComments
 from .forms import MembershipForm
 
-
 from .models import Member, Membership
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
-    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE
+    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL
 
 
 class MemberHomePageView(TemplateView):
@@ -66,7 +72,7 @@ class MemberDashboardView(TemplateView):
             logged_member = Member.objects.get(django_user__username=request.user)
             l_likes_in_last_minute, l_comments_in_last_minute = update_member_limits_f(request, logged_member)
             show_describe_button = logged_member.is_editor(request)
-            #instagram_user = Member.objects.get(django_user__username=request.user)
+            # instagram_user = Member.objects.get(django_user__username=request.user)
             is_monthly_member = logged_member.is_monthly_member()
             is_yearly_member = logged_member.is_yearly_member()
             queryset = Member.objects.filter(django_user__username=request.user)
@@ -93,7 +99,6 @@ class MemberDashboardView(TemplateView):
 
         except ObjectDoesNotExist:
             logged_member = None
-
 
         l_categories = Category.objects.all()
         l_attributes = Attribute.objects.all()
@@ -122,7 +127,7 @@ class MemberDashboardView(TemplateView):
                            categories=l_categories,
                            attributes=l_attributes,
                            show_describe_button=show_describe_button,
-                           )
+                      )
         )
 
 
@@ -190,7 +195,7 @@ class MemberMyAccountView(TemplateView):
         else:
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
-        #l_logged_members_categories = logged_member.categories
+        # l_logged_members_categories = logged_member.categories
         #l_logged_members_attributes = logged_member.attributes
 
 
@@ -210,13 +215,25 @@ class MemberMyAccountView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                          )
+                      )
         )
 
 
-class MemberNewMembershipView(TemplateView):
+def show_me_the_money(sender, **kwargs):
+    ipn_obj = sender
+    if ipn_obj.payment_status == ST_PP_COMPLETED:
+        # Undertake some action depending upon `ipn_obj`.
+        new_membership = Membership(membership_type='PRO')
+        new_membership.save()
 
+    else:
+        x = 2
+        # something went wrong
+
+class MemberNewMembershipView(TemplateView):
     template_name = 'members/new-membership.html'
+
+
 
     def get(self, request, *args, **kwargs):
 
@@ -247,7 +264,18 @@ class MemberNewMembershipView(TemplateView):
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
 
-        form = MembershipForm()
+        paypal_dict = {
+            "business": PAYPAL_RECEIVER_EMAIL,
+            "amount": "5.00",
+            "item_name": "Squaresensor Monthly Membership",
+            "invoice": "squaresensor-invoice-id-%s" % (str(datetime.now())),
+            "notify_url": 'http://dev.squaresensor.com' + reverse('paypal-ipn'),
+            "return_url": 'http://dev.squaresensor.com' + reverse('members:new_membership_result'),
+            "cancel_return": 'http://dev.squaresensor.com' + reverse('members:new_membership_cancel'),
+        }
+
+        form = PayPalPaymentsForm(initial=paypal_dict)
+        valid_ipn_received.connect(show_me_the_money)
 
         return render(request,
                       self.template_name,
@@ -262,13 +290,114 @@ class MemberNewMembershipView(TemplateView):
                            x_limit_pct=x_limit_pct,
                            categories=l_categories,
                            attributes=l_attributes,
-                           )
+                      )
         )
 
 
 class MemberNewMembershipResultView(TemplateView):
-
     template_name = 'members/membership-result.html'
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        # do something
+        return super(MemberNewMembershipResultView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+
+        l_membership_end_time = None
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+
+        # END Common for all members views ===============================================
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
+        """
+        membership_form = MembershipForm(self.request.POST)
+
+        if membership_form.is_valid():
+            membership_type = membership_form.cleaned_data['membership_type']
+            try:
+                recurring_membership = membership_form.cleaned_data['recurring_membership']
+            except:
+                recurring_membership = u'off'
+            membership_duration = membership_form.cleaned_data['membership_duration']
+            l_membership_start_time = datetime.today()
+
+            if membership_duration == 'MON':
+                l_membership_end_time = l_membership_start_time + relativedelta(months=+1)
+            if membership_duration == 'YEA':
+                l_membership_end_time = l_membership_start_time + relativedelta(years=+1)
+            if recurring_membership:
+                l_recurring_membership = True
+            else:
+                l_recurring_membership = False
+
+            # old_membership = logged_member.membership
+
+            l_new_membership = Membership(
+                membership_type=membership_type,
+                membership_start_time=l_membership_start_time,
+                membership_end_time=l_membership_end_time,
+                recurring_membership=l_recurring_membership,
+                active_membership=True
+            )
+            try:
+                l_new_membership.save()
+                for membership in logged_member.membership.all():
+                    membership.active_membership = False
+                    membership.save()
+                #old_membership.save()
+                logged_member.membership.add(l_new_membership)
+                #logged_member.membership.remove(old_membership)
+                #logged_member.save()
+            except:
+                raise
+        """
+
+        return render(request,
+                      self.template_name,
+                      dict(
+
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                      )
+        )
+
+
+class MemberNewMembershipCancelView(TemplateView):
+    template_name = 'members/membership-cancel.html'
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        # do something
+        return super(MemberNewMembershipCancelView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
 
@@ -309,7 +438,7 @@ class MemberNewMembershipResultView(TemplateView):
             except:
                 recurring_membership = u'off'
             membership_duration = membership_form.cleaned_data['membership_duration']
-            l_membership_start_time=datetime.today()
+            l_membership_start_time = datetime.today()
 
             if membership_duration == 'MON':
                 l_membership_end_time = l_membership_start_time + relativedelta(months=+1)
@@ -320,26 +449,8 @@ class MemberNewMembershipResultView(TemplateView):
             else:
                 l_recurring_membership = False
 
-            #old_membership = logged_member.membership
+            # old_membership = logged_member.membership
 
-            l_new_membership = Membership(
-                membership_type=membership_type,
-                membership_start_time=l_membership_start_time,
-                membership_end_time=l_membership_end_time,
-                recurring_membership=l_recurring_membership,
-                active_membership=True
-            )
-            try:
-                l_new_membership.save()
-                for membership in logged_member.membership.all():
-                    membership.active_membership = False
-                    membership.save()
-                #old_membership.save()
-                logged_member.membership.add(l_new_membership)
-                #logged_member.membership.remove(old_membership)
-                #logged_member.save()
-            except:
-                raise
 
         return render(request,
                       self.template_name,
@@ -353,12 +464,11 @@ class MemberNewMembershipResultView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                          )
+                      )
         )
 
 
 class MemberNewFriendsResponseView(TemplateView):
-
     template_name = 'members/new-friends-response.html'
 
     def get(self, request, *args, **kwargs):
@@ -382,7 +492,7 @@ class MemberNewFriendsResponseView(TemplateView):
         instagram_session.init_instagram_API()
 
         l_members_followers_obj = BestFollowers(
-            p_instgram_user_id = logged_member.instagram_user_id,
+            p_instgram_user_id=logged_member.instagram_user_id,
             p_analyze_n_photos=IMPORT_MAX_INSTAGRAM_FOLLOWERS,
             p_instagram_api=instagram_session
         )
@@ -390,7 +500,7 @@ class MemberNewFriendsResponseView(TemplateView):
 
         l_contacted_new_friends = NewFriendContactedByMember.objects.filter(
             member=logged_member,
-            ).exclude(interaction_type='S')
+        ).exclude(interaction_type='S')
 
         l_new_friends_since_last_check = 0
         l_total_new_squaresensor_friends = 0
@@ -439,12 +549,11 @@ class MemberNewFriendsResponseView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                          )
+                      )
         )
 
 
 class CommenterIndexView(TemplateView):
-
     template_name = 'members/commenter-index.html'
 
     def get(self, request, *args, **kwargs):
@@ -533,5 +642,5 @@ class CommenterIndexView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                          )
+                      )
         )

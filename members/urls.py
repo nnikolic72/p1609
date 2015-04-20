@@ -24,5 +24,6 @@ urlpatterns = patterns('',
     url(r'^commenter/$', login_required(CommenterIndexView.as_view()), name='commenter_index'),
     url(r'^new-membership/$', login_required(MemberNewMembershipView.as_view()), name='new_membership'),
     url(r'^new-membership-result/$', login_required(MemberNewMembershipResultView.as_view()), name='new_membership_result'),
+    url(r'^new-membership-cancel/$', login_required(MemberNewMembershipResultView.as_view()), name='new_membership_cancel'),
     url(r'^new-friends-response/$', login_required(MemberNewFriendsResponseView.as_view()), name='new_friends_response'),
 )
