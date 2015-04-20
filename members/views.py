@@ -1,5 +1,8 @@
 from __future__ import division
 import logging
+from datetime import (
+    datetime, timedelta
+)
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
@@ -235,10 +238,18 @@ def show_me_the_money(sender, **kwargs):
             raise
 
         if paid_invoice:
+            l_membership_start_time = datetime.today()
+            if paid_invoice.membership_type == 'MON':
+                l_membership_end_time = l_membership_start_time + timedelta(days=31)
+            if paid_invoice.membership_type == 'PRO':
+                l_membership_end_time = l_membership_start_time + timedelta(years=365)
+
             new_membership = Membership(membership_type=paid_invoice.membership_type,
                                         invoice=paid_invoice,
                                         member=paid_invoice.member,
-                                        active_membership=True)
+                                        active_membership=True,
+                                        membership_start_time=l_membership_start_time,
+                                        membership_end_time=l_membership_end_time)
             new_membership.save()
             logging.debug('Paid invoice %s' % (ipn_obj.invoice))
     else:
