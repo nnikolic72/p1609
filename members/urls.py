@@ -152,4 +152,5 @@ def show_me_the_money_flagged(sender, **kwargs):
         pass
         # something went wrong
 
+valid_ipn_received.connect(show_me_the_money)
 payment_was_flagged.connect(show_me_the_money_flagged)
