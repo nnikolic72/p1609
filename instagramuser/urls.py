@@ -12,6 +12,8 @@ from .views import (AddInspiringUserView,
     InspiringUserIndexAllView
 )
 
+
+
 urlpatterns = patterns('',
                        url(r'^add/$', login_required(AddInspiringUserView.as_view()),
                            name='addinspiring'

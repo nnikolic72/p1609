@@ -223,53 +223,7 @@ class MemberMyAccountView(TemplateView):
         )
 
 
-def show_me_the_money(sender, **kwargs):
-    ipn_obj = sender
-    l_message = 'Payment response received. Status (%s). Sender (%s)' % (ipn_obj.payment_status, sender)
-    l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
-                                   message=l_message)
-    l_new_payment_log.save()
 
-    if ipn_obj.payment_status == ST_PP_COMPLETED:
-        # Undertake some action depending upon `ipn_obj`.
-
-        try:
-            paid_invoice = Invoice.objects.get(invoice_number=ipn_obj.invoice)
-            paid_invoice.invoice_status = "paid"
-            paid_invoice.save()
-        except ObjectDoesNotExist:
-            paid_invoice = None
-        except:
-            raise
-
-        if paid_invoice:
-            l_membership_start_time = datetime.today()
-            l_membership_end_time = None
-            if paid_invoice.membership_type == 'MON':
-                l_membership_end_time = l_membership_start_time + timedelta(days=31)
-            if paid_invoice.membership_type == 'PRO':
-                l_membership_end_time = l_membership_start_time + timedelta(days=365)
-
-            new_membership = Membership(membership_type=paid_invoice.membership_type,
-                                        invoice=paid_invoice,
-                                        member=paid_invoice.member,
-                                        active_membership=True,
-                                        membership_start_time=l_membership_start_time,
-                                        membership_end_time=l_membership_end_time)
-            new_membership.save()
-            logging.debug('Paid invoice %s' % (ipn_obj.invoice))
-        else:
-            logging.exception('Paid invoice not found %s' % (ipn_obj.invoice))
-            raise
-    else:
-        try:
-            paid_invoice = Invoice.objects.get(invoice_number=ipn_obj.invoice)
-            paid_invoice.delete()
-        except ObjectDoesNotExist:
-            paid_invoice = None
-        except:
-            raise
-        # something went wrong
 
 
 class MemberNewMembershipView(TemplateView):
@@ -374,7 +328,7 @@ class MemberNewYearlyMembershipView(TemplateView):
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict)
-        valid_ipn_received.connect(show_me_the_money)
+
 
         return render(request,
                       self.template_name,
