@@ -80,13 +80,7 @@ def show_me_the_money(sender, **kwargs):
             logging.exception('Paid invoice not found %s' % (ipn_obj.invoice))
             raise
     else:
-        try:
-            paid_invoice = Invoice.objects.get(invoice_number=ipn_obj.invoice)
-            paid_invoice.delete()
-        except ObjectDoesNotExist:
-            paid_invoice = None
-        except:
-            raise
+        pass
         # something went wrong
 
 valid_ipn_received.connect(show_me_the_money)
