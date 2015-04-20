@@ -329,14 +329,15 @@ class MemberNewYearlyMembershipView(TemplateView):
             "cmd": "_xclick-subscriptions",
             "business": PAYPAL_RECEIVER_EMAIL,
             "a3": l_price,                      # monthly price,
-            "p3": 12,                           # duration of each unit (depends on unit)
-            "t3": "M",                         # duration unit ("M for Month")
+            "p3": 1,                           # duration of each unit (depends on unit)
+            "t3": "Y",                         # duration unit ("M for Month")
             "item_name": "Squaresensor Premium Yearly Membership",
             "invoice": l_invoice_number,
             "no-note": "1",
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
+            "currency_code": "EUR",
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict, button_type="subscribe")
@@ -416,6 +417,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
+            "currency_code": "EUR",
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict,  button_type="subscribe")
