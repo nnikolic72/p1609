@@ -29,7 +29,7 @@ from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, upda
     BestPhotos, InstagramComments
 from .forms import MembershipForm
 
-from .models import Member, Membership, Invoice
+from .models import Member, Membership, Invoice, PaymentLog
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
     COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL, ROOT_SITE_URL
 
@@ -225,6 +225,11 @@ class MemberMyAccountView(TemplateView):
 
 def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
+    l_message = 'Payment response received. Status (%s). Sender (%s)' % (ipn_obj.payment_status, sender)
+    l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
+                                   message=l_message)
+    l_new_payment_log.save()
+
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # Undertake some action depending upon `ipn_obj`.
 
@@ -239,10 +244,11 @@ def show_me_the_money(sender, **kwargs):
 
         if paid_invoice:
             l_membership_start_time = datetime.today()
+            l_membership_end_time = None
             if paid_invoice.membership_type == 'MON':
                 l_membership_end_time = l_membership_start_time + timedelta(days=31)
             if paid_invoice.membership_type == 'PRO':
-                l_membership_end_time = l_membership_start_time + timedelta(years=365)
+                l_membership_end_time = l_membership_start_time + timedelta(days=365)
 
             new_membership = Membership(membership_type=paid_invoice.membership_type,
                                         invoice=paid_invoice,
@@ -252,6 +258,9 @@ def show_me_the_money(sender, **kwargs):
                                         membership_end_time=l_membership_end_time)
             new_membership.save()
             logging.debug('Paid invoice %s' % (ipn_obj.invoice))
+        else:
+            logging.exception('Paid invoice not found %s' % (ipn_obj.invoice))
+            raise
     else:
         try:
             paid_invoice = Invoice.objects.get(invoice_number=ipn_obj.invoice)

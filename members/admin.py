@@ -9,7 +9,7 @@ INSTAGRAM_SECRET_KEY)
 from .models import (
     Member,
     Membership,
-    Invoice)
+    Invoice, PaymentLog)
 
 
 class CategoryInlineAdmin(admin.TabularInline):
@@ -284,6 +284,20 @@ class InvoiceAdmin(admin.ModelAdmin):
         ),
         ]
 
+
+class PaymentLogAdmin(admin.ModelAdmin):
+    list_display = ('invoice_number', 'message',
+                     'pk'
+    )
+    fieldsets = [
+        ('General Information', {'fields': ['invoice_number', 'message',
+                                            ]
+        }
+        ),
+        ]
+
+
 admin.site.register(Member, MemberAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
+admin.site.register(PaymentLog, PaymentLogAdmin)
 admin.site.register(Membership, MembershipAdmin)

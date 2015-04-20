@@ -213,6 +213,19 @@ class Invoice(models.Model):
     )
 
 
+class PaymentLog(models.Model):
+    invoice_number = models.CharField(max_length=200, null=True, blank=True,
+                                       default="",
+                                       verbose_name=_('Invoice number'),
+                                       help_text=_('Invoice number')
+    )
+
+    message = models.CharField(max_length=500, null=True, blank=True,
+                                       default="",
+                                       verbose_name=_('Payment record'),
+                                       help_text=_('Payment record')
+    )
+
 class Membership(models.Model):
     """
     Model to hold membership information
