@@ -347,7 +347,6 @@ class MemberNewYearlyMembershipView(TemplateView):
         )
 
 
-
 class MemberNewMonthlyMembershipView(TemplateView):
     template_name = 'members/new-monthly-membership.html'
 
@@ -401,7 +400,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict)
-        valid_ipn_received.connect(show_me_the_money)
+        #valid_ipn_received.connect(show_me_the_money)
 
         return render(request,
                       self.template_name,
