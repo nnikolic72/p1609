@@ -237,7 +237,8 @@ def show_me_the_money(sender, **kwargs):
         if paid_invoice:
             new_membership = Membership(membership_type=paid_invoice.membership_type,
                                         invoice=paid_invoice,
-                                        member=paid_invoice.member)
+                                        member=paid_invoice.member,
+                                        active_membership=True)
             new_membership.save()
             logging.debug('Paid invoice %s' % (ipn_obj.invoice))
     else:
