@@ -222,6 +222,11 @@ class Membership(models.Model):
                                             verbose_name=_('Active'),
                                             help_text=_('Is membership active?')
     )
+    invoice_number = models.CharField(max_length=200, null=True, blank=True,
+                                       default="",
+                                       verbose_name=_('Invoice number'),
+                                       help_text=_('Invoice number')
+    )
 
     creation_date = models.DateTimeField(editable=False)
     last_update_date = models.DateTimeField()
