@@ -52,8 +52,8 @@ def show_me_the_money(sender, **kwargs):
         l_new_payment_log = PaymentLog(invoice_number=None,
                                        message=l_message)
 
-    l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
-                                   message=l_message)
+    #l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
+    #                               message=l_message)
     l_new_payment_log.save()
 
     if ipn_obj.payment_status == ST_PP_COMPLETED:
