@@ -342,7 +342,7 @@ class MemberNewYearlyMembershipView(TemplateView):
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
-            "currency_code": l_currency_code,
+            #"currency_code": l_currency_code,
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict, button_type="subscribe")
@@ -426,7 +426,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
-            "currency_code": l_currency_code,
+            #"currency_code": l_currency_code,
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict,  button_type="subscribe")
