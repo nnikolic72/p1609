@@ -19,7 +19,11 @@
 
 {% block content %}
     {{ block.super }}
-    <p>Success! Congratulations on becoming a Squaresensor member! Go to <a href="{% url 'members:my_account' %}">{% trans 'your account page' %}</a></p>
+    <h3>{% trans 'Success! Congratulations on becoming a Squaresensor member!' %}<br>
+    <small>{% trans 'Please allow up to one hour to complete the purchase registration.' %}</small></h3>
+
+
+       <p>Go to <a href="{% url 'members:my_account' %}">{% trans 'your account page' %}</a></p>
 {% endblock content %}
 
 {% block aside %}
