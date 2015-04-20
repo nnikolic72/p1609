@@ -2218,7 +2218,7 @@ def update_member_limits_f(req, logged_member):
         l_timedelta_day = timedelta(days=+FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS)
         l_new_friends_in_last_day_interval_start = logged_member.new_friends_in_last_day_interval_start
         if l_new_friends_in_last_day_interval_start:
-            l_diff = l_new_friends_in_last_day_interval_start - timezone.now()
+            l_diff = timezone.now() - l_new_friends_in_last_day_interval_start
             if l_diff > l_timedelta_day:
                 # hour has passed - reset the counters
                 logged_member.new_friends_in_last_day = 0
