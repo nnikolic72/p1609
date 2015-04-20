@@ -26,7 +26,7 @@ from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, upda
     BestPhotos, InstagramComments
 from .forms import MembershipForm
 
-from .models import Member, Membership
+from .models import Member, Membership, Invoice
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
     COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL
 
@@ -224,12 +224,30 @@ def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # Undertake some action depending upon `ipn_obj`.
-        new_membership = Membership(membership_type='PRO', invoice_number=ipn_obj.invoice)
-        new_membership.save()
-        logging.debug('Paid invoice %s' % (ipn_obj.invoice))
 
+        try:
+            paid_invoice = Invoice.objects.get(invoice_number=ipn_obj.invoice)
+            paid_invoice.invoice_status = "paid"
+            paid_invoice.save()
+        except ObjectDoesNotExist:
+            paid_invoice = None
+        except:
+            raise
+
+        if paid_invoice:
+            new_membership = Membership(membership_type=paid_invoice.membership_type,
+                                        invoice=paid_invoice,
+                                        member=paid_invoice.member)
+            new_membership.save()
+            logging.debug('Paid invoice %s' % (ipn_obj.invoice))
     else:
-        x = 2
+        try:
+            paid_invoice = Invoice.objects.get(invoice_number=ipn_obj.invoice)
+            paid_invoice.delete()
+        except ObjectDoesNotExist:
+            paid_invoice = None
+        except:
+            raise
         # something went wrong
 
 
@@ -265,11 +283,20 @@ class MemberNewMembershipView(TemplateView):
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
 
+        # Create a new invoice
+        l_invoice_number = 'squaresensor-invoice-%s-%s' % (logged_member.instagram_user_name, str(datetime.now()))
+        new_invoice = Invoice(member=logged_member,
+                              invoice_number=l_invoice_number,
+                              invoice_status='unpaid'
+                              )
+        new_invoice.save()
+
         paypal_dict = {
             "business": PAYPAL_RECEIVER_EMAIL,
             "amount": "5.00",
             "item_name": "Squaresensor Monthly Membership",
-            "invoice": "squaresensor-invoice-id-%s" % (str(datetime.now())),
+            "invoice": l_invoice_number,
+            "no-note": 1,
             "notify_url": 'http://dev.squaresensor.com' + reverse('paypal-ipn'),
             "return_url": 'http://dev.squaresensor.com' + reverse('members:new_membership_result'),
             "cancel_return": 'http://dev.squaresensor.com' + reverse('members:new_membership_cancel'),

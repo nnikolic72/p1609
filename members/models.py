@@ -190,6 +190,29 @@ class Member(InstagramUser):
         verbose_name_plural = _('Members')
 
 
+class Invoice(models.Model):
+    """
+    Invoices for membership payments
+    """
+    invoice_number = models.CharField(max_length=200, null=True, blank=True,
+                                       default="",
+                                       verbose_name=_('Invoice number'),
+                                       help_text=_('Invoice number')
+    )
+    membership_type = models.CharField(max_length=20, null=True, blank=True,
+                                       default="",
+                                       verbose_name=_('Membership Type'),
+                                       help_text=_('Membership Type')
+    )
+
+    member = models.ForeignKey('members.Member', null=True, blank=True)
+    invoice_status = models.CharField(max_length=20, null=True, blank=True,
+                                       default="unpaid",
+                                       verbose_name=_('Invoice status'),
+                                       help_text=_('Invoice status')
+    )
+
+
 class Membership(models.Model):
     """
     Model to hold membership information
@@ -222,11 +245,13 @@ class Membership(models.Model):
                                             verbose_name=_('Active'),
                                             help_text=_('Is membership active?')
     )
-    invoice_number = models.CharField(max_length=200, null=True, blank=True,
-                                       default="",
-                                       verbose_name=_('Invoice number'),
-                                       help_text=_('Invoice number')
-    )
+    #invoice_number = models.CharField(max_length=200, null=True, blank=True,
+    #                                   default="",
+    #                                   verbose_name=_('Invoice number'),
+    #                                   help_text=_('Invoice number')
+    #)
+
+    invoice = models.ForeignKey('members.Invoice', null=True, blank=True)
 
     creation_date = models.DateTimeField(editable=False)
     last_update_date = models.DateTimeField()
