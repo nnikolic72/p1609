@@ -49,7 +49,7 @@ def show_me_the_money(sender, **kwargs):
                                        message=l_message)
     else:
         l_message = 'sender is blank'
-        l_new_payment_log = PaymentLog(invoice_number=None,
+        l_new_payment_log = PaymentLog(invoice_number='',
                                        message=l_message)
 
     #l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
@@ -99,7 +99,7 @@ def show_me_the_money_flagged(sender, **kwargs):
                                        message=l_message)
     else:
         l_message = 'Flagged. sender is blank'
-        l_new_payment_log = PaymentLog(invoice_number=None,
+        l_new_payment_log = PaymentLog(invoice_number='',
                                        message=l_message)
     #l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
     #                               message=l_message)
