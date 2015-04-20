@@ -34,7 +34,11 @@
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
                 {% if is_payment_live == '1' %}
-                    {{ form.render }}
+                    <form method="get" action="{% url 'members:new_monthly_membership' %}">
+                        <button type="submit" class="btm btn-lg btn-success btn-block">
+                            {% trans 'Purchase Monthly Membership' %}
+                        </button>
+                    </form>
                 {% endif %}
             </div>
             <div class="col-xs-12 col-sm-4 col-sm-offset-1 text-center well bg-success">
@@ -49,12 +53,11 @@
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
                 {% if is_payment_live == '1' %}
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick">
-                    <input type="hidden" name="hosted_button_id" value="YVUZYTTGC4UF2">
-                    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
+                    <form method="get" action="{% url 'members:new_yearly_membership' %}">
+                        <button type="submit" class="btm btn-lg btn-success btn-block">
+                            {% trans 'Purchase Yearly Premium Membership' %}
+                        </button>
+                    </form>
                 {% endif %}
             </div>
         </div>

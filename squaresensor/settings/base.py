@@ -67,6 +67,16 @@ if not PAYPAL_RECEIVER_EMAIL:
         PAYPAL_RECEIVER_EMAIL = None
 
 try:
+    ROOT_SITE_URL = os.environ['ROOT_SITE_URL']
+except:
+    ROOT_SITE_URL = None
+if not ROOT_SITE_URL:
+    try:
+        ROOT_SITE_URL = config.get('squaresensor', 'ROOT_SITE_URL')
+    except:
+        ROOT_SITE_URL = None
+
+try:
     IS_PAYMENT_LIVE = os.environ['IS_PAYMENT_LIVE']
 except:
     IS_PAYMENT_LIVE = None
@@ -353,7 +363,7 @@ INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS = 1  # when Instagram resets their limit
 
 #Commenting parameters
 COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT = 10
-COMMENTER_NO_OF_PICS_MEMBER_LIMIT = 50
+COMMENTER_NO_OF_PICS_MEMBER_LIMIT = 30
 
 #Find New Friends parameters
 FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS = 10

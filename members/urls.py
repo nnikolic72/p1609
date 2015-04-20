@@ -11,7 +11,9 @@ from .views import (
     MemberNewMembershipView,
     MemberNewMembershipResultView,
     MemberNewFriendsResponseView,
-    CommenterIndexView
+    CommenterIndexView,
+    MemberNewMonthlyMembershipView,
+    MemberNewYearlyMembershipView,
 )
 
 
@@ -23,6 +25,8 @@ urlpatterns = patterns('',
     url(r'^account/$', login_required(MemberMyAccountView.as_view()), name='my_account'),
     url(r'^commenter/$', login_required(CommenterIndexView.as_view()), name='commenter_index'),
     url(r'^new-membership/$', login_required(MemberNewMembershipView.as_view()), name='new_membership'),
+    url(r'^new-monthly-membership/$', login_required(MemberNewMonthlyMembershipView.as_view()), name='new_monthly_membership'),
+    url(r'^new-yearly-membership/$', login_required(MemberNewYearlyMembershipView.as_view()), name='new_yearly_membership'),
     url(r'^new-membership-result/$', login_required(MemberNewMembershipResultView.as_view()), name='new_membership_result'),
     url(r'^new-membership-cancel/$', login_required(MemberNewMembershipResultView.as_view()), name='new_membership_cancel'),
     url(r'^new-friends-response/$', login_required(MemberNewFriendsResponseView.as_view()), name='new_friends_response'),

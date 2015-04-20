@@ -28,7 +28,7 @@ from .forms import MembershipForm
 
 from .models import Member, Membership, Invoice
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
-    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL
+    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL, ROOT_SITE_URL
 
 
 class MemberHomePageView(TemplateView):
@@ -283,10 +283,133 @@ class MemberNewMembershipView(TemplateView):
             x_limit_pct = 100
         # END Limit calculation ----------------------------------------------------------
 
+        return render(request,
+                      self.template_name,
+                      dict(
+                           is_payment_live=IS_PAYMENT_LIVE,
+
+                           is_monthly_member=is_monthly_member,
+                           is_yearly_member=is_yearly_member,
+                           logged_member=logged_member,
+                           x_ratelimit_remaining=x_ratelimit_remaining,
+                           x_ratelimit=x_ratelimit,
+                           x_limit_pct=x_limit_pct,
+                           categories=l_categories,
+                           attributes=l_attributes,
+                      )
+        )
+
+
+class MemberNewYearlyMembershipView(TemplateView):
+    template_name = 'members/new-yearly-membership.html'
+
+    def get(self, request, *args, **kwargs):
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+
+        # END Common for all members views ===============================================
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
         # Create a new invoice
         l_invoice_number = 'squaresensor-invoice-%s-%s' % (logged_member.instagram_user_name, str(datetime.now()))
         new_invoice = Invoice(member=logged_member,
                               invoice_number=l_invoice_number,
+                              membership_type='PRO',
+                              invoice_status='unpaid'
+                              )
+        new_invoice.save()
+
+        paypal_dict = {
+            "business": PAYPAL_RECEIVER_EMAIL,
+            "amount": "50.00",
+            "item_name": "Squaresensor Premium Yearly Membership",
+            "invoice": l_invoice_number,
+            "no-note": 1,
+            "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
+            "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
+            "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
+        }
+
+        form = PayPalPaymentsForm(initial=paypal_dict)
+        valid_ipn_received.connect(show_me_the_money)
+
+        return render(request,
+                      self.template_name,
+                      dict(form=form,
+                           is_payment_live=IS_PAYMENT_LIVE,
+
+                           is_monthly_member=is_monthly_member,
+                           is_yearly_member=is_yearly_member,
+                           logged_member=logged_member,
+                           x_ratelimit_remaining=x_ratelimit_remaining,
+                           x_ratelimit=x_ratelimit,
+                           x_limit_pct=x_limit_pct,
+                           categories=l_categories,
+                           attributes=l_attributes,
+                      )
+        )
+
+
+
+class MemberNewMonthlyMembershipView(TemplateView):
+    template_name = 'members/new-monthly-membership.html'
+
+    def get(self, request, *args, **kwargs):
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+
+        # END Common for all members views ===============================================
+
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+
+        # Create a new invoice
+        l_invoice_number = 'squaresensor-invoice-%s-%s' % (logged_member.instagram_user_name, str(datetime.now()))
+        new_invoice = Invoice(member=logged_member,
+                              invoice_number=l_invoice_number,
+                              membership_type='MON',
                               invoice_status='unpaid'
                               )
         new_invoice.save()
@@ -297,9 +420,9 @@ class MemberNewMembershipView(TemplateView):
             "item_name": "Squaresensor Monthly Membership",
             "invoice": l_invoice_number,
             "no-note": 1,
-            "notify_url": 'http://dev.squaresensor.com' + reverse('paypal-ipn'),
-            "return_url": 'http://dev.squaresensor.com' + reverse('members:new_membership_result'),
-            "cancel_return": 'http://dev.squaresensor.com' + reverse('members:new_membership_cancel'),
+            "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
+            "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
+            "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict)

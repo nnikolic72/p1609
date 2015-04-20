@@ -19,7 +19,7 @@
 
 {% block content %}
     {{ block.super }}
-    <p>Success!</p>
+    <p>Success! Congratulations on becoming a Squaresensor member! Go to <a href="{% url 'members:my_account' %}">{% trans 'your account page' %}</a></p>
 {% endblock content %}
 
 {% block aside %}
