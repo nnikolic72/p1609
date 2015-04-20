@@ -107,7 +107,17 @@
             {% if not is_monthly_member and not is_yearly_member %}
                 <div class="col-xs-12 col-lg-2 squaresensor-content-panel" style="padding-bottom: 50px;">
                     {% block aside %}
-                        <p>Reklame u base.html</p>
+                        <div class="well text-center">
+                            <h4 class="lead">{% trans 'Become a Squaresensor member' %}</h4>
+                            <form action="{% url 'members:new_membership' %}" method="get">
+                                <button type="submit"
+                                        style="margin-top: 20px; margin-bottom: 20px;"
+                                        class="btn btn-success btn-block">
+                                    {% trans 'Details' %}
+                                </button>
+                            </form>
+                            <p>{% trans 'Discover the full power of Squaresenor now!' %}</p>
+                        </div>
                     {% endblock aside %}
                 </div>
             {% endif %}

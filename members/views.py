@@ -31,7 +31,8 @@ from .forms import MembershipForm
 
 from .models import Member, Membership, Invoice, PaymentLog
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
-    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL, ROOT_SITE_URL
+    COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL, ROOT_SITE_URL, \
+    SQUARESENSOR_YEARLY_MEMBERSHIP, SQUARESENSOR_MONTHLY_MEMBERSHIP
 
 
 class MemberHomePageView(TemplateView):
@@ -244,8 +245,10 @@ class MemberNewMembershipView(TemplateView):
         except:
             raise HttpResponseNotFound
 
-
         # END Common for all members views ===============================================
+
+        squaresensor_yearly_membership = SQUARESENSOR_YEARLY_MEMBERSHIP
+        squaresensor_monthly_membership = SQUARESENSOR_MONTHLY_MEMBERSHIP
 
         # Limit calculation --------------------------------------------------------------
         logged_member.refresh_api_limits(request)
@@ -262,6 +265,9 @@ class MemberNewMembershipView(TemplateView):
                       self.template_name,
                       dict(
                            is_payment_live=IS_PAYMENT_LIVE,
+                           squaresensor_yearly_membership=squaresensor_yearly_membership,
+                           squaresensor_monthly_membership=squaresensor_monthly_membership,
+
 
                            is_monthly_member=is_monthly_member,
                            is_yearly_member=is_yearly_member,
@@ -316,24 +322,32 @@ class MemberNewYearlyMembershipView(TemplateView):
                               )
         new_invoice.save()
 
+        squaresensor_yearly_membership = SQUARESENSOR_YEARLY_MEMBERSHIP
+
+        l_price = '%s' % (SQUARESENSOR_YEARLY_MEMBERSHIP)
         paypal_dict = {
+            "cmd": "_xclick-subscriptions",
             "business": PAYPAL_RECEIVER_EMAIL,
-            "amount": "50.00",
+            "a3": l_price,                      # monthly price,
+            "p3": 12,                           # duration of each unit (depends on unit)
+            "t3": "M",                         # duration unit ("M for Month")
+            "src": "0",                        # make payments recur
             "item_name": "Squaresensor Premium Yearly Membership",
             "invoice": l_invoice_number,
-            "no-note": 1,
+            "no-note": "1",
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
         }
 
-        form = PayPalPaymentsForm(initial=paypal_dict)
+        form = PayPalPaymentsForm(initial=paypal_dict, button_type="subscribe")
 
 
         return render(request,
                       self.template_name,
                       dict(form=form,
                            is_payment_live=IS_PAYMENT_LIVE,
+                           squaresensor_yearly_membership=squaresensor_yearly_membership,
 
                            is_monthly_member=is_monthly_member,
                            is_yearly_member=is_yearly_member,
@@ -388,24 +402,32 @@ class MemberNewMonthlyMembershipView(TemplateView):
                               )
         new_invoice.save()
 
+
+        squaresensor_monthly_membership = SQUARESENSOR_MONTHLY_MEMBERSHIP
+        l_price = '%s' % (SQUARESENSOR_MONTHLY_MEMBERSHIP)
         paypal_dict = {
+            "cmd": "_xclick-subscriptions",
             "business": PAYPAL_RECEIVER_EMAIL,
-            "amount": "5.00",
+            "a3": l_price,                      # monthly price,
+            "p3": 1,                           # duration of each unit (depends on unit)
+            "t3": "M",                         # duration unit ("M for Month")
+            "src": "0",                        # make payments recur
             "item_name": "Squaresensor Monthly Membership",
             "invoice": l_invoice_number,
-            "no-note": 1,
+            "no-note": "1",
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
         }
 
-        form = PayPalPaymentsForm(initial=paypal_dict)
+        form = PayPalPaymentsForm(initial=paypal_dict,  button_type="subscribe")
         #valid_ipn_received.connect(show_me_the_money)
 
         return render(request,
                       self.template_name,
                       dict(form=form,
                            is_payment_live=IS_PAYMENT_LIVE,
+                           squaresensor_monthly_membership=squaresensor_monthly_membership,
 
                            is_monthly_member=is_monthly_member,
                            is_yearly_member=is_yearly_member,

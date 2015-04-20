@@ -23,16 +23,17 @@
     <div class="container-fluid">
         <div class="row">
 
-            <div class="col-xs-12 col-sm-4 col-sm-offset-1 text-center well">
-                <h4 class="lead">Purchase Monthly Squaresensor Membership</h4>
-                <h3>Price: 5 EUR</h3>
+            <div class="col-xs-12 col-sm-5 col-sm-offset-0 text-center well">
+                <h4 class="lead">{% trans 'Purchase Monthly Squaresensor Membership' %}</h4>
+                <h3>{% blocktrans %}Price: {{ squaresensor_monthly_membership }} EUR{%  endblocktrans %}</h3>
                 <p class="text-left">Benefits:</p>
                 <ul class="text-left">
-                    <li>{% trans 'Contact 50 new friends per day instead of 10 in free membership plan.' %}</li>
+                    <li>{% trans 'Contact 30 new friends per day instead of 10 in free membership plan.' %}</li>
                     <li>{% trans 'Commenter analyzes last 50 posts for unanswered comments instead of 10 in free membership plan.' %}</li>
-                    <li>{% trans 'No advertisements' %}</li>
+                    <li>{% trans 'No advertisements.' %}</li>
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
+            <br><br>
                 {% if is_payment_live == '1' %}
                     <form method="get" action="{% url 'members:new_monthly_membership' %}">
                         <button type="submit" class="btm btn-lg btn-success btn-block">
@@ -41,15 +42,15 @@
                     </form>
                 {% endif %}
             </div>
-            <div class="col-xs-12 col-sm-4 col-sm-offset-1 text-center well bg-success">
-                <h4 class="lead">Purchase Yearly Premium Squaresensor Membership</h4>
-                <h3>Price: 50 EUR</h3>
+            <div class="col-xs-12 col-sm-5 col-sm-offset-1 text-center well bg-success">
+                <h4 class="lead">{% trans 'Purchase Yearly Premium Squaresensor Membership' %}</h4>
+                <h3>{% blocktrans %}Price: {{ squaresensor_yearly_membership }} EUR{%  endblocktrans %}</h3>
                 <p class="text-left">Benefits:</p>
                 <ul class="text-left">
                     <li>{% trans 'Better price than month by month membership.' %}</li>
-                    <li>{% trans 'Contact 50 new friends per day instead of 10 in free membership plan.' %}</li>
+                    <li>{% trans 'Contact 30 new friends per day instead of 10 in free membership plan.' %}</li>
                     <li>{% trans 'Commenter analyzes last 50 posts for unanswered comments instead of 10 in free membership plan.' %}</li>
-                    <li>{% trans 'No advertisements' %}</li>
+                    <li>{% trans 'No advertisements.' %}</li>
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
                 {% if is_payment_live == '1' %}
