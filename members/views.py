@@ -331,7 +331,6 @@ class MemberNewYearlyMembershipView(TemplateView):
             "a3": l_price,                      # monthly price,
             "p3": 12,                           # duration of each unit (depends on unit)
             "t3": "M",                         # duration unit ("M for Month")
-            "src": "0",                        # make payments recur
             "item_name": "Squaresensor Premium Yearly Membership",
             "invoice": l_invoice_number,
             "no-note": "1",
@@ -411,7 +410,6 @@ class MemberNewMonthlyMembershipView(TemplateView):
             "a3": l_price,                      # monthly price,
             "p3": 1,                           # duration of each unit (depends on unit)
             "t3": "M",                         # duration unit ("M for Month")
-            "src": "0",                        # make payments recur
             "item_name": "Squaresensor Monthly Membership",
             "invoice": l_invoice_number,
             "no-note": "1",
