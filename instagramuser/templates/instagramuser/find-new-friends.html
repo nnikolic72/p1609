@@ -64,10 +64,8 @@
             {% for friend_and_photos in friends_and_photos %}
                 <div class="squaresensor-sub-panel" id="new_friend_{{ friend_and_photos.0.instagram_user_id }}">
                     <div class="row"  style="margin-bottom: 20px;">
-                        <div class="col-xs-12 col-sm-4">
-                            <img class="img-responsive img-circle squaresensor-image-circular small_profile_img" src="{{ friend_and_photos.0.instagram_profile_picture_URL }}">
-                        </div>
-                        <div class="col-xs-12 col-sm-8">
+
+                        <div class="col-xs-12">
                             <h4>@{{ friend_and_photos.0.instagram_user_name }}</h4>
                             <br>
                             <form method="get" action="">
@@ -102,6 +100,7 @@
 
             <form action="{% url 'instagramuser:new_friends' %}" method="get">
                 <button class="btn btn-lg btn-success col-xs-12 col-sm-4 col-sm-offset-4"
+                        style="margin-bottom: 20px;"
                         id="load_more_friends"
                         onclick="display_ajax_img('load_more_friends', '')"
                         >
