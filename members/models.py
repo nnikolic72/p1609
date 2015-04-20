@@ -81,7 +81,7 @@ class Member(InstagramUser):
 
     def is_monthly_member(self):
         l_is_monthly_member = False
-        for membership_i in Membership.objects.filter(member=self, membership_type='YEA', active_membership=True):
+        for membership_i in Membership.objects.filter(member=self, membership_type='MON', active_membership=True):
             l_is_monthly_member = True
 
         return l_is_monthly_member
