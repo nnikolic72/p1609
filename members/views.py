@@ -224,7 +224,7 @@ def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # Undertake some action depending upon `ipn_obj`.
-        new_membership = Membership(membership_type='PRO')
+        new_membership = Membership(membership_type='PRO', invoice_number=ipn_obj.invoice)
         new_membership.save()
         logging.debug('Paid invoice %s' % (ipn_obj.invoice))
 
