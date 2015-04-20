@@ -255,7 +255,7 @@ class MemberAdmin(admin.ModelAdmin):
 
 
 class MembershipAdmin(admin.ModelAdmin):
-    list_display = ('membership_type', 'active_membership', 'recurring_membership', 'membership_start_time',
+    list_display = ('membership_type', 'member', 'active_membership', 'recurring_membership', 'membership_start_time',
                     'membership_end_time', 'invoice', 'pk'
     )
     fieldsets = [
