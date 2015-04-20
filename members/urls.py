@@ -1,7 +1,8 @@
 from datetime import timedelta
+from django.utils.datetime_safe import datetime
 import logging
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.datetime_safe import datetime
+
 from paypal.standard.ipn.signals import valid_ipn_received, payment_was_flagged
 from paypal.standard.models import ST_PP_COMPLETED
 from members.models import PaymentLog, Invoice, Membership
@@ -59,7 +60,9 @@ def show_me_the_money(sender, **kwargs):
     '''
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # Undertake some action depending upon `ipn_obj`.
-
+        l_new_payment_log = PaymentLog(invoice_number='ST_PP_COMPLETED',
+                                       message='ST_PP_COMPLETED')
+        l_new_payment_log.save()
         try:
             paid_invoice = Invoice.objects.get(invoice_number=ipn_obj.invoice)
             paid_invoice.invoice_status = "paid"
@@ -109,7 +112,9 @@ def show_me_the_money_flagged(sender, **kwargs):
     '''
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # Undertake some action depending upon `ipn_obj`.
-
+        l_new_payment_log = PaymentLog(invoice_number='ST_PP_COMPLETED FLAGGED',
+                                       message='ST_PP_COMPLETED FLAGGED')
+        l_new_payment_log.save()
         try:
             paid_invoice = Invoice.objects.get(invoice_number=ipn_obj.invoice)
             paid_invoice.invoice_status = "paid"
