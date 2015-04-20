@@ -43,6 +43,7 @@ urlpatterns = patterns('',
 
 def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
+    '''
     if ipn_obj:
         l_message = 'Payment response received. Status (%s). Sender (%s)' % (ipn_obj.payment_status, sender)
         l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
@@ -55,7 +56,7 @@ def show_me_the_money(sender, **kwargs):
     #l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
     #                               message=l_message)
     l_new_payment_log.save()
-
+    '''
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # Undertake some action depending upon `ipn_obj`.
 
@@ -93,6 +94,7 @@ def show_me_the_money(sender, **kwargs):
 
 def show_me_the_money_flagged(sender, **kwargs):
     ipn_obj = sender
+    '''
     if ipn_obj:
         l_message = 'Flagged Payment response received. Status (%s). Sender (%s)' % (ipn_obj.payment_status, sender)
         l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
@@ -104,7 +106,7 @@ def show_me_the_money_flagged(sender, **kwargs):
     #l_new_payment_log = PaymentLog(invoice_number=ipn_obj.invoice,
     #                               message=l_message)
     l_new_payment_log.save()
-
+    '''
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # Undertake some action depending upon `ipn_obj`.
 
