@@ -121,10 +121,14 @@ def show_me_the_money_flagged(sender, **kwargs):
             l_membership_start_time = datetime.today()
             l_membership_end_time = None
 
-            if paid_invoice.membership_type == 'MON':
-                l_membership_end_time = l_membership_start_time + timedelta(days=31)
-            if paid_invoice.membership_type == 'PRO':
-                l_membership_end_time = l_membership_start_time + timedelta(days=365)
+            try:
+                if paid_invoice.membership_type == 'MON':
+                    l_membership_end_time = l_membership_start_time + timedelta(days=31)
+                if paid_invoice.membership_type == 'PRO':
+                    l_membership_end_time = l_membership_start_time + timedelta(days=365)
+            except:
+                logging.exception('Date conversion failed %s' % (ipn_obj.invoice))
+                raise
 
             new_membership = Membership(membership_type=paid_invoice.membership_type,
                                         invoice=paid_invoice,
