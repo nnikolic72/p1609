@@ -84,6 +84,10 @@ function status_bar_help() {
     $('#StatusBarHelpDialog').modal('show');
 }
 
+function show_div(p_div_id) {
+    $('#' + p_div_id).fadeIn();
+}
+
 function dismiss_help_callback(data) {
 
 }

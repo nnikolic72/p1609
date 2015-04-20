@@ -27,7 +27,7 @@
                     {% if logged_member.help_smartfeed_index == True %}
                         <div class="alert alert-success alert-dismissible" role="alert">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="text-center">{% trans 'Welcome to your SmartFeed!' %}<br><small>{%  blocktrans %}You have {{ squarefollowings_count }} SmartFollowings{% endblocktrans %}</small></h4>
+                            <h4 class="text-center">{% trans 'Welcome to your SmartFeed!' %}</h4>
                             <h3>{% trans 'Information' %}</h3>
                             <ul>
                                 <li>{% trans 'Your SmartFeed shows photos from your regular Instagram Feed.' %}</li>
@@ -46,6 +46,7 @@
                     {% endif %}
 
                     <div class="alert alert-info">
+                    <small>{%  blocktrans %}You have {{ squarefollowings_count }} SmartFollowings{% endblocktrans %}</small><br>
                         {% if period_verbose %}
                             <h5>{% trans 'Now showing photos from ' %}{{ period_verbose }}</h5>
                         {% else %}

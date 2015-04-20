@@ -5,7 +5,7 @@
 
 
 {% block title %}{% trans 'SmartFeed Configuration' %}{% endblock title %}
-{% block page-title %}{% trans 'SmartFeed' %} <small>{% trans 'Configuration' %}</small>{% endblock page-title %}
+{% block page-title %}{% trans 'SmartFeed' %} <small>{% trans 'Configuration' %}{% if logged_member.help_smartfeed_configure == False %} <span class="glyphicon glyphicon-question-sign" onclick="show_div('help_smartfeed_configure');"></span>{% endif %}</small>{% endblock page-title %}
 
 {% block css %}
     {{ block.super }}
@@ -23,8 +23,13 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
-                {% if logged_member.help_smartfeed_configure == True %}
-                <div class="alert alert-success alert-dismissible" role="alert">
+
+                <div class="alert alert-success alert-dismissible" role="alert"
+                     id="help_smartfeed_configure"
+                     {% if logged_member.help_smartfeed_configure == False %}
+                     style="display: none"
+                     {% endif %}
+                        >
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
                     <h3>{% trans 'Information:' %}</h3>
@@ -43,7 +48,7 @@
                                     <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
                                 </div>
                             </li>
-                            <li>{% trans 'Yellow - medium - only best posts appear in your SmartFeed' %}
+                            <li><b>{% trans '(recommended) Yellow - medium - only best posts appear in your SmartFeed' %}</b>
                                 <br>
                                 <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
                                     <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
@@ -71,7 +76,7 @@
                             style="margin-top: 20px;"
                             >{% trans 'Do not show again' %}</button>
                 </div>
-                {% endif %}
+
             </div>
         </div>
 
