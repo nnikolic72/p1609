@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.http import HttpResponseNotFound
 from django.utils import timezone
 from emoji.models import Emoji
+from members.models import Membership
 from photos.models import Photo
 from smartfeed.models import SquareFollowing, SquareFollowingMember
 
@@ -2198,6 +2199,14 @@ def update_member_limits_f(req, logged_member):
                 logged_member.new_friends_in_last_day = 0
                 logged_member.new_friends_in_last_day_interval_start = timezone.now()
                 logged_member.save()
+
+        # Membership limits
+        l_active_memberships = Membership.objects.filter(member=logged_member,
+                                                         active_membership=True)
+        for membership in l_active_memberships:
+            if membership.membership_end_time < datetime.today():
+                membership.active_membership = False
+                membership.save()
 
     except ObjectDoesNotExist:
         logged_member = None
