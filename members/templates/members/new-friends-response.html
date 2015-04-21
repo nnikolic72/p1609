@@ -23,9 +23,9 @@
             <div class="col-xs-12">
                 <h4>{% trans 'Information:' %}</h4>
                 <ul>
-                    <li>{% blocktrans %}You have contacted {{ contacted_new_friends_cnt }} Instagram user{{ contacted_new_friends_cnt|pluralize }} through Squaresensor{% endblocktrans %}</li>
-                    <li>{% blocktrans %}There are {{ new_friends_since_last_check }} new friend{{ new_friends_since_last_check|pluralize }} since you last checked.{% endblocktrans %}</li>
-                    <li>{% blocktrans %}There are total of {{ new_friends_since_last_check }} new friend{{ new_friends_since_last_check|pluralize }} you found on SquareSensor.{% endblocktrans %}</li>
+                    <li>{% blocktrans with contacted_new_friends_cnt|pluralize as contacted_new_friends_cnt_pl %}You have contacted {{ contacted_new_friends_cnt }} Instagram user{{ contacted_new_friends_cnt_pl }} through Squaresensor{% endblocktrans %}</li>
+                    <li>{% blocktrans with new_friends_since_last_check|pluralize as new_friends_since_last_check_pl %}There are {{ new_friends_since_last_check }} new friend{{ new_friends_since_last_check_pl }} since you last checked.{% endblocktrans %}</li>
+                    <li>{% blocktrans with total_new_squaresensor_friends|pluralize as total_new_squaresensor_friends_pl %}There are total of {{ total_new_squaresensor_friends }} new friend{{ total_new_squaresensor_friends_pl }} you found on SquareSensor.{% endblocktrans %}</li>
                 </ul>
             </div>
             <div class="col-xs-12">
@@ -36,14 +36,14 @@
                 {% for new_friend in new_friends_list %}
                     <ul>
                         <div class="col-xs-12">
-                            <li>@{{ new_friend.username }}</li>
+                            <li>@{{ new_friend.username }} <a href="http://www.instagram.com/{{ new_friend.username }}" target="_blank"><span class="glyphicon glyphicon-link"></span></a></li>
                         </div>
                     </ul>
                 {% endfor %}
             {% else %}
                 <div class="col-xs-12">
                     <div class="alert alert-info">
-                        <p>{% trans 'There are no new responses. Try to contact more friends ' %}
+                        <p>{% trans 'There are no new responses since you last checked. Try to contact more friends ' %}
                             <a class="btn btn-xs btn-default" href="{% url 'instagramuser:new_friends' %}">here</a>
                         </p>
                     </div>
@@ -59,9 +59,11 @@
             {% if existing_friends_list %}
 
                 {% for existing_friend in existing_friends_list %}
-                    <div class="col-xs-12">
-                        {{ existing_friend.username }}
-                    </div>
+                    <ul>
+                        <div class="col-xs-12">
+                            <li>@{{ existing_friend.username }} <a href="http://www.instagram.com/{{ existing_friend.username }}" target="_blank"><span class="glyphicon glyphicon-link"></span></a></li>
+                        </div>
+                    </ul>
                 {% endfor %}
             {% else %}
                 <div class="col-xs-12">

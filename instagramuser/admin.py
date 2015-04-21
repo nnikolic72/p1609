@@ -578,7 +578,6 @@ class AttributeFollowerInlineAdmin(admin.TabularInline):
 class FollowerAdmin(admin.ModelAdmin):
     '''Definition of Admin interface for Friend model'''
 
-
     def process_friend(self, request, queryset):
         '''Action -> Do what is needed to process a Friend with Instagram API
            Process only Friends that are marked to be processed -> to_be_processed==True
@@ -589,8 +588,6 @@ class FollowerAdmin(admin.ModelAdmin):
 
         self.message_user(request, buf)
     process_friend.short_description = 'Process Follower by Instagram API'
-
-
 
     def set_friends_process_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected Friends to True.
@@ -603,7 +600,6 @@ class FollowerAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_friends_process_true.short_description = 'Set "To Be Processed for basic info" -> Yes'
 
-
     def set_friends_process_false(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected Friends to False.
            Process only Friends that have flag to_be_processed set to True.
@@ -614,11 +610,6 @@ class FollowerAdmin(admin.ModelAdmin):
         message = admin_utils.set_instagram_users_process_false(request, queryset)
         self.message_user(request, message)
     set_friends_process_false.short_description = 'Set "To Be Processed for basic info" -> No'
-
-
-
-
-
 
     def set_friends_process_photos_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
@@ -641,8 +632,6 @@ class FollowerAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_friends_process_photos_false.short_description = 'Set "To Be Processed for photos" to "No"'
 
-
-
     def set_friends_process_friends_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
            Process only GoodUsers that have flag to_be_processed set to False.
@@ -652,7 +641,6 @@ class FollowerAdmin(admin.ModelAdmin):
         message = admin_utils.set_instagram_users_process_friends_true(request, queryset)
         self.message_user(request, message)
     set_friends_process_friends_true.short_description = 'Set "To Be Processed for Friends" to "Yes"'
-
 
     def set_friends_process_friends_false(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to False.
@@ -664,8 +652,6 @@ class FollowerAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_friends_process_friends_false.short_description = 'Set "To Be Processed for Friends" to "No"'
 
-
-
     def set_friends_process_followings_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
            Process only GoodUsers that have flag to_be_processed set to False.
@@ -675,7 +661,6 @@ class FollowerAdmin(admin.ModelAdmin):
         message = admin_utils.set_instagram_users_process_friends_true(request, queryset)
         self.message_user(request, message)
     set_friends_process_followings_true.short_description = 'Set "To Be Processed for Friends" to "Yes"'
-
 
     def set_friends_process_followings_false(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to False.
