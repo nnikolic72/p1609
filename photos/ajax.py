@@ -738,6 +738,7 @@ def load_instagram_commenter_comments(req, p_photo_id):
     else:
         l_search_photos_amount = COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT
 
+    '''
     l_member_photos_obj = BestPhotos(
         instgram_user_id=logged_member.instagram_user_id,
         top_n_photos=None,
@@ -746,29 +747,32 @@ def load_instagram_commenter_comments(req, p_photo_id):
     )
     l_member_photos_obj.get_instagram_photos()
     l_member_latest_photos = l_member_photos_obj.l_latest_photos
+    '''
+
+    l_photo = instagram_session.get_instagram_photo_info(p_photo_id)
 
     l_unanswered_comments_and_posts_list = []
-    for photo in l_member_latest_photos:
-        if photo.comment_count > 0:
-            l_instagram_comments = InstagramComments(
-                p_photo_id=photo.id,
-                p_instagram_session=instagram_session
+    #for photo in l_member_latest_photos:
+    if l_photo.comment_count > 0:
+        l_instagram_comments = InstagramComments(
+            p_photo_id=l_photo.id,
+            p_instagram_session=instagram_session
+        )
+
+        l_unanswered_comments_list = l_instagram_comments.get_unanswered_comments(
+            logged_member.instagram_user_id
+        )
+
+        l_unanswered_comments_list_length = len(l_unanswered_comments_list)
+
+        if l_unanswered_comments_list_length > 0:
+            l_unanswered_comments_and_posts_list.append(
+                [l_photo.get_thumbnail_url(),
+                 l_unanswered_comments_list,
+                 len(l_unanswered_comments_list),
+                 l_photo.id
+                ]
             )
-
-            l_unanswered_comments_list = l_instagram_comments.get_unanswered_comments(
-                logged_member.instagram_user_id
-            )
-
-            l_unanswered_comments_list_length = len(l_unanswered_comments_list)
-
-            if l_unanswered_comments_list_length > 0:
-                l_unanswered_comments_and_posts_list.append(
-                    [photo.get_thumbnail_url(),
-                     l_unanswered_comments_list,
-                     len(l_unanswered_comments_list),
-                     photo.id
-                    ]
-                )
 
     html_text = render_to_string('members/commenter-index-ajax.html',
                                  dict(

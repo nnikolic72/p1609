@@ -31,9 +31,12 @@
                             <h3>{% trans 'Information' %}</h3>
                             <ul>
                                 <li>{% trans 'Your SmartFeed shows photos from your regular Instagram Feed.' %}</li>
-                                <li>{% trans 'If you missed a photo you can always pick a day in the past and see your SmartFeed from that day.' %}</li>
+                                <li>{% trans 'Your SmartFeed is able to display only the best photos from your regular Instagram feed.' %}</li>
+                                <li>{% trans 'SmartFeed remebers where you have left off. When reloaded it displays only the newer photos.' %}</li>
+                                <li>{% trans 'If you missed a photo you can always pick a day in the past and see your SmartFeed contents from that day.' %}</li>
                                 <li>{% trans 'Some photos from your Instagram feed, that are posted now or a few hours ago, may appear in your SmartFeed a few hours later.' %}</li>
-                                <li>{% trans 'You can always configure your SmartFollowings ' %}<a class="btn btn-xs btn-default" href="{% url 'smartfeed:configure' %}">here</a>.</li>
+                                <li>{% trans 'To add new SmartFollowings you have to import them from your existing Instagram followings on SmartFeed configuration screen.' %}</li>
+                                <li>{% trans 'You can import and configure your SmartFollowings ' %}<a class="btn btn-xs btn-default" href="{% url 'smartfeed:configure' %}">here</a>.</li>
                             </ul>
                             <button type="button"
                                     class="btn btn-default btn-sm"
