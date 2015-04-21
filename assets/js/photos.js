@@ -67,7 +67,7 @@ function show_hidden_comments() {
 }
 
 function show_hidden_comments(p_photo_id) {
-    $('#hidden-comments' + p_photo_id).show();
+    $('#hidden-comments_' + p_photo_id).show();
 }
 
 function send_instagram_comment_callback(data) {
