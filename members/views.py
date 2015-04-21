@@ -32,7 +32,7 @@ from .forms import MembershipForm
 from .models import Member, Membership, Invoice, PaymentLog
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
     COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL, ROOT_SITE_URL, \
-    SQUARESENSOR_YEARLY_MEMBERSHIP, SQUARESENSOR_MONTHLY_MEMBERSHIP
+    SQUARESENSOR_YEARLY_MEMBERSHIP, SQUARESENSOR_MONTHLY_MEMBERSHIP, TEST_APP, PAYPAL_TEST
 
 
 class MemberHomePageView(TemplateView):
@@ -322,6 +322,11 @@ class MemberNewYearlyMembershipView(TemplateView):
                               )
         new_invoice.save()
 
+        if PAYPAL_TEST == '1':
+            l_currency_code = "USD"
+        else:
+            l_currency_code = "EUR"
+
         squaresensor_yearly_membership = SQUARESENSOR_YEARLY_MEMBERSHIP
 
         l_price = '%s' % (SQUARESENSOR_YEARLY_MEMBERSHIP)
@@ -337,7 +342,7 @@ class MemberNewYearlyMembershipView(TemplateView):
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
-            "currency_code": "EUR",
+            #"currency_code": l_currency_code,
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict, button_type="subscribe")
@@ -402,6 +407,10 @@ class MemberNewMonthlyMembershipView(TemplateView):
                               )
         new_invoice.save()
 
+        if TEST_APP == '1':
+            l_currency_code = "USD"
+        else:
+            l_currency_code = "EUR"
 
         squaresensor_monthly_membership = SQUARESENSOR_MONTHLY_MEMBERSHIP
         l_price = '%s' % (SQUARESENSOR_MONTHLY_MEMBERSHIP)
@@ -417,7 +426,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
-            "currency_code": "EUR",
+            #"currency_code": l_currency_code,
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict,  button_type="subscribe")
