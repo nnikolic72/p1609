@@ -37,7 +37,7 @@
     {% if comments %}
         <div class="row">
             {% if p_new_friends_interaction == 1 %}
-                <button class="btn btn-default squaresensor-button-with-margin center-block" onclick="show_hidden_comments();">{% trans 'Show comments' %}</button>
+                <button class="btn btn-default squaresensor-button-with-margin center-block" onclick="show_hidden_comments('{{ p_photo_id }}');">{% trans 'Show comments' %}</button>
                 <div id='hidden-comments' style="display: none;">
             {% endif %}
             {% for comment in comments %}
