@@ -93,6 +93,14 @@ class Member(InstagramUser):
 
         return l_is_yearly_member
 
+    def check_membership_expired(self):
+        l_active_memberships = Membership.objects.filter(member=self,
+                                                         active_membership=True)
+        for membership in l_active_memberships:
+            if membership.membership_end_time < datetime.today():
+                membership.active_membership = False
+                membership.save()
+
     def get_active_membership(self):
         l_active_membership = None
 
