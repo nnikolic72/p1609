@@ -96,6 +96,7 @@ class InstagramSession():
         if self.api:
             try:
                 user_search = self.api.user_search(q=p_gooduser_name, count=1)
+
             except InstagramAPIError as e:
                 if (e.status_code == 400):
                     l_user_private = True  # @UnusedVariable

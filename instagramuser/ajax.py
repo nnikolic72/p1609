@@ -77,30 +77,40 @@ def analyze_user(req, form):
             instagram_session.init_instagram_API()
             user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
             if len(user_search) > 0:
-                ig_utils = InstagramUserAdminUtils()
-                inspiring_user = InspiringUser(instagram_user_name=instagram_user_name,
-                                               to_be_processed_for_basic_info=True,
-                                               to_be_processed_for_photos=True)
-                if inspiring_user:
-                    inspiring_user.save()
-                    queryset = InspiringUser.objects.filter(instagram_user_name=instagram_user_name)
-                    if queryset.count() > 0:
-                        ig_utils.process_instagram_user(req, queryset)
-                        l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
-
-                        if l_photos_queryset.count() > 0:
-                            ig_utils.process_photos_by_instagram_api(req, l_photos_queryset)
+                if user_search[0].username == instagram_user_name:
+                    ig_utils = InstagramUserAdminUtils()
+                    inspiring_user = InspiringUser(instagram_user_name=instagram_user_name,
+                                                   to_be_processed_for_basic_info=True,
+                                                   to_be_processed_for_photos=True)
+                    if inspiring_user:
+                        inspiring_user.save()
+                        queryset = InspiringUser.objects.filter(instagram_user_name=instagram_user_name)
+                        if queryset.count() > 0:
+                            ig_utils.process_instagram_user(req, queryset)
                             l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
 
+                            if l_photos_queryset.count() > 0:
+                                ig_utils.process_photos_by_instagram_api(req, l_photos_queryset)
+                                l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
 
 
+
+                    else:
+                        return json.dumps({
+
+                            'already_exists': 0,
+                            'error': 1,
+                            'error_message': 'Can not add Inspiring user in the database at this time.',
+                            'html_text': '<p>Can not add Inspiring user in the database at this time.</p>'
+                        }
+                        )
                 else:
                     return json.dumps({
 
                         'already_exists': 0,
                         'error': 1,
-                        'error_message': 'Can not add Inspiring user in the database at this time.',
-                        'html_text': '<p>Can not add Inspiring user in the database at this time.</p>'
+                        'error_message': 'Inspiring user does not exists.',
+                        'html_text': '<p>Inspiring user does not exists.</p>'
                     }
                     )
             else:
