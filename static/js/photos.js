@@ -206,15 +206,20 @@ function load_instagram_commenter_comments_callback(data) {
     //var p_new_friends_interaction = data.p_new_friends_interaction;
 
     //alert(html_text);
-    var modal_comment_text_id = '#commenter_comment_block';
+    var modal_comment_text_id = '#commenter_photo_block_' + p_photo_id;
+    var send_response_button_id = '#send_instagram_commenter_comment_' + p_photo_id;
+    var response_textarea_id = '#response_' + p_photo_id;
 
     $(modal_comment_text_id).html(html_text);
+    $(send_response_button_id).html('Send Response');
+    $(response_textarea_id).val('');
+
     toggler('comments_' + p_photo_id);
-    if($("#" + 'comments_' + p_photo_id).length == 0) {
+    if($('#' + 'comments_' + p_photo_id).length == 0) {
         //it doesn't exist
         scroll_to_id('commenter_comment_block');
     } else {
-        scroll_to_id('comments_' + p_photo_id);
+        scroll_to_id('commenter_photo_block_' + p_photo_id);
     }
 }
 
