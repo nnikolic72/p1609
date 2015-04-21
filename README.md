@@ -79,3 +79,7 @@ worker: celery -A squaresensor worker -l info
 
 // Group
 Inspiring User Editor
+
+// Testing
+coverage run manage.py test
+coverage html --include=" $ SITE_URL*" --omit="admin.py"

@@ -8,8 +8,6 @@ from categories.models import Category
 from attributes.models import Attribute
 
 
-
-
 # Create your models here.
 class InstagramUser(models.Model):
     """Abstract base class for Inspiring, Members, Friends and Followings"""

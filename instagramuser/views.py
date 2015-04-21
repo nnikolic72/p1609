@@ -674,7 +674,7 @@ class FindFriendsView(TemplateView):
             is_monthly_member = logged_member.is_monthly_member()
             is_yearly_member = logged_member.is_yearly_member()
 
-            if logged_member.is_monthly_member() == True or logged_member.is_yearly_member() == True:
+            if logged_member.is_monthly_member() is True or logged_member.is_yearly_member() is True:
                 max_interactions = FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS
             else:
                 max_interactions = FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS

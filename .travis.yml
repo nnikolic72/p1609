@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.7"
+# command to install dependencies
+services:
+– postgresql
+env:
+  - DJANGO_SETTINGS_MODULE=squaresensor.settings.local
+install: "pip install -r requirements.txt"
+before_script:
+psql -c 'create database squaresensorv01;' -U postgres
+
+# command to run tests
+script: python manage.py test instagramuser

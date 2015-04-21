@@ -6,6 +6,7 @@ from datetime import (
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -322,7 +323,7 @@ class MemberNewYearlyMembershipView(TemplateView):
                               )
         new_invoice.save()
 
-        if PAYPAL_TEST == '1':
+        if PAYPAL_TEST == True:
             l_currency_code = "USD"
         else:
             l_currency_code = "EUR"
@@ -342,11 +343,10 @@ class MemberNewYearlyMembershipView(TemplateView):
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
-            #"currency_code": l_currency_code,
+            "currency_code": l_currency_code,
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict, button_type="subscribe")
-
 
         return render(request,
                       self.template_name,
@@ -407,7 +407,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
                               )
         new_invoice.save()
 
-        if TEST_APP == '1':
+        if PAYPAL_TEST == True:
             l_currency_code = "USD"
         else:
             l_currency_code = "EUR"
@@ -426,7 +426,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
             "notify_url": ROOT_SITE_URL + reverse('paypal-ipn'),
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
-            #"currency_code": l_currency_code,
+            "currency_code": l_currency_code,
         }
 
         form = PayPalPaymentsForm(initial=paypal_dict,  button_type="subscribe")
@@ -674,6 +674,8 @@ class MemberNewFriendsResponseView(TemplateView):
                         if contacted_friend.response_date == None:
                             l_new_friends_list.extend([follower])
                             l_new_friends_since_last_check += 1
+                            contacted_friend.response_date = timezone.now()
+                            contacted_friend.save()
                         else:
                             l_existing_friends_list.extend([follower])
 
