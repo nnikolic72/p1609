@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
@@ -97,7 +98,7 @@ class Member(InstagramUser):
         l_active_memberships = Membership.objects.filter(member=self,
                                                          active_membership=True)
         for membership in l_active_memberships:
-            if membership.membership_end_time < datetime.today():
+            if membership.membership_end_time < timezone.now():
                 membership.active_membership = False
                 membership.save()
 
