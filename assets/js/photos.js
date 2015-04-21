@@ -62,10 +62,6 @@ function load_instagram_comments(p_photo_id, p_new_friends_interaction) {
     );
 }
 
-function show_hidden_comments() {
-    $('#hidden-comments').show();
-}
-
 function show_hidden_comments(p_photo_id) {
     $('#hidden-comments_' + p_photo_id).show();
 }
