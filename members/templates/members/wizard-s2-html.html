@@ -16,7 +16,7 @@
     {% for attribute in attributes %}
         <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom: 5px;">
             <button type="button"
-                    id="category_button_{{ attribute.id }}"
+                    id="attribute_button_{{ attribute.id }}"
                     onclick="select_member_attribute({{ attribute.id }}, {{ logged_member.id }});"
                     class="btn btn-block
                     {% for checkatr in logged_member.memberbelongstoattribute_set.all %}
