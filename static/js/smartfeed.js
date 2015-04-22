@@ -3,6 +3,7 @@
  */
 
 function import_instagram_followings_callback(data) {
+    //alert('import_instagram_followings_callback');
     var instagram_followings_placeholder = '#instagram_followings_placeholder';
     var html_text = data.html_text;
 

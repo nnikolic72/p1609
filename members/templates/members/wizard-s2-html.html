@@ -1,0 +1,35 @@
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+<h4 class="lead">{% trans 'STEP ' %} {{ current_step }}: {% trans 'Describe your Instagram photography styles.' %}<br><small>{% trans 'Please select at least three styles' %}</small></h4>
+<div class="row">
+    {% for attribute in attributes %}
+        <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom: 5px;">
+            <button type="button"
+                    id="category_button_{{ attribute.id }}"
+                    onclick="select_member_attribute({{ attribute.id }}, {{ logged_member.id }});"
+                    class="btn btn-block
+                    {% for checkatr in logged_member.memberbelongstoattribute_set.all %}
+                        {%  if attribute == checkatr.attribute %}
+                            btn-info
+                        {% else %}
+                            btn-default
+                        {% endif %}
+                    {% endfor %}
+                "><small>{{ attribute.title }}</small>
+            </button>
+        </div>
+    {% endfor %}
+    <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 col-sm-offset-4 col-sm-4">
+                    <button type="button"
+                            class="btn btn-lg btn-success btn-block"
+                            onclick="squaresensor_wizard('{{ next_step }}');"
+                            style="margin-top: 20px; margin-bottom: 20px;"
+                            >{% trans 'Proceed to step ' %}{{ next_step }} <span class="glyphicon glyphicon-play"></span></button>
+                </div>
+            </div>
+        </div>
+</div>

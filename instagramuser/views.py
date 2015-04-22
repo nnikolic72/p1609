@@ -21,7 +21,7 @@ from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdmi
 
 from squaresensor.settings.base import IS_APP_LIVE, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS, \
     FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS, FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS, \
-    FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS
+    FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS, RECENT_BEST_SEARCH_LAST_N_PHOTOS
 from .forms import AddInspiringUserForm
 from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
 from photos.models import Photo
@@ -564,7 +564,7 @@ class AnyUserRecentBestView(TemplateView):
             l_best_photos = BestPhotos(
                 instgram_user_id=l_instagram_user.id,
                 top_n_photos=0,
-                search_photos_amount=100,
+                search_photos_amount=RECENT_BEST_SEARCH_LAST_N_PHOTOS,
                 instagram_api=instagram_session
             )
             l_best_photos.get_instagram_photos()

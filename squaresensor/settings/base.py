@@ -373,6 +373,9 @@ FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS = 10
 FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS = 30
 FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS = 1
 
+# Recent Best search settings
+RECENT_BEST_SEARCH_LAST_N_PHOTOS = 99
+
 # APP settings: inpiring users
 INSPIRING_USERS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find
 INSPIRING_USERS_SEARCH_N_PHOTOS = 500  # how many last photos to search while finding the best ones

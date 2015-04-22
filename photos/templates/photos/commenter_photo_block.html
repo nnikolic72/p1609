@@ -43,7 +43,7 @@
                             class="btn btn-sm btn-default"
                             onclick="add_response_username('{{ comment.1.user.username }}', '{{ photo.3 }}');"
                             >
-                        <span class="glyphicon glyphicon-pencil" ></span>
+                        <span class="fa fa-reply" ></span>
                     </button>
                     <small>{% if comment.2 %}({{ comment.2}})</small> {% endif %}<b>{{ comment.1.user.username }}</b>{% if comment.1.user.full_name %} ({{ comment.1.user.full_name }}){% endif %}: {{ comment.1.text|emoji_replace_unicode }}
                 </div>

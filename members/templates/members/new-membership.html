@@ -21,7 +21,7 @@
 {% block content %}
     {{ block.super }}
     <div class="container-fluid">
-        <div class="row">
+        <div class="row visible-xs hidden-sm hidden-md hidden-lg">
 
             <div class="col-xs-12 col-sm-5 col-sm-offset-0 text-center well">
                 <h4 class="lead">{% trans 'Purchase Monthly Squaresensor Membership' %}</h4>
@@ -33,7 +33,7 @@
                     <li>{% trans 'No advertisements.' %}</li>
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
-            <br><br>
+                <br><br>
                 {% if is_payment_live == '1' %}
                     <form method="get" action="{% url 'members:new_monthly_membership' %}">
                         <button type="submit" class="btm btn-lg btn-success btn-block">
@@ -60,6 +60,80 @@
                         </button>
                     </form>
                 {% endif %}
+            </div>
+        </div>
+
+        <div class="row hidden-xs visible-sm visible-md visible-lg">
+
+            <div class="col-xs-12">
+                <table class="table table-responsive text-center">
+                    <tr>
+                        <td></td>
+                        <td colspan="3"><h3>{% trans 'Membership options' %}</h3></td>
+
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>{% trans 'Free' %}</td>
+                        <td>{% trans 'Monthly' %}</td>
+                        <td>{% trans 'Yearly Premium' %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Contact new friends/day' %}</td>
+                        <td>{{ contact_new_friends_free }}</td>
+                        <td>{{ contact_new_friends_monthly }}</td>
+                        <td>{{ contact_new_friends_yearly }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Responder looks at last' %}</td>
+                        <td>{{ responder_free }} posts</td>
+                        <td>{{ responder_monthly }} posts</td>
+                        <td>{{ responder_yearly }} posts</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Advertisements on site' %}</td>
+                        <td>{% trans 'Shown' %}</td>
+                        <td>{% trans 'Not Shown' %}</td>
+                        <td>{% trans 'Not Shown' %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Supporting Squaresensor team :-)' %}</td>
+                        <td>{% trans 'No' %}</td>
+                        <td>{% trans 'YES' %}</td>
+                        <td>{% trans 'YES' %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Monthly Price' %}</td>
+                        <td>{% trans 'Free' %}</td>
+                        <td>{{ price_monthly_per_month|floatformat:2 }} {% trans 'per month' %}</td>
+                        <td>{{ price_monthly_per_year|floatformat:2 }} {% trans 'per month' %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Price' %}</td>
+                        <td>{% trans 'Free' %}</td>
+                        <td>{{ price_monthly_per_month|floatformat:2 }}</td>
+                        <td>{{ price_yearly|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Become a premium member' %}</td>
+                        <td></td>
+                        <td>
+                            <form method="get" action="{% url 'members:new_monthly_membership' %}">
+                                <button type="submit" class="btm btn-lg btn-success btn-block">
+                                    {% trans 'Get Monthly Membership' %}
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="get" action="{% url 'members:new_yearly_membership' %}">
+                                <button type="submit" class="btm btn-lg btn-success btn-block">
+                                    {% trans 'Get Yearly Premium Membership' %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+
             </div>
         </div>
     </div>

@@ -177,6 +177,7 @@ class Member(InstagramUser):
     )
 
     help_first_time_wizard = models.BooleanField(default=True, null=False, blank=False)
+    help_first_time_wizard_cur_step = models.IntegerField(default=1, null=False, blank=False)
     help_members_dashboard = models.BooleanField(default=True, null=False, blank=False)
     help_members_commenter = models.BooleanField(default=True, null=False, blank=False)
     help_photos_modal_comment_section = models.BooleanField(default=True, null=False, blank=False)

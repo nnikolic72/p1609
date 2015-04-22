@@ -100,3 +100,19 @@ function dismiss_help(p_help_name) {
     );
 
 }
+
+
+function bootstrap_loading_button(p_button_id) {
+
+    $('#' + p_button_id).button('loading');
+
+
+}
+
+function bootstrap_loading_reset(p_button_id) {
+    $('#' + p_button_id).button('reset');
+}
+
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})

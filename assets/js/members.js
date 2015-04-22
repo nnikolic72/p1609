@@ -50,3 +50,55 @@ function select_member_attribute(p_attribute_id, p_logged_member_id) {
     );
 }
 
+function squaresensor_wizard_increase_step_callback(data) {
+
+}
+
+function squaresensor_wizard_callback(data) {
+    //alert('squaresensor_wizard_callback');
+    var p_current_step = data.p_current_step;
+    var html_text = data.html_text;
+    var p_instagram_user_id = data.p_instagram_user_id;
+
+    $('#wizard-placeholder').fadeOut(600, function() {
+            scroll_to_id('wizard-placeholder');
+            $('#wizard-placeholder').html(html_text);
+        }
+    );
+
+    $('#wizard-placeholder').fadeIn();
+
+    Dajaxice.members.squaresensor_wizard_increase_step(squaresensor_wizard_increase_step_callback,
+        {'p_current_step': p_current_step }
+    );
+
+    if (p_current_step == '3') {
+        // Loading of instagram Followings
+        import_instagram_followings(p_instagram_user_id);
+    }
+    //$('#wizard-placeholder').html(html_text);
+    //$('#wizard-placeholder').fadeIn();
+}
+
+
+function squaresensor_wizard(p_current_step) {
+    //alert('squaresensor_wizard, step ' + p_current_step );
+
+    Dajaxice.members.squaresensor_wizard(squaresensor_wizard_callback,
+        {'p_current_step': p_current_step}
+    );
+
+}
+
+function squaresensor_wizard_complete_callback(data) {
+
+}
+
+function squaresensor_wizard_complete() {
+    //alert('squaresensor_wizard_complete');
+
+    Dajaxice.members.squaresensor_wizard_complete(squaresensor_wizard_complete_callback,
+        {}
+    );
+
+}

@@ -33,7 +33,8 @@ from .forms import MembershipForm
 from .models import Member, Membership, Invoice, PaymentLog
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
     COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL, ROOT_SITE_URL, \
-    SQUARESENSOR_YEARLY_MEMBERSHIP, SQUARESENSOR_MONTHLY_MEMBERSHIP, TEST_APP, PAYPAL_TEST
+    SQUARESENSOR_YEARLY_MEMBERSHIP, SQUARESENSOR_MONTHLY_MEMBERSHIP, TEST_APP, PAYPAL_TEST, \
+    FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS, FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS
 
 
 class MemberHomePageView(TemplateView):
@@ -57,9 +58,50 @@ class MemberWelcomeView(TemplateView):
     template_name = 'members/welcome.html'
 
     def get(self, request, *args, **kwargs):
+        logged_member = None
+        profile_photo_url = None
+
+        tokens = UserSocialAuth.get_social_auth_for_user(request.user).get().tokens
+        ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
+
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+
+            l_likes_in_last_minute, l_comments_in_last_minute = update_member_limits_f(request, logged_member)
+            show_describe_button = logged_member.is_editor(request)
+            # instagram_user = Member.objects.get(django_user__username=request.user)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
+            queryset = Member.objects.filter(django_user__username=request.user)
+        except ObjectDoesNotExist:
+            logged_member = None
+
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        # Limit calculation --------------------------------------------------------------
+        logged_member.refresh_api_limits(request)
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # Limit calculation --------------------------------------------------------------
+
         return render(request,
                       self.template_name,
                       dict(
+                           logged_member=logged_member,
+
+                           is_monthly_member=is_monthly_member,
+                           is_yearly_member=is_yearly_member,
+                           x_ratelimit_remaining=x_ratelimit_remaining,
+                           x_ratelimit=x_ratelimit,
+                           x_limit_pct=x_limit_pct,
+                           categories=l_categories,
+                           attributes=l_attributes,
+                           show_describe_button=show_describe_button,
                       )
         )
 
@@ -76,6 +118,7 @@ class MemberDashboardView(TemplateView):
 
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
+
             l_likes_in_last_minute, l_comments_in_last_minute = update_member_limits_f(request, logged_member)
             show_describe_button = logged_member.is_editor(request)
             # instagram_user = Member.objects.get(django_user__username=request.user)
@@ -101,7 +144,9 @@ class MemberDashboardView(TemplateView):
             if logged_member.instagram_profile_picture_URL:
                 profile_photo_url = logged_member.instagram_profile_picture_URL
 
-
+            if logged_member.help_first_time_wizard == True:
+                # Show the tutorial wizard
+                return HttpResponseRedirect(reverse("members:tutorial"))
 
         except ObjectDoesNotExist:
             logged_member = None
@@ -268,6 +313,16 @@ class MemberNewMembershipView(TemplateView):
                            is_payment_live=IS_PAYMENT_LIVE,
                            squaresensor_yearly_membership=squaresensor_yearly_membership,
                            squaresensor_monthly_membership=squaresensor_monthly_membership,
+                           contact_new_friends_free=FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS,
+                           contact_new_friends_monthly=FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS,
+                           contact_new_friends_yearly=FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS,
+                           responder_free=COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT,
+                           responder_monthly=COMMENTER_NO_OF_PICS_MEMBER_LIMIT,
+                           responder_yearly=COMMENTER_NO_OF_PICS_MEMBER_LIMIT,
+                           price_monthly_per_month=SQUARESENSOR_MONTHLY_MEMBERSHIP,
+                           price_monthly_per_year=SQUARESENSOR_YEARLY_MEMBERSHIP / 12,
+                           price_yearly=SQUARESENSOR_YEARLY_MEMBERSHIP,
+
 
 
                            is_monthly_member=is_monthly_member,

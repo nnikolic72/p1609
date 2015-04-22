@@ -30,6 +30,8 @@
 
                 {% if is_payment_live == '1' %}
                     {{ form.render }}
+                {% else %}
+                    <p>{% trans 'Membership payments are not yet enabled. We will enable them in a few days.' %}</p>
                 {% endif %}
             </div>
         </div>

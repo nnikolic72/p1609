@@ -22,17 +22,17 @@
     <div class="row">
         <div class="col-xs-12">
             {% if logged_member.help_instagramuser_index_inspiring_artists2 == True %}
-            <div class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
-                <h3>{% trans 'Information about Inspiring Artists:' %}</h3>
-                <ul>
-                    <li>{% trans 'This is hand picked selection of fine Instagram Photographers.' %}</li>
-                    <li>{% trans 'Here you can choose how you will search for Inspiring Artists.' %}</li>
-                    <li>{% trans "'Search by Category' with display a list of photography subject categories." %}</li>
-                    <li>{% trans "'Search by Style' with display a list of styles of photography." %}</li>
-                    <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
-                </ul>
+                    <h3>{% trans 'Information about Inspiring Artists:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is hand picked selection of fine Instagram Photographers.' %}</li>
+                        <li>{% trans 'Here you can choose how you will search for Inspiring Artists.' %}</li>
+                        <li>{% trans "'Search by Category' with display a list of photography subject categories." %}</li>
+                        <li>{% trans "'Search by Style' with display a list of styles of photography." %}</li>
+                        <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
+                    </ul>
                     <button type="button"
                             class="btn btn-default btn-sm"
                             data-dismiss="alert"
@@ -40,7 +40,7 @@
                             onclick="dismiss_help('help_instagramuser_index_inspiring_artists2')"
                             style="margin-top: 20px;"
                             >{% trans 'Do not show again' %}</button>
-            </div>
+                </div>
             {% endif %}
         </div>
     </div>
@@ -52,8 +52,10 @@
                 <form method="get" action="{% url 'categories:index' %}">
                     <button type="submit"
                             id="inspiring_artists_categories"
-                            onclick="display_ajax_img('inspiring_artists_categories')"
+                            data-loading-text="<i class='fa fa-sitemap fa-3x'></i><br>{% trans 'Categories loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('inspiring_artists_categories');"
                             class="btn btn-default btn-block squaresensor-button-with-margin">
+                        <i class="fa fa-sitemap fa-3x"></i><br>
                         {% trans 'Search by Category' %}
                     </button>
                 </form>
@@ -64,8 +66,10 @@
                 <form method="get" action="{% url 'attributes:index' %}">
                     <button type="submit"
                             id="inspiring_artists_attributes"
-                            onclick="display_ajax_img('inspiring_artists_attributes')"
+                            data-loading-text="<i class='fa fa-camera fa-3x'></i><br>{% trans 'Styles loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('inspiring_artists_attributes');"
                             class="btn btn-default btn-block squaresensor-button-with-margin">
+                        <i class="fa fa-camera fa-3x"></i><br>
                         {% trans 'Search by Style' %}
                     </button>
                 </form>

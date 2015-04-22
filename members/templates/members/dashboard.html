@@ -46,7 +46,7 @@
 
         <div class="col-xs-12 text-center">
 
-                <h4 style="margin-top: 40px; margin-bottom: 20px;">{% trans 'My Instagram data' %}</h4>
+            <h4 style="margin-top: 40px; margin-bottom: 20px;">{% trans 'My Instagram data' %}</h4>
 
         </div>
 
@@ -86,9 +86,11 @@
                         <form action="{% url 'instagramuser:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}" method="get">
                             <button type="submit"
                                     id="my-best-photos"
+                                    data-loading-text="<i class='fa fa-diamond fa-3x'></i><br>{% trans 'My best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
                                     class="btn btn-sm btn-default btn-block squaresensor-button-with-margin"
-                                    onclick="display_ajax_img('my-best-photos', '{{ STATIC_URL }}')"
+                                    onclick="bootstrap_loading_button('my-best-photos');"
                                     >
+                                <i class="fa fa-diamond fa-3x"></i><br>
                                 {% trans 'My best photos' %}
                             </button>
                         </form>
@@ -97,8 +99,10 @@
                         <form action="{% url 'instagramuser:any_user_recent_best' p_instagram_user_name=logged_member.instagram_user_name %}" method="get">
                             <button type="submit"
                                     id="my-recent-best"
-                                    onclick="display_ajax_img('my-recent-best', '{{ STATIC_URL }}')"
+                                    data-loading-text="<i class='fa fa-calendar fa-3x'></i><br>{% trans 'My recent best loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                                    onclick="bootstrap_loading_button('my-recent-best');"
                                     class="btn btn-sm btn-default btn-block squaresensor-button-with-margin">
+                                <i class="fa fa-calendar fa-3x"></i><br>
                                 {% trans 'My recent best' %}
                             </button>
                         </form>
@@ -116,8 +120,10 @@
             <form action="{% url 'smartfeed:index' %}" method="get">
                 <button type="submit"
                         id="view-smartfeed"
-                        onclick="display_ajax_img('view-smartfeed', '{{ STATIC_URL }}')"
+                        data-loading-text="<i class='fa fa-heartbeat fa-3x'></i><br>{% trans 'SmartFeed loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('view-smartfeed');"
                         class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    <i class="fa fa-heartbeat fa-3x"></i><br>
                     {% trans 'View SmartFeed' %}
                 </button>
             </form>
@@ -126,8 +132,10 @@
             <form action="{% url 'instagramuser:new_friends' %}" method="get">
                 <button type="submit"
                         id="find-new-friends"
-                        onclick="display_ajax_img('find-new-friends', '{{ STATIC_URL }}')"
+                        data-loading-text="<i class='fa fa-search fa-3x'></i><br>{% trans 'New Friends loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('find-new-friends');"
                         class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    <i class="fa fa-search fa-3x"></i><br>
                     {% trans 'Find New Friends' %}
                 </button>
             </form>
@@ -136,8 +144,10 @@
             <form action="{% url 'instagramuser:index_inspiring_artists' %}" method="get">
                 <button type="submit"
                         id="find-inspiring-artists"
-                        onclick="display_ajax_img('find-inspiring-artists', '{{ STATIC_URL }}')"
+                        data-loading-text="<i class='fa fa-lightbulb-o fa-3x'></i><br>{% trans 'Inspiring Artists loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('find-inspiring-artists');"
                         class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    <i class="fa fa-lightbulb-o fa-3x"></i><br>
                     {% trans 'Find Inspiring Artists' %}
                 </button>
             </form>
@@ -147,8 +157,10 @@
             <form action="{% url 'members:commenter_index' %}" method="get">
                 <button type="submit"
                         id="commenter_index"
-                        onclick="display_ajax_img('commenter_index', '{{ STATIC_URL }}')"
+                        data-loading-text="<i class='fa fa-reply fa-3x'></i><br>{% trans 'Responder loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('commenter_index');"
                         class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                    <i class="fa fa-reply fa-3x"></i><br>
                     {% trans 'Responder' %}
                 </button>
             </form>
@@ -164,8 +176,10 @@
             <form action="{% url 'members:my_account' %}" method="get">
                 <button type="submit"
                         id="configure-my-account"
-                        onclick="display_ajax_img('configure-my-account', '{{ STATIC_URL }}')"
+                        data-loading-text="<i class='fa fa-lightbulb-o fa-3x'></i><br>{% trans 'Configuration loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('configure-my-account');"
                         class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
+                    <i class="fa fa-cog fa-3x"></i><br>
                     {% trans 'Configure My Account' %}
                 </button>
             </form>
@@ -174,8 +188,10 @@
             <form action="{% url 'smartfeed:configure' %}" method="get">
                 <button type="submit"
                         id="configure-smartfeed"
-                        onclick="display_ajax_img('configure-smartfeed', '{{ STATIC_URL }}')"
+                        data-loading-text="<i class='fa fa-adjust fa-3x'></i><br>{% trans 'SmartFeed Configuration loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('configure-smartfeed');"
                         class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
+                    <i class="fa fa-adjust fa-3x"></i><br>
                     {% trans 'Configure SmartFeed' %}
                 </button>
             </form>
@@ -184,8 +200,10 @@
             <form action="{% url 'members:new_friends_response' %}" method="get">
                 <button type="submit"
                         id="new_friends_response"
-                        onclick="display_ajax_img('new_friends_response', '{{ STATIC_URL }}')"
+                        data-loading-text="<i class='fa fa-users fa-3x'></i><br>{% trans 'Response loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('new_friends_response');"
                         class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
+                    <i class="fa fa-users fa-3x"></i><br>
                     {% trans 'New Friends Response' %}
                 </button>
             </form>

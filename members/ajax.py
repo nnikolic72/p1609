@@ -1,9 +1,11 @@
 from __future__ import division
 import json
 from datetime import timedelta
+from django.core.urlresolvers import reverse
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 
@@ -71,8 +73,153 @@ def select_member_category(req, p_category_id, p_logged_member_id):
              )
     )
 
+@dajaxice_register
+def squaresensor_wizard_complete(req):
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+        logged_member.help_first_time_wizard = False
+        logged_member.help_first_time_wizard_cur_step = 4
+        logged_member.save()
+    except ObjectDoesNotExist:
+        logged_member = None
+
+    return json.dumps(
+        dict(
+             )
+    )
+
+@dajaxice_register
+def squaresensor_wizard(req, p_current_step):
+    """
+
+    :param req:
+    :type req:
+    :param p_category_id:
+    :type p_category_id:
+    :param p_logged_member_id:
+    :type p_logged_member_id:
+    :return:
+    :rtype:
+    """
+
+    result = 'error'
+    l_current_step = None
+    l_next_step = None
+
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+
+        l_likes_in_last_minute, l_comments_in_last_minute = update_member_limits_f(req, logged_member)
+        show_describe_button = logged_member.is_editor(req)
+        # instagram_user = Member.objects.get(django_user__username=request.user)
+        is_monthly_member = logged_member.is_monthly_member()
+        is_yearly_member = logged_member.is_yearly_member()
+        queryset = Member.objects.filter(django_user__username=req.user)
 
 
+        logged_member.help_first_time_wizard_cur_step = p_current_step
+        l_current_step = int(logged_member.help_first_time_wizard_cur_step)
+        l_next_step = l_current_step + 1
+
+    except ObjectDoesNotExist:
+        logged_member = None
+
+    html_text = None
+
+    if p_current_step == '1':
+        l_categories = Category.objects.all()
+
+        html_text = render_to_string('members/wizard-s1-html.html',
+                                     dict(
+                                         categories=l_categories,
+                                         logged_member=logged_member,
+                                         current_step=l_current_step,
+                                         next_step=l_next_step,
+                                         p_instagram_user_id=logged_member.instagram_user_id,
+                                     )
+        )
+        result = 'ok'
+
+    if p_current_step == '2':
+        l_attributes = Attribute.objects.all()
+
+        html_text = render_to_string('members/wizard-s2-html.html',
+                                     dict(
+                                         attributes=l_attributes,
+                                         logged_member=logged_member,
+                                         current_step=l_current_step,
+                                         next_step=l_next_step,
+                                         p_instagram_user_id=logged_member.instagram_user_id,
+                                     )
+        )
+        result = 'ok'
+
+    if p_current_step == '3':
+
+        html_text = render_to_string('members/wizard-s3-html.html',
+                                     dict(
+
+                                         logged_member=logged_member,
+                                         current_step=l_current_step,
+                                         next_step=l_next_step,
+                                         p_instagram_user_id=logged_member.instagram_user_id,
+                                     )
+        )
+        result = 'ok'
+
+    if p_current_step == '4':
+        logged_member.help_first_time_wizard = False
+        logged_member.help_first_time_wizard_cur_step = 4
+        logged_member.save()
+        #return HttpResponseRedirect(reverse("members:dashboard"))
+
+    return json.dumps(
+        dict(p_current_step=p_current_step,
+             html_text=html_text,
+             p_result=result,
+             status=result,
+             p_instagram_user_id=logged_member.instagram_user_id,
+             )
+    )
+
+
+@dajaxice_register
+def squaresensor_wizard_increase_step(req, p_current_step):
+    """
+
+    :param req:
+    :type req:
+    :param p_category_id:
+    :type p_category_id:
+    :param p_logged_member_id:
+    :type p_logged_member_id:
+    :return:
+    :rtype:
+    """
+
+    result = 'error'
+    l_current_step = None
+    l_next_step = None
+
+    try:
+        logged_member = Member.objects.get(django_user__username=req.user)
+
+
+        logged_member.help_first_time_wizard_cur_step = p_current_step
+        l_current_step = int(logged_member.help_first_time_wizard_cur_step)
+        l_next_step = l_current_step + 1
+        logged_member.help_first_time_wizard_cur_step = str(l_next_step)
+        logged_member.save()
+
+    except ObjectDoesNotExist:
+        logged_member = None
+
+
+
+    return json.dumps(
+        dict(
+             )
+    )
 
 @dajaxice_register
 def select_member_attribute(req, p_attribute_id, p_logged_member_id):

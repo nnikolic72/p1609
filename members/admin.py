@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from libs.instagram.tools import InstagramUserAdminUtils
 
 from squaresensor.settings.base import (INSTAGRAM_CLIENT_ID, INSTAGRAM_CLIENT_SECRET, INSTAGRAM_REDIRECT_URI,
-INSTAGRAM_SECRET_KEY)
+                                        INSTAGRAM_SECRET_KEY)
 
 from .models import (
     Member,
@@ -15,8 +15,10 @@ from .models import (
 class CategoryInlineAdmin(admin.TabularInline):
     model = Member.categories.through
 
+
 class AttributeInlineAdmin(admin.TabularInline):
     model = Member.attributes.through
+
 
 class MemberAdmin(admin.ModelAdmin):
     def process_member(self, request, queryset):
@@ -140,7 +142,7 @@ class MemberAdmin(admin.ModelAdmin):
                set_members_process_friends_true,
                set_members_process_followings_false,
                set_members_process_followings_true,
-               )
+    )
 
     '''Which fields are editable in Admin list view'''
     list_editable = (
@@ -156,12 +158,12 @@ class MemberAdmin(admin.ModelAdmin):
 
     '''Add fields from the model by which we want to filter list'''
     list_filter = (
-                   'to_be_processed_for_basic_info',
-                   'to_be_processed_for_friends',
-                   'to_be_processed_for_followings',
-                   'to_be_processed_for_photos',
-                   'instagram_user_name_valid',
-                   'creation_date',
+        'to_be_processed_for_basic_info',
+        'to_be_processed_for_friends',
+        'to_be_processed_for_followings',
+        'to_be_processed_for_photos',
+        'instagram_user_name_valid',
+        'creation_date',
     )
 
     '''Add a field from the model by which you want to search'''
@@ -186,19 +188,19 @@ class MemberAdmin(admin.ModelAdmin):
         ),
         ('New Friends Interactions', {'fields': ['daily_new_friends_interactions',
                                                  'daily_new_friends_interactions_date',
-                                            ]
+                                                 ]
         }
         ),
         ('Instagram Limits Use', {'fields': ['likes_in_last_minute',
-                                                 'likes_in_last_minute_interval_start',
-                                                 'comments_in_last_minute',
-                                                 'comments_in_last_minute_interval_start',
-                                                 'new_friends_in_last_day',
-                                                 'new_friends_in_last_day_interval_start',
-                                            ]
+                                             'likes_in_last_minute_interval_start',
+                                             'comments_in_last_minute',
+                                             'comments_in_last_minute_interval_start',
+                                             'new_friends_in_last_day',
+                                             'new_friends_in_last_day_interval_start',
+                                             ]
         }
         ),
-       ('Maths', {'fields': ['poly_order',
+        ('Maths', {'fields': ['poly_order',
                               'poly_theta_0',
                               'poly_theta_1',
                               'poly_theta_2',
@@ -208,7 +210,27 @@ class MemberAdmin(admin.ModelAdmin):
                               'poly_max_days',
                               'poly_min_likes',
                               'poly_max_likes',
-        ]
+                              ]
+        }
+        ),
+        ('Tutorial Flags', {'fields': ['help_first_time_wizard',
+                                       'help_first_time_wizard_cur_step',
+                                       'help_members_dashboard',
+                                       'help_members_commenter',
+                                       'help_photos_modal_comment_section',
+                                       'help_photos_allbest',
+                                       'help_smartfeed_index',
+                                       'help_smartfeed_configure',
+                                       'help_instagramuser_find_new_friends',
+                                       'help_instagramuser_index_inspiring_artists2',
+                                       'help_categories_index',
+                                       'help_attributes_index',
+                                       'help_reserved1',
+                                       'help_reserved2',
+                                       'help_reserved3',
+                                       'help_reserved4',
+                                       'help_reserved5',
+                                       ]
         }
         ),
         ('Member Processing Information', {'fields': ['last_processed_for_basic_info_date',
@@ -264,7 +286,7 @@ class MembershipAdmin(admin.ModelAdmin):
                                             'membership_start_time', 'membership_end_time',
                                             'invoice'
 
-                                            ]
+        ]
         }
         ),
         ]
@@ -272,7 +294,7 @@ class MembershipAdmin(admin.ModelAdmin):
 
 class InvoiceAdmin(admin.ModelAdmin):
     list_display = ('invoice_number', 'member', 'membership_type', 'invoice_status',
-                     'pk'
+                    'pk'
     )
     fieldsets = [
         ('General Information', {'fields': ['invoice_number',
@@ -287,7 +309,7 @@ class InvoiceAdmin(admin.ModelAdmin):
 
 class PaymentLogAdmin(admin.ModelAdmin):
     list_display = ('invoice_number', 'message',
-                     'pk'
+                    'pk'
     )
     fieldsets = [
         ('General Information', {'fields': ['invoice_number', 'message',
