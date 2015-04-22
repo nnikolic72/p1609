@@ -2,11 +2,9 @@
 {% load dajaxice_templatetags %}
 {% load i18n %}
 
-<h3 class="lead">{% trans 'Squaresensor Welcome Wizard' %}</h3><br>
-<i class="fa fa-magic fa-3x"></i>
+<h3 class="lead text-center"><i class="fa fa-magic" style="color: green;"></i> {% trans 'Squaresensor Welcome Wizard' %}</h3>
+
 <hr>
-<h4>{% trans 'Welcome to Squaresensor!' %}</h4>
-<br>
 
 <div id="wizard-placeholder">
     <h4 style="margin-bottom: 10px;">{% trans 'You are three steps away from your Squaresensor experience:' %}</h4>
@@ -62,7 +60,7 @@
                             style="margin-top: 20px; margin-bottom: 20px;"
                             >
 
-                        {% trans 'Proceed to step ' %}{{ logged_member.help_first_time_wizard_cur_step }} <span class="glyphicon glyphicon-play"></span></button>
+                        {% trans 'Proceed to Step ' %}{{ logged_member.help_first_time_wizard_cur_step }} <span class="glyphicon glyphicon-play"></span></button>
                 {% endif %}
                 {% if logged_member.help_first_time_wizard_cur_step >= 4 %}
                     <form method="get" action="{% url 'members:dashboard' %}">
