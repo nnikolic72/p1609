@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='member',
             name='help_first_time_wizard_cur_step',
-            field=models.IntegerField(default=0),
+            field=models.IntegerField(default=1),
             preserve_default=True,
         ),
     ]
