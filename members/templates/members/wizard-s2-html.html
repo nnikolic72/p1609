@@ -2,6 +2,15 @@
 {% load dajaxice_templatetags %}
 {% load i18n %}
 
+<div class="alert alert-success">
+    <h3>{% trans 'Styles Setup Information:' %}</h3>
+    <ul>
+        <li>{% trans 'This is then Squaresensor Welcome Wizard Styles Setup step.' %}</li>
+        <li>{% trans 'You describe your Instagram photography by selecting styles you use in your photography.' %}</li>
+        <li>{% trans 'It will help Squaresensor to accurately set up your account and tailor your experience.' %}</li>
+        <li>{% trans 'You can change your settings later.' %}</li>
+    </ul>
+</div>
 <h4 class="lead">{% trans 'STEP ' %} {{ current_step }}: {% trans 'Describe your Instagram photography styles.' %}<br><small>{% trans 'Please select at least three styles' %}</small></h4>
 <div class="row">
     {% for attribute in attributes %}

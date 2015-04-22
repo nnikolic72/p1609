@@ -3,6 +3,14 @@
 {% load i18n %}
 {% load staticfiles %}
 
+<div class="alert alert-success">
+    <h3>{% trans 'Instagram Followings Import Information:' %}</h3>
+    <ul>
+        <li>{% trans 'This is then Squaresensor Welcome Wizard Instagram Followings Import step.' %}</li>
+        <li>{% trans 'Here you set up your Squaresensor SmartFeed, by selecting which Instagram users will be featured in it.' %}</li>
+        <li>{% trans 'You can change your settings later. Start by selecting a few Yellow SquareFollowings below' %}</li>
+    </ul>
+</div>
 <h4 class="lead">{% trans 'STEP ' %} {{ current_step }}: {% trans 'Import your Instagram Followings.' %}<br><small>{% trans 'Best practice is to select less than 100 SquareFollowings in first configuration. You can add more SquareFollowings later.' %}</small></h4>
 <div class="alert alert-success alert-dismissible" role="alert"
      id="help_smartfeed_configure">
