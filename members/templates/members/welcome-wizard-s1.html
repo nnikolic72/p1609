@@ -2,46 +2,54 @@
 {% load dajaxice_templatetags %}
 {% load i18n %}
 
-<h3 class="lead">{% trans 'Squaresensor Welcome Wizard' %}</h3>
+<h3 class="lead">{% trans 'Squaresensor Welcome Wizard' %}</h3><br>
+<i class="fa fa-magic fa-3x"></i>
 <hr>
 <h4>{% trans 'Welcome to Squaresensor!' %}</h4>
 <br>
 
 <div id="wizard-placeholder">
     <h4 style="margin-bottom: 10px;">{% trans 'You are three steps away from your Squaresensor experience:' %}</h4>
-    <ul class="lead">
+    <ul class="lead fa-ul">
         <li style="margin-bottom: 10px;">
             {% if logged_member.help_first_time_wizard_cur_step > 1  %}
-                <span class="glyphicon glyphicon-check btn btn-success btn-xs"></span>&nbsp;
+                <span class="fa-li fa fa-check-square"></span>&nbsp;
+                {% else %}
+                <span class="fa-li fa fa-square"></span>&nbsp;
             {% endif %}
             {% trans 'STEP 1: Describe your Instagram photography subjects.' %}&nbsp;
-            <small>
+
                 <button type="button" class="btn btn-info btn-default btn-xs" data-toggle="tooltip" data-placement="top"
                         title="{% trans 'In this step, you select from a list of subjects like Landscape, Architecture, ... and describe what subjects you photograph.' %}"
                         >{% trans 'Learn more' %}</button>
-            </small>
+
         </li>
         <li style="margin-bottom: 10px;">
             {% if logged_member.help_first_time_wizard_cur_step > 2  %}
-                <span class="glyphicon glyphicon-check btn btn-success btn-xs"></span>&nbsp;
+                <span class="fa-li fa fa-check-square"></span>&nbsp;
+                {% else %}
+                <span class="fa-li fa fa-square"></span>&nbsp;
             {% endif %}
             {% trans 'STEP 2: Describe your Instagram photography styles.' %}&nbsp;
-            <small>
+
                 <button type="button" class="btn btn-info btn-default btn-xs" data-toggle="tooltip" data-placement="top"
                         title="{% trans 'In this step, you select from a list of styles like Color, Black and White, HDR, ... and describe what styles you use in your photography.' %}"
                         >{% trans 'Learn more' %}</button>
-            </small>
+
         </li>
-        <li style="margin-bottom: 10px;">
+        <li
+                style="margin-bottom: 10px;">
             {% if logged_member.help_first_time_wizard_cur_step > 3  %}
-                <span class="glyphicon glyphicon-check btn btn-success btn-xs"></span>&nbsp;
+                <span class="fa-li fa fa-check-square"></span>&nbsp;
+                {% else %}
+                <span class="fa-li fa fa-square"></span>&nbsp;
             {% endif %}
             {% trans 'STEP 3: Import your Instagram Followings to Squaresensor.' %}&nbsp;
-            <small>
+
                 <button type="button" class="btn btn-info btn-default btn-xs" data-toggle="tooltip" data-placement="top"
                         title="{% trans 'In this step, you import your Instagram Followings to Squaresensor. This sets up your SmartFeed, your new way of enjoying Instagram photos.' %}"
                         >{% trans 'Learn more' %}</button>
-            </small>
+
         </li>
     </ul>
     <div class="container-fluid">
