@@ -381,7 +381,7 @@ class BestPhotos:
                 if recent_media and x_next:
                     while x_next:
                         try:
-                            media_feed, x_next = self.instagram_session.api.user_recent_media(with_next_url = x_next)
+                            media_feed, x_next = self.instagram_session.api.user_recent_media(with_next_url=x_next)
                         except InstagramAPIError as e:
                             logging.exception("get_instagram_photos: ERR-00012 Instagram API Error %s : %s" % (e.status_code, e.error_message))
 
@@ -421,13 +421,14 @@ class BestPhotos:
             '''Convert Instagram media object to list'''
             l_media_list = []
             for x_media in self.l_latest_photos:
-                l_time_delta = datetime.today() - x_media.created_time
-                l_media_list.append([x_media.id, x_media.like_count,
-                                     x_media.comment_count,
-                                     l_time_delta.days,
-                                     0 # Error - to be calculated
-                ]
-                )
+                if x_media.type == 'image':
+                    l_time_delta = datetime.today() - x_media.created_time
+                    l_media_list.append([x_media.id, x_media.like_count,
+                                         x_media.comment_count,
+                                         l_time_delta.days,
+                                         0 # Error - to be calculated
+                    ]
+                    )
             #media_cnt = len(l_media_list)
             '''Normalize the number of likes and days'''
             l_max_likes = max(l[1] for l in l_media_list)
@@ -961,7 +962,7 @@ class InstagramUserAdminUtils():
                 '''We have Instagram session'''
                 user_search = ig_session.is_instagram_user_valid(obj.instagram_user_name)
 
-                if user_search:
+                if (len(user_search) > 0) and (user_search[0].username == obj.instagram_user_name):
                     instagram_user = ig_session.get_instagram_user(user_search[0].id)
 
                     if instagram_user:
@@ -991,7 +992,6 @@ class InstagramUserAdminUtils():
                                 '''Found followers - save them to our database'''
                                 for follower in l_instagram_friends:
                                     l_exists = Follower.objects.filter(instagram_user_id=follower.id)
-
 
                                     instagram_utils = InstagramUserAdminUtils()
                                     if l_exists.count() == 0:
@@ -1151,7 +1151,7 @@ class InstagramUserAdminUtils():
                 # We have Instagram session and enough API call remaining
                 user_search = ig_session.is_instagram_user_valid(obj.instagram_user_name)
 
-                if user_search:
+                if (len (user_search) > 0) and (user_search[0].username == obj.instagram_user_name):
                     instagram_user = ig_session.get_instagram_user(user_search[0].id)
 
                     if instagram_user:
@@ -1254,7 +1254,7 @@ class InstagramUserAdminUtils():
         if api:
             user_search = api.is_instagram_user_valid(p_instagram_user.instagram_user_name)
 
-        if user_search:
+        if (len(user_search) > 0) and (user_search[0].username == p_instagram_user.instagram_user_name):
             buf = 'Success'
             instagram_user = api.get_instagram_user(user_search[0].id)
 
@@ -1373,8 +1373,9 @@ class InstagramUserAdminUtils():
                 # Insert new best photos for this user
                 if l_top_photos:
                     for val in l_top_photos:
+                        rec = None
                         if Photo.objects.filter(instagram_photo_id=val[0]).exists():
-                            rec = None
+
                             try:
                                 rec = Photo.objects.get(instagram_photo_id=val[0])
                             except ObjectDoesNotExist:

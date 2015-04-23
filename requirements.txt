@@ -40,3 +40,4 @@ static3==0.5.1
 tablib==0.10.0
 Unipath==1.1
 whitenoise==1.0.6
+-r requirements_heroku.txt

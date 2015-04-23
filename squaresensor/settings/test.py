@@ -4,8 +4,8 @@ import dj_database_url
 
 #Heroku deployment
 
-#from memcacheify import memcacheify  # @UnresolvedImport
-#CACHES = memcacheify()
+from memcacheify import memcacheify  # @UnresolvedImport
+CACHES = memcacheify()
 
 
 SECRET_KEY = os.environ['SECRET_KEY']

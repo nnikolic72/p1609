@@ -32,10 +32,10 @@ class InspiringUserAdmin(admin.ModelAdmin):
         '''
         buf = 'Finished.'
         #instagram_utils = InstagramUserAdminUtils()
-        inspirig_users_id_list = []
+        inspiring_users_id_list = []
         for inspiring_user in queryset:
-            inspirig_users_id_list.extend([inspiring_user.instagram_user_id])
-        process_instagram_user.delay(None, inspirig_users_id_list)
+            inspiring_users_id_list.extend([inspiring_user.instagram_user_id])
+        process_instagram_user.delay(None, inspiring_users_id_list)
 
         self.message_user(request, buf)
     process_inspiringuser.short_description = 'Process Inspiring User by Instagram API'

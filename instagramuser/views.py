@@ -213,7 +213,7 @@ class InspiringUserNameView(TemplateView):
             instagram_session.init_instagram_API()
             user_search = instagram_session.is_instagram_user_valid(inspiring_user.instagram_user_name)
 
-            if len(user_search) > 0:
+            if (len(user_search) > 0) and (user_search[0].username == inspiring_user.instagram_user_name ):
                 l_instagram_user = instagram_session.get_instagram_user(user_search[0].id)
                 l_best_photos = BestPhotos(
                     instgram_user_id=inspiring_user.instagram_user_id,
@@ -433,10 +433,7 @@ class UsersBestPhotosView(TemplateView):
             ig_admin_utils = InstagramUserAdminUtils()
             ig_admin_utils.process_instagram_user(request, queryset)
 
-
             user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
-
-
 
             if self.is_member:
                 l_photos_queryset = Photo.objects.filter(member_id=squaresensor_user).order_by('-photo_rating')
@@ -558,7 +555,7 @@ class AnyUserRecentBestView(TemplateView):
         instagram_session.init_instagram_API()
         user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
 
-        if len(user_search) > 0:
+        if (len(user_search) > 0) and (user_search[0].username == instagram_user_name):
             l_instagram_user = instagram_session.get_instagram_user(user_search[0].id)
 
             l_best_photos = BestPhotos(

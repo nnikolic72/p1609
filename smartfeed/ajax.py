@@ -164,7 +164,7 @@ def smart_feed_subscribe(req, p_instagram_user_id, p_color):
         instagram_session.init_instagram_API()
         user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
 
-        if len(user_search) > 0:
+        if (len(user_search) > 0) and (user_search[0].username == instagram_user_name):
             l_instagram_user = instagram_session.get_instagram_user(user_search[0].id)
 
             l_best_photos = BestPhotos(
