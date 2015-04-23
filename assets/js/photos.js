@@ -74,7 +74,7 @@ function send_instagram_comment_callback(data) {
     var comments_per_minute = data.comments_per_minute;
     var x_limit_pct = data.x_limit_pct.toPrecision(2);
     var result = data.result;
-
+    var interactions_remaining = data.interactions_remaining;
 
     var l_comments_count = data.l_comments_count;
 
@@ -97,10 +97,15 @@ function send_instagram_comment_callback(data) {
                 scrollTop: $(new_friend_id).offset().top - 50
             }, 600);
             $(new_friend_id).hide();
+
+            $('#interactions_remaining_text').html(interactions_remaining);
         }
     }
-    $('#ctm').html(comments_per_minute);
-    $('#iglu').html(x_limit_pct + ' %');
+
+    if(result != 'error') {
+        $('#ctm').html(comments_per_minute);
+        $('#iglu').html(x_limit_pct + ' %');
+    }
 
     //if we interact with new friends -
     //show_comments_modal(p_photo_id); //hides

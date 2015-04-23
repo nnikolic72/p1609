@@ -26,7 +26,8 @@ from dajaxice.decorators import dajaxice_register
 from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED, TEST_APP, INSTAGRAM_LIKES_PER_HOUR_LIMIT, \
     INSTAGRAM_COMMENTS_PER_HOUR_LIMIT, TEST_APP_LIKE_PER_PERIOD_LIMIT, TEST_APP_COMMENT_PER_PERIOD_LIMIT, \
     INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, \
-    FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS
+    FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS, FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS, \
+    FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS, INSTAGRAM_HASHTAGS_PER_COMMENT_LIMIT
 
 __author__ = 'n.nikolic'
 
@@ -378,6 +379,10 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
     :return:
     """
 
+    l_interactions_remaining = None
+    l_comments_count = None
+    l_result = "error"
+
     # Common for all members views ===================================================
     l_categories = Category.objects.all()
     l_attributes = Attribute.objects.all()
@@ -403,97 +408,108 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
         l_comment_form_input_id = u'new_comment_%s_%s' % (p_photo_id, p_inline)
     comment_text = form[l_comment_form_input_id]
 
-    # checking number of comments in the last period
-    l_comments_in_last_minute = logged_member.comments_in_last_minute
-    l_comments_in_last_minute_interval_start = logged_member.comments_in_last_minute_interval_start
+    #check fot three hastags rule
+    l_hashtags_count = comment_text.count('#')
+    if l_hashtags_count <= INSTAGRAM_HASHTAGS_PER_COMMENT_LIMIT:
 
-    l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
+        # checking number of comments in the last period
+        l_comments_in_last_minute = logged_member.comments_in_last_minute
+        l_comments_in_last_minute_interval_start = logged_member.comments_in_last_minute_interval_start
 
-    if l_comments_in_last_minute_interval_start:
-        # l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
-        l_diff = l_comments_in_last_minute_interval_start - timezone.now()
-        if l_diff > l_timedelta:
-            #hour has passed - reset the counters
-            logged_member.comments_in_last_minute = 0
+        l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
+
+        if l_comments_in_last_minute_interval_start:
+            # l_likes_in_last_minute_interval_end = l_likes_in_last_minute_interval_start + timedelta(hours=+1)
+            l_diff = l_comments_in_last_minute_interval_start - timezone.now()
+            if l_diff > l_timedelta:
+                #hour has passed - reset the counters
+                logged_member.comments_in_last_minute = 0
+                logged_member.comments_in_last_minute_interval_start = timezone.now()
+                logged_member.save()
+                l_comments_in_last_minute = 0
+
+        else:
+            logged_member.comments_in_last_minute = 1
             logged_member.comments_in_last_minute_interval_start = timezone.now()
             logged_member.save()
-            l_comments_in_last_minute = 0
+            l_comments_in_last_minute = 1
 
-    else:
-        logged_member.comments_in_last_minute = 1
-        logged_member.comments_in_last_minute_interval_start = timezone.now()
-        logged_member.save()
-        l_comments_in_last_minute = 1
-
-    if TEST_APP:
-        l_instagram_comments_per_hour_limit = TEST_APP_COMMENT_PER_PERIOD_LIMIT
-    else:
-        l_instagram_comments_per_hour_limit = INSTAGRAM_COMMENTS_PER_HOUR_LIMIT
-
-    l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
-    if logged_member.comments_in_last_minute < l_instagram_comments_per_hour_limit:
-        if INSTAGRAM_COMMENTS_ALLOWED == '1':
-            l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
-            l_comments_in_last_minute += 1
-            logged_member.comments_in_last_minute = l_comments_in_last_minute
-            logged_member.save()
+        if TEST_APP:
+            l_instagram_comments_per_hour_limit = TEST_APP_COMMENT_PER_PERIOD_LIMIT
         else:
-            l_comments_in_last_minute += 1
-            logged_member.comments_in_last_minute = l_comments_in_last_minute
-            logged_member.save()
-            l_result = 'notallowed'
-    else:
-        l_result = 'limit'
+            l_instagram_comments_per_hour_limit = INSTAGRAM_COMMENTS_PER_HOUR_LIMIT
 
-    if p_new_friends_interaction == 1:
-        try:
-            l_interacted_friend = Follower.objects.get(instagram_user_id=l_photo_author_instagram_id)
-        except ObjectDoesNotExist:
-            l_interacted_friend = None
-        except:
-            raise
-
-        if l_interacted_friend:
-            l_interacted_friend.member.add(logged_member)
-            l_interacted_friend.interaction_count += 1
-            l_interacted_friend.save()
-            # increase member daily interactions count
-            l_today = timezone.now().date()
-            if l_today == logged_member.daily_new_friends_interactions_date:
-                logged_member.daily_new_friends_interactions += 1
+        l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
+        if logged_member.comments_in_last_minute < l_instagram_comments_per_hour_limit:
+            if INSTAGRAM_COMMENTS_ALLOWED == '1':
+                l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+                l_comments_in_last_minute += 1
+                logged_member.comments_in_last_minute = l_comments_in_last_minute
+                logged_member.save()
             else:
-                logged_member.daily_new_friends_interactions_date = l_today
-                logged_member.daily_new_friends_interactions = 1
-            logged_member.save()
+                l_comments_in_last_minute += 1
+                logged_member.comments_in_last_minute = l_comments_in_last_minute
+                logged_member.save()
+                l_result = 'notallowed'
+        else:
+            l_result = 'limit'
 
-            l_new_friend_contacted = NewFriendContactedByMember(
-                member=logged_member,
-                friend=l_interacted_friend,
-                contact_date=timezone.now(),
-                contact_count=1,
-                interaction_type='C'
-            )
-            l_new_friend_contacted.save()
+        if p_new_friends_interaction == 1:
+            try:
+                l_interacted_friend = Follower.objects.get(instagram_user_id=l_photo_author_instagram_id)
+            except ObjectDoesNotExist:
+                l_interacted_friend = None
+            except:
+                raise
 
-            # update limits
-            l_timedelta_day = timedelta(days=+FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS)
-            l_new_friends_in_last_day_interval_start = logged_member.new_friends_in_last_day_interval_start
-            if l_new_friends_in_last_day_interval_start:
-                l_diff = l_new_friends_in_last_day_interval_start - timezone.now()
-                if l_diff > l_timedelta_day:
-                    # hour has passed - reset the counters
+            if l_interacted_friend:
+                l_interacted_friend.member.add(logged_member)
+                l_interacted_friend.interaction_count += 1
+                l_interacted_friend.save()
+                # increase member daily interactions count
+                l_today = timezone.now().date()
+                if l_today == logged_member.daily_new_friends_interactions_date:
+                    logged_member.daily_new_friends_interactions += 1
+                else:
+                    logged_member.daily_new_friends_interactions_date = l_today
+                    logged_member.daily_new_friends_interactions = 1
+                logged_member.save()
+
+                l_new_friend_contacted = NewFriendContactedByMember(
+                    member=logged_member,
+                    friend=l_interacted_friend,
+                    contact_date=timezone.now(),
+                    contact_count=1,
+                    interaction_type='C'
+                )
+                l_new_friend_contacted.save()
+
+                # update limits
+                l_timedelta_day = timedelta(days=+FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS)
+                l_new_friends_in_last_day_interval_start = logged_member.new_friends_in_last_day_interval_start
+                if l_new_friends_in_last_day_interval_start:
+                    l_diff = l_new_friends_in_last_day_interval_start - timezone.now()
+                    if l_diff > l_timedelta_day:
+                        # hour has passed - reset the counters
+                        logged_member.new_friends_in_last_day = 1
+                        logged_member.new_friends_in_last_day_interval_start = timezone.now()
+                        logged_member.save()
+                    else:
+                        logged_member.new_friends_in_last_day += 1
+                        logged_member.save()
+                else:
                     logged_member.new_friends_in_last_day = 1
                     logged_member.new_friends_in_last_day_interval_start = timezone.now()
                     logged_member.save()
-                else:
-                    logged_member.new_friends_in_last_day += 1
-                    logged_member.save()
-            else:
-                logged_member.new_friends_in_last_day = 1
-                logged_member.new_friends_in_last_day_interval_start = timezone.now()
-                logged_member.save()
 
-    l_comments_count = l_instagram_comments.get_comments_count()
+                if (logged_member.is_monthly_member() == True) or (logged_member.is_yearly_member() == True):
+                    l_interactions_remaining = \
+                        FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS - logged_member.new_friends_in_last_day
+                else:
+                    l_interactions_remaining = \
+                        FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS - logged_member.new_friends_in_last_day
+
+        l_comments_count = l_instagram_comments.get_comments_count()
 
     # Limit calculation --------------------------------------------------------------
     x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
@@ -512,6 +528,7 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
              p_new_friends_interaction=p_new_friends_interaction,
              p_photo_author_instagram_id=l_photo_author_instagram_id,
              result=l_result,
+             interactions_remaining=l_interactions_remaining,
 
              x_ratelimit_remaining=x_ratelimit_remaining,
              x_ratelimit=x_ratelimit,
