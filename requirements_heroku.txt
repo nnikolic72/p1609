@@ -1,3 +1,2 @@
-django-heroku-memcacheify==0.8  
+django-heroku-memcacheify==0.8
 pylibmc==1.2.3
-whitenoise==1.0.6
