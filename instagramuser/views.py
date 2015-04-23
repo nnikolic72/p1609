@@ -662,6 +662,8 @@ class FindFriendsView(TemplateView):
         :rtype:
         """
 
+        liked_photos = []
+
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
         l_attributes = Attribute.objects.all()
@@ -739,6 +741,12 @@ class FindFriendsView(TemplateView):
                 l_top_photos_list.extend([l_instagram_photo])
             l_friends_and_photos.append([follower, l_top_photos_list])
 
+
+            for x_media in l_best_photos.top_photos_list:
+                my_likes = MyLikes(request.user.username, x_media[0], instagram_session )
+                has_user_liked_media, no_of_likes = my_likes.has_user_liked_media()
+                if has_user_liked_media:
+                    liked_photos.extend([x_media[0]])
         # Limit calculation --------------------------------------------------------------
         logged_member.refresh_api_limits(request)
         x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
@@ -760,6 +768,7 @@ class FindFriendsView(TemplateView):
                           max_interactions=max_interactions,
                           interactions_remaining=l_new_friends_remaining,
                           hours_remaining=l_hours_remaining,
+                          liked_photos=liked_photos,
 
                           is_monthly_member=is_monthly_member,
                           is_yearly_member=is_yearly_member,

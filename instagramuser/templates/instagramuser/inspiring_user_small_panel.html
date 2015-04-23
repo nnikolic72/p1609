@@ -12,8 +12,10 @@
         <form action="{% url 'instagramuser:alltimebest' p_username=inspiring_user.instagram_user.instagram_user_name p_mode='view' %}">
             <button type="submit"
                     id="alltimebest_{{ inspiring_user.instagram_user.instagram_user_name }}"
-                    onclick="display_ajax_img('alltimebest_{{ inspiring_user.instagram_user.instagram_user_name }}', '{{ STATIC_URL }}')"
+                    onclick="bootstrap_loading_button('alltimebest_{{ inspiring_user.instagram_user.instagram_user_name }}');"
+                    data-loading-text="<i class='fa fa-diamond fa-3x'></i><br>{% trans 'Best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
                     class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                <i class="fa fa-diamond fa-3x"></i><br>
                 {% trans 'Best Photos' %}
             </button>
         </form>
@@ -22,8 +24,10 @@
         <form action="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user.instagram_user_name %}" method="get">
             <button type="submit"
                     id="recentbest_{{ inspiring_user.instagram_user.instagram_user_name }}"
-                    onclick="display_ajax_img('recentbest_{{ inspiring_user.instagram_user.instagram_user_name }}', '{{ STATIC_URL }}')"
+                    onclick="bootstrap_loading_button('recentbest_{{ inspiring_user.instagram_user.instagram_user_name }}');"
+                    data-loading-text="<i class='fa fa-calendar fa-3x'></i><br>{% trans 'Recent best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
                     class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                <i class="fa fa-calendar fa-3x"></i><br>
                 {% trans 'Recent Best' %}
             </button>
         </form>
@@ -31,6 +35,7 @@
     <div class="col-xs-12 col-sm-3">
         <form action="{{ inspiring_user.instagram_user.instagram_user_profile_page_URL }}/" target="_blank" method="get">
             <button type="submit" class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                <i class="fa fa-external-link fa-3x"></i><br>
                 {% trans 'IG Profile Page' %}
             </button>
         </form>

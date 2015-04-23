@@ -43,7 +43,7 @@ function inline_comment_toggler(divId, p_photo_id, p_instagram_user_name, commen
 
 function display_loading_text(p_div_id, p_static_url) {
     var div_id = '#' + p_div_id;
-    var ajax_img = '<p style="float: left;">Loading...<p>';
+    var ajax_img = '<p style="float: left;">Loading... <i class="fa fa-spinner fa-pulse"></i><p>';
 
 
     $(div_id).html(ajax_img);

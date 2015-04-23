@@ -7,25 +7,25 @@
 </div>
 <div class="modal-body">
     {% if logged_member.help_photos_modal_comment_section == True %}
-    <div class="alert alert-success alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4>{% trans 'Comments Information' %}</h4>
-        <ul>
-            <li>{% trans 'Comments for this post are displayed in this window' %}</li>
-            <li>{% trans 'Comments are ordered in threads - conversations' %}</li>
-            <li>{% blocktrans %}By pressing on <small><span class="glyphicon glyphicon-option-horizontal"></span></small> button you can reply to comment{% endblocktrans %}</li>
-            <li>{% trans 'You can add a new comment at the bottom of the comment list' %}</li>
-            <li>{% trans 'Please do not spam and be polite! You are interacting with real people.' %}</li>
-            <li>{% trans 'Please do not post more than three hashtags in one comment' %}</li>
-        </ul>
-        <button type="button"
-                class="btn btn-default btn-sm"
-                data-dismiss="alert"
-                aria-label="Close"
-                onclick="dismiss_help('help_photos_modal_comment_section')"
-                style="margin-top: 20px;"
-                >{% trans 'Do not show again' %}</button>
-    </div>
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4>{% trans 'Comments Information' %}</h4>
+            <ul>
+                <li>{% trans 'Comments for this post are displayed in this window' %}</li>
+                <li>{% trans 'Comments are ordered in threads - conversations' %}</li>
+                <li>{% blocktrans %}By pressing on <small><span class="glyphicon glyphicon-option-horizontal"></span></small> button you can reply to comment{% endblocktrans %}</li>
+                <li>{% trans 'You can add a new comment at the bottom of the comment list' %}</li>
+                <li>{% trans 'Please do not spam and be polite! You are interacting with real people.' %}</li>
+                <li>{% trans 'Please do not post more than three hashtags in one comment' %}</li>
+            </ul>
+            <button type="button"
+                    class="btn btn-default btn-sm"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                    onclick="dismiss_help('help_photos_modal_comment_section')"
+                    style="margin-top: 20px;"
+                    >{% trans 'Do not show again' %}</button>
+        </div>
     {% endif %}
     <div align="center">
         <img class="img-responsive img-thumbnail" src="{{ instagram_thumbnail_url }}">
@@ -92,9 +92,12 @@
                         <div class="input-group-sm">
                             <input type="text" class="form-control input-sm" name="new_comment_{{ p_photo_id }}_{{ comment.0 }}" id="new_comment_{{ p_photo_id }}_{{ comment.0 }}" value="">
 
-                            <button type="button" class="btn btn-default btn-sm"
+                            <button type="button"
+                                    class="btn btn-default btn-sm"
+                                    id="inline_comment_{{ p_photo_id }}_{{ comment.0 }}"
+                                    data-loading-text="<i class='fa fa-comment'></i> {% trans 'Sending...' %} <i class='fa fa-spinner fa-pulse'></i>"
                                     onclick="send_instagram_inline_comment('{{ p_photo_id }}', '{{ comment.0 }}');"
-                                    >{% trans 'Send' %}</button>
+                                    ><i class="fa fa-comment "></i> {% trans 'Send' %}</button>
                         </div>
                     </form>
                 </div>
@@ -114,8 +117,13 @@
             <input type="text" class="input-sm col-xs-12" name="new_comment_{{ p_photo_id }}"  style="margin-bottom: 10px;">
         </div>
         <div class="form-group">
-            <button type="button" class="btn btn-primary" onclick="send_instagram_comment('{{ p_photo_id }}', {{ p_new_friends_interaction }});">{% trans 'Send' %}</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Discard' %}</button>
+            <button type="button"
+                    class="btn btn-primary"
+                    id="send_comment_{{ p_photo_id }}"
+                    data-loading-text="<i class='fa fa-comment'></i> {% trans 'Sending...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="send_instagram_comment('{{ p_photo_id }}', {{ p_new_friends_interaction }});">
+                <i class="fa fa-comment "></i> {% trans 'Send' %}</button>
         </div>
     </form>
 </div>

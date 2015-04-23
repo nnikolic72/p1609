@@ -27,10 +27,11 @@
                                   id="response_{{ photo.3 }}" class="form-control"></textarea>
                     <button style="margin-bottom: 10px;"
                             id="send_instagram_commenter_comment_{{ photo.3 }}"
+                            data-loading-text="<i class='fa fa-comment'></i> {% trans 'Sending response...' %} <i class='fa fa-spinner fa-pulse'></i>"
                             onclick="send_instagram_commenter_comment('{{ photo.3 }}', '{{ STATIC_URL }}');"
                             type="button"
                             class="btn btn-success">
-                        {% trans 'Send Response' %}
+                        <i class="fa fa-comment "></i> {% trans 'Send Response' %}
                     </button>
                 </form>
             </div>

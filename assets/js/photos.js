@@ -47,7 +47,7 @@ function load_instagram_comments_callback(data) {
 
     $(modal_comment_text_id).html(html_text);
 
-
+    bootstrap_loading_reset('send_comment_' + p_photo_id);
     show_comments_modal(p_photo_id);
 
 
@@ -87,6 +87,7 @@ function send_instagram_comment_callback(data) {
         $('#ErrorDialog').modal('show');
     } else {
         if (p_new_friends_interaction == 0) {
+
             load_instagram_comments(p_photo_id);
         }
 
@@ -107,6 +108,7 @@ function send_instagram_comment_callback(data) {
         $('#iglu').html(x_limit_pct + ' %');
     }
 
+
     //if we interact with new friends -
     //show_comments_modal(p_photo_id); //hides
 }
@@ -117,6 +119,8 @@ function send_instagram_comment(p_photo_id, p_new_friends_interaction) {
     var data = $(id_name).serializeObject();
 
     //alert('send_instagram_comment ' + data);
+
+    bootstrap_loading_button('send_comment_' + p_photo_id);
 
     Dajaxice.photos.send_instagram_comment(send_instagram_comment_callback,
         {'form': data, 'p_photo_id': p_photo_id, 'p_inline': '',
@@ -131,9 +135,11 @@ function send_instagram_inline_comment(p_photo_id, p_comment_order) {
     var data = $(id_name).serializeObject();
     //alert('send_instagram_inline_comment ' + p_photo_id + 'exit');
     //alert('send_instagram_inline_comment ' + data);
+    bootstrap_loading_button('inline_comment_' + p_photo_id + '_' + p_comment_order);
 
     Dajaxice.photos.send_instagram_comment(send_instagram_comment_callback,
-        {'form': data, 'p_photo_id': p_photo_id, 'p_inline': p_comment_order  }
+        {'form': data, 'p_photo_id': p_photo_id, 'p_inline': p_comment_order,
+        'p_new_friends_interaction': 0 }
     );
 }
 
@@ -183,7 +189,9 @@ function like_instagram_picture(p_photo_id, p_static_url) {
     var ig_likes_text_id = '#instagram_likes_text_' + p_photo_id;
     var current_likes_cnt = parseInt($(ig_likes_text_id).text(), 10);
     var button_id = '#like_button_' + p_photo_id;
-    var html_text = '<div align=center><img class="img-responsive" src="' + p_static_url + 'img/ajax_loader-small.gif" style="height=11px;"></div>';
+    //var html_text = '<div align=center><img class="img-responsive" src="' + p_static_url + 'img/ajax_loader-small.gif" style="height=11px;"></div>';
+    var html_text = '<i class="fa fa-spinner fa-pulse"></i>';
+
     $(button_id).removeClass('btn-danger');
     $(button_id).html(html_text);
     //alert('send_instagram_comment ' + data);
@@ -216,7 +224,8 @@ function load_instagram_commenter_comments_callback(data) {
     var response_textarea_id = '#response_' + p_photo_id;
 
     $(modal_comment_text_id).html(html_text);
-    $(send_response_button_id).html('Send Response');
+    //$(send_response_button_id).html('Send Response');
+    bootstrap_loading_reset('send_instagram_commenter_comment_' + p_photo_id);
     $(response_textarea_id).val('');
 
     toggler('comments_' + p_photo_id);
@@ -267,7 +276,8 @@ function send_instagram_commenter_comment(p_photo_id, p_static_url) {
     var data = $(id_name).serializeObject();
 
     var comment_text = $('#response_' + p_photo_id).val();
-    display_ajax_img('send_instagram_commenter_comment_' + p_photo_id, p_static_url);
+    //display_ajax_img('send_instagram_commenter_comment_' + p_photo_id, p_static_url);
+    bootstrap_loading_button('send_instagram_commenter_comment_' + p_photo_id);
 
     //alert('send_instagram_comment ' + data);
 

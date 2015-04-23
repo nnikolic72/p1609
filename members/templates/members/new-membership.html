@@ -72,11 +72,11 @@
                         <td colspan="3"><h3>{% trans 'Membership options' %}</h3></td>
 
                     </tr>
-                    <tr>
-                        <td></td>
-                        <td>{% trans 'Free' %}</td>
-                        <td>{% trans 'Monthly' %}</td>
-                        <td>{% trans 'Yearly Premium' %}</td>
+                    <tr class="lead">
+                        <td class="col-md-4"></td>
+                        <td class="col-md-2">{% trans 'Free' %}</td>
+                        <td class="col-md-3">{% trans 'Monthly Premium' %}</td>
+                        <td class="col-md-3">{% trans 'Yearly Premium' %}<br><small style="color: red;"><i class="fa fa-star"></i> {% trans 'HOT' %} <i class="fa fa-star"></i></small></td>
                     </tr>
                     <tr>
                         <td>{% trans 'Contact new friends/day' %}</td>
@@ -105,29 +105,29 @@
                     <tr>
                         <td>{% trans 'Monthly Price' %}</td>
                         <td>{% trans 'Free' %}</td>
-                        <td>{{ price_monthly_per_month|floatformat:2 }} {% trans 'per month' %}</td>
-                        <td>{{ price_monthly_per_year|floatformat:2 }} {% trans 'per month' %}</td>
+                        <td>{{ price_monthly_per_month|floatformat:2 }} EUR <small>/ {% trans 'per month' %}</small></td>
+                        <td>{{ price_monthly_per_year|floatformat:2 }} EUR <small>/ {% trans 'per month' %}</small></td>
                     </tr>
                     <tr>
                         <td>{% trans 'Price' %}</td>
                         <td>{% trans 'Free' %}</td>
-                        <td>{{ price_monthly_per_month|floatformat:2 }}</td>
-                        <td>{{ price_yearly|floatformat:2 }}</td>
+                        <td>{{ price_monthly_per_month|floatformat:2 }} EUR</td>
+                        <td>{{ price_yearly|floatformat:2 }} EUR</td>
                     </tr>
                     <tr>
-                        <td>{% trans 'Become a premium member' %}</td>
+                        <td class="lead">{% trans 'Become a premium member' %}</td>
                         <td></td>
                         <td>
                             <form method="get" action="{% url 'members:new_monthly_membership' %}">
                                 <button type="submit" class="btm btn-lg btn-success btn-block">
-                                    {% trans 'Get Monthly Membership' %}
+                                    {% trans 'Get Monthly Premium Membership Now!' %}
                                 </button>
                             </form>
                         </td>
                         <td>
                             <form method="get" action="{% url 'members:new_yearly_membership' %}">
                                 <button type="submit" class="btm btn-lg btn-success btn-block">
-                                    {% trans 'Get Yearly Premium Membership' %}
+                                    {% trans 'Get Yearly Premium Membership Now!' %}
                                 </button>
                             </form>
                         </td>
