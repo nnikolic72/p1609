@@ -40,6 +40,21 @@ class InspiringUserAdmin(admin.ModelAdmin):
         self.message_user(request, buf)
     process_inspiringuser.short_description = 'Process Inspiring User by Instagram API'
 
+    def check_ig_limits(self, request, queryset):
+        '''Action -> Do what is needed to process a GoodUser with Instagram API
+           Process only users that are marked to be processed -> to_be_processed==True
+        '''
+        buf = 'Finished.'
+        #instagram_utils = InstagramUserAdminUtils()
+        instagram_session = InstagramSession(p_is_admin=True, p_token='')
+        instagram_session.init_instagram_API()
+        x_ratelimit_remaining, x_ratelimit = instagram_session.get_api_limits()
+
+        buf = 'Limit: %s, Remaining: %s' % (x_ratelimit, x_ratelimit_remaining)
+
+        self.message_user(request, buf)
+    check_ig_limits.short_description = 'Check Instagram API limits'
+
     def set_inspiringusers_process_true(self, request, queryset):
         '''Action -> Set "to_be_processed" flag for selected GoodUsers to True.
            Process only GoodUsers that have flag to_be_processed set to False.
@@ -170,6 +185,7 @@ class InspiringUserAdmin(admin.ModelAdmin):
                set_inspiringusers_process_friends_true,
                set_inspiringusers_process_followings_false,
                set_inspiringusers_process_followings_true,
+               check_ig_limits,
     )
 
     '''Determine what is dispalayed on GoodUser Admin Edit form'''
