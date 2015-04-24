@@ -53,6 +53,7 @@
             </div>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-xs-12 col-sm-4 col-sm-offset-4 text-center">
+                    {% if show_describe_button %}
                     <form class="form" method="get" action="{% url 'instagramuser:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}">
                         <button type="submit" class="btn btn-default btn-block"
                                 id="alltimebest-refresh"
@@ -60,6 +61,7 @@
                                 >
                             {% trans 'Refresh' %}</button>
                     </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -78,7 +78,7 @@ function check_members_limits() {
     );
 }
 check_members_limits();
-setInterval(check_members_limits, 60 * 1000); // 60 * 1000 miliseconds
+setInterval(check_members_limits, 300 * 1000); // 300 * 1000 miliseconds
 
 function status_bar_help() {
     $('#StatusBarHelpDialog').modal('show');
