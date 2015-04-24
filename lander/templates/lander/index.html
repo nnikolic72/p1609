@@ -21,9 +21,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-sm-3 text-center">
-                    <div align="center">
-                        <img class="img-responsive" src="{{ STATIC_URL }}img/ss-black-small_300.png">
-                    </div>
+
+                        <img class="img-responsive center-block hidden-xs visible-sm visible-md visible-lg" src="{{ STATIC_URL }}img/ss-black-small_300.png">
+                        <img class="img-responsive center-block visible-xs hidden-sm hidden-md hidden-lg" src="{{ STATIC_URL }}img/ss-black-small_150.png">
+
                 </div>
                 <div class="col-xs-12 col-sm-9 text-center">
                     <h1>{% trans 'Squaresensor' %}</h1><br>
@@ -45,32 +46,31 @@
                 {% else %}
 
                     {% if is_app_live == '1' %}
-                        <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
-                            <div class="col-xs-12 text-center">
-                                <a class="button btn-lg btn-success"
+                        <form method="get" action="{% url 'socialauth_begin' 'instagram' %}">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                {% trans 'Login with Instagram' %} <i class="fa fa-sign-in"></i>
+                            </button>
+                        </form>
+                        <br>
+                        <p>{% trans 'Your Squaresensor account will be created right after you authenticate with Instagram.' %}</p>
 
-                                   href="{% url 'socialauth_begin' 'instagram' %}"
-                                        >{% trans 'Login with Instagram' %}</a>
-                            </div>
-                            <div class="col-xs-12">
-                                <p>{% trans 'Your Squaresensor account will be created right after you authenticate with Instagram.' %}</p>
+
+                    {% else %}
+                        <div class="row" style="margin: 20px;">
+                            <div class="col-xs-12 col-sm-offset-3 col-sm-6">
+                                <h5>Discover the web app that fine tunes Instagram to YOUR lifestyle, and enjoy your pictures the way YOU prefer!</h5>
+                                <hr>
+                                <h4>Sign up here<br><small>Leave your e-mail address so we can let you know when we open!</small></h4>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-offset-3 col-sm-6">
+                                {% include 'lander/index_inner.html' %}
+                            </div>
+                        </div>
+
+
                     {% endif %}
-                    <div class="row" style="margin: 20px;">
-                        <div class="col-xs-12 col-sm-offset-3 col-sm-6">
-                            <h5>Discover the web app that fine tunes Instagram to YOUR lifestyle, and enjoy your pictures the way YOU prefer!</h5>
-                            <hr>
-                            <h4>Sign up here<br><small>Leave your e-mail address so we can let you know when we open!</small></h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-offset-3 col-sm-6">
-                            {% include 'lander/index_inner.html' %}
-                        </div>
-                    </div>
-
-
                 {% endif %}
             </div>
         </div>

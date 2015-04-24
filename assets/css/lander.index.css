@@ -9,7 +9,10 @@
     background-color: #ffffff;
     color: #000000;
     text-shadow: 1px 1px 3px rgba(150, 150, 150, 1);
-    padding: 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 40px;
+    padding-bottom: 140px;
 }
 
 .lander-section-2 {
