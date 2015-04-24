@@ -26,7 +26,7 @@
             {% for inspiring_user in inspiring_users_list %}
                 <div class="row squaresensor_inspiringuser">
                     <div class="col-xs-12 col-sm-2">
-                        <a href="{% url 'instagramuser:alltimebest' p_mode='view' p_username=inspiring_user.0.instagram_user_name %}" target="_blank">{{ inspiring_user.0.instagram_user_name }}</a>
+                        {{ forloop.counter }}/{{ inspiring_users_list|length }}. <a href="{% url 'instagramuser:alltimebest' p_mode='view' p_username=inspiring_user.0.instagram_user_name %}" target="_blank">@{{ inspiring_user.0.instagram_user_name }}</a>
                     </div>
                     <div class="col-xs-12 col-sm-10">
                         {% if inspiring_user.1 %}
