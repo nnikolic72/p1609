@@ -352,7 +352,13 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 #GOOGLE_ANALYTICS_DOMAIN = 'squaresensor.com'
 
-TEST_APP = True
+#TEST_APP = True
+
+try:
+    TEST_APP = os.environ['TEST_APP']
+except:
+    TEST_APP = '1'
+
 #Used for testing
 TEST_APP_FRIENDS_TR_ANALYZE_N_FRIENDS = 199
 TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS = 299

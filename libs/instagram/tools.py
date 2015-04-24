@@ -975,7 +975,7 @@ class InstagramUserAdminUtils():
 
                         if (self.l_instagram_api_limit_start > (l_analyze_n_followers + 50)):
                             '''Do we have enough API requests available? Yes'''
-                            if TEST_APP == True:
+                            if TEST_APP == '1':
                                 '''Override for testing, analyze less followers'''
                                 l_analyze_n_followers = TEST_APP_FRIENDS_TR_ANALYZE_N_FRIENDS
 
@@ -1164,7 +1164,7 @@ class InstagramUserAdminUtils():
 
                         if (self.l_instagram_api_limit_start > (l_analyze_n_followers + 50)):
 
-                            if TEST_APP == True:
+                            if TEST_APP == '1':
                                 # Override for testing, analyze less followers
                                 l_analyze_n_followers = TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS
 
@@ -1335,7 +1335,7 @@ class InstagramUserAdminUtils():
                     self.l_find_top_n_photos = FOLLOWINGS_FIND_TOP_N_PHOTOS
                     self.l_search_last_photos = FOLLOWINGS_SEARCH_N_PHOTOS
 
-                if TEST_APP == True:
+                if TEST_APP == '1':
                     # reduce number of photos to search
                     self.l_search_last_photos = 200
 
