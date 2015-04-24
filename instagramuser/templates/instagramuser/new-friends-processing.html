@@ -9,26 +9,29 @@
 
 {% block css %}
     {{ block.super }}
-    <link href="{{ STATIC_URL }}css/lander.index.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/instagramuser.index.css" rel="stylesheet">
 {% endblock css %}
 
 {% block script %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}js/lander.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/instagramuser.js" type="text/javascript" charset="utf-8"></script>
 {% endblock script %}
 
 {% block content %}
     {{ block.super }}
+    <p>Test app: {{ test_app }}</p>
     {% for inspiring_user in inspiring_users_list %}
         <div class="col-xs-12">
-            <p>@{{ inspiring_user.0.instagram_user_name }} (Cat: {{ inspiring_user.1 }}, Atr: {{ inspiring_user.2 }}) Analyzed: {{ inspiring_user.3 }}</p>
+            <p>@{{ inspiring_user.0.instagram_user_name }} (Cat: {{ inspiring_user.1 }}, Atr: {{ inspiring_user.2 }}), To Be Processed: {{ inspiring_user.0.to_be_processed_for_friends }}, Analyzed: {{ inspiring_user.3 }}</p>
             <p><button
                     class="btn btn-xs"
                     type="button"
                     onclick="analyze_for_friends({{ inspiring_user.0.instagram_user_id }});"
                     >Analyze</button></p>
-            <p>Result: <div id="analyze_result_{{ inspiring_user.0.instagram_user_id }}"></div></p>
+            <p>Result: <div id="analyze_result_{{ inspiring_user.0.instagram_user_id }}">--</div></p>
+        <hr>
         </div>
+
     {% endfor %}
 {% endblock content %}
 

@@ -99,3 +99,15 @@ function remove_new_friend(p_instagram_user_id) {
 
     Dajaxice.instagramuser.remove_new_friend(remove_new_friend_callback, {'p_instagram_user_id': p_instagram_user_id});
 }
+
+function analyze_for_friends_callback (data) {
+    var result = data.result;
+    var p_instagram_user_id = data.p_instagram_user_id;
+
+    $('#analyze_result_' + p_instagram_user_id).html(result);
+}
+
+
+function analyze_for_friends(p_instagram_user_id) {
+     Dajaxice.instagramuser.analyze_for_friends(analyze_for_friends_callback, {'p_instagram_user_id': p_instagram_user_id});
+}

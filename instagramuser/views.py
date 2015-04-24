@@ -21,7 +21,7 @@ from libs.instagram.tools import InstagramSession, BestPhotos, InstagramUserAdmi
 
 from squaresensor.settings.base import IS_APP_LIVE, FRIENDS_FIND_TOP_N_PHOTOS, FRIENDS_SEARCH_N_PHOTOS, \
     FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS, FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS, \
-    FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS, RECENT_BEST_SEARCH_LAST_N_PHOTOS
+    FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS, RECENT_BEST_SEARCH_LAST_N_PHOTOS, TEST_APP
 from .forms import AddInspiringUserForm
 from members.models import Member, MemberBelongsToCategory, MemberBelongsToAttribute
 from photos.models import Photo
@@ -904,7 +904,8 @@ class NewFriendsProcessingView(TemplateView):
 
         # END Limit calculation ----------------------------------------------------------
         # END Common for all members views ===============================================
-        l_inspiring_users_queryset = InspiringUser.objects.all().order_by('-times_processed_for_friends')
+        test_app = TEST_APP
+        l_inspiring_users_queryset = InspiringUser.objects.all().order_by('times_processed_for_friends').order_by('instagram_user_name')
 
         l_inspiring_users_list = []
         for inspiring_user in l_inspiring_users_queryset:
@@ -919,7 +920,8 @@ class NewFriendsProcessingView(TemplateView):
             )
 
         # Limit calculation --------------------------------------------------------------
-        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+        x_ratelimit_remaining, x_ratelimit = logged_member.refresh_api_limits(request)
+
 
         x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
         if x_ratelimit != 0:
@@ -932,6 +934,7 @@ class NewFriendsProcessingView(TemplateView):
                       self.template_name,
                       dict(
                           inspiring_users_list=l_inspiring_users_list,
+                          test_app=test_app,
 
                           is_monthly_member=is_monthly_member,
                           is_yearly_member=is_yearly_member,
