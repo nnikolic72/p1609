@@ -905,7 +905,7 @@ class NewFriendsProcessingView(TemplateView):
         # END Limit calculation ----------------------------------------------------------
         # END Common for all members views ===============================================
         test_app = TEST_APP
-        l_inspiring_users_queryset = InspiringUser.objects.all().order_by('times_processed_for_friends').order_by('instagram_user_name')
+        l_inspiring_users_queryset = InspiringUser.objects.all().order_by('times_processed_for_friends', 'instagram_user_name')
 
         l_inspiring_users_list = []
         for inspiring_user in l_inspiring_users_queryset:
