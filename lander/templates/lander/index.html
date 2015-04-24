@@ -29,7 +29,7 @@
                     <h1>{% trans 'Squaresensor' %}</h1><br>
                     <h4>{% trans "The breakthrough Instagram app, with a smart sense of the web's best!" %}</h4>
                     <br>
-                    <h2>{% trans 'COMING SOON' %}</h2>
+                    <h2>{% trans 'Welcome!' %}</h2>
                 </div>
             </div>
         </div>
@@ -51,6 +51,9 @@
 
                                    href="{% url 'socialauth_begin' 'instagram' %}"
                                         >{% trans 'Login with Instagram' %}</a>
+                            </div>
+                            <div class="col-xs-12">
+                                <p>{% trans 'Your Squaresensor accont will be created automatically, after you athenticate with Instagram.' %}</p>
                             </div>
                         </div>
                     {% endif %}
