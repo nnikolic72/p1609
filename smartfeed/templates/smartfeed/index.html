@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'SmartFeed' %}{% endblock title %}
+{% block page-title %}{% trans 'SmartFeed' %}{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/smartfeed.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/photos.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/smartfeed.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    {% if squarefollowings_count >= 10 %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 text-left">
+                    {% if logged_member.help_smartfeed_index == True %}
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="text-center">{% trans 'Welcome to your SmartFeed!' %}</h4>
+                            <h3>{% trans 'Information' %}</h3>
+                            <ul>
+                                <li>{% trans 'Your SmartFeed shows photos from your regular Instagram Feed.' %}</li>
+                                <li>{% trans 'Your SmartFeed is able to display only the best photos from your regular Instagram feed.' %}</li>
+                                <li>{% trans 'SmartFeed remebers where you have left off. When reloaded it displays only the newer photos.' %}</li>
+                                <li>{% trans 'If you missed a photo you can always pick a day in the past and see your SmartFeed contents from that day.' %}</li>
+                                <li>{% trans 'Some photos from your Instagram feed, that are posted now or a few hours ago, may appear in your SmartFeed a few hours later.' %}</li>
+                                <li>{% trans 'To add new SmartFollowings you have to import them from your existing Instagram followings on SmartFeed configuration screen.' %}</li>
+                                <li>{% trans 'You can import and configure your SmartFollowings ' %}<a class="btn btn-xs btn-default" href="{% url 'smartfeed:configure' %}">here</a>.</li>
+                            </ul>
+                            <button type="button"
+                                    class="btn btn-default btn-sm"
+                                    data-dismiss="alert"
+                                    aria-label="Close"
+                                    onclick="dismiss_help('help_smartfeed_index')"
+                                    style="margin-top: 20px;"
+                                    >{% trans 'Do not show again' %}</button>
+                        </div>
+                    {% endif %}
+
+                    <div class="alert alert-info">
+                    <small>{%  blocktrans %}You have {{ squarefollowings_count }} SmartFollowings{% endblocktrans %}</small><br>
+                        {% if period_verbose %}
+                            <h5>{% trans 'Now showing photos from ' %}{{ period_verbose }}</h5>
+                        {% else %}
+                            <h5>{% trans 'Now showing:' %}</h5>
+                            <ul>
+                                <li>{% trans 'New SmartFeed photos.' %}</li>
+                                <li>{% trans 'All photos from Green SquareFollowings.' %}</li>
+                                <li>{% trans 'All Yellow SmartFollowings posts are filtered to show the best.' %}</li>
+                                <li>{% trans 'No photos from Red SquareFollowings.' %}</li>
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-xs-12 text-center" style="margin-bottom: 20px; margin-top: 20px;">
+                    {% trans 'Pick a day ' %}
+                    <div class="btn-group" role="group" aria-label="bgroup">
+                        <button type="button" id="period0" onclick="display_ajax_img('period0', '{{ STATIC_URL }}')"
+                                class="btn btn-xs
+                    {% if period_number == 0 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=0 %}">today</a></button>
+                        <button type="button" id="period1" onclick="display_ajax_img('period1', '{{ STATIC_URL }}')"
+                                class="btn btn-default btn-xs
+                    {% if period_number == 1 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=1 %}">1d</a></button>
+                        <button type="button" id="period2" onclick="display_ajax_img('period2', '{{ STATIC_URL }}')"
+                                class="btn btn-default btn-xs
+                    {% if period_number == 2 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=2 %}">2d</a></button>
+                        <button type="button" id="period3" onclick="display_ajax_img('period3', '{{ STATIC_URL }}')"
+                                class="btn btn-default btn-xs
+                    {% if period_number == 3 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=3 %}">3d</a></button>
+                        <button type="button" id="period3" onclick="display_ajax_img('period3', '{{ STATIC_URL }}')"
+                                class="btn btn-default btn-xs
+                    {% if period_number == 4 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=4 %}">4d</a></button>
+                    </div>
+                    {% trans ' ago' %}
+
+                </div>
+            </div>
+        </div>
+        {% if best_media %}
+            {% for photo in best_media %}
+                {% include 'photos/single_thumbnail_photo_ig.html' %}
+            {% endfor %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12 text-center" style="margin-bottom: 20px; margin-top: 20px;">
+                        {% trans 'Pick a day ' %}
+                        <div class="btn-group" role="group" aria-label="bgroup">
+                            <button type="button" id="period0" onclick="display_ajax_img('period0', '{{ STATIC_URL }}')"
+                                    class="btn btn-xs
+                    {% if period_number == 0 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=0 %}">today</a></button>
+
+                            <button type="button"  id="period1" onclick="display_ajax_img('period1', '{{ STATIC_URL }}')"
+                                    class="btn btn-default btn-xs
+                    {% if period_number == 1 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=1 %}">1d</a></button>
+                            <button type="button" id="period2" onclick="display_ajax_img('period2', '{{ STATIC_URL }}')"
+                                    class="btn btn-default btn-xs
+                    {% if period_number == 2 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=2 %}">2d</a></button>
+                            <button type="button" id="period3" onclick="display_ajax_img('period3', '{{ STATIC_URL }}')"
+                                    class="btn btn-default btn-xs
+                    {% if period_number == 3 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=3 %}">3d</a></button>
+                            <button type="button" id="period4" onclick="display_ajax_img('period4', '{{ STATIC_URL }}')"
+                                    class="btn btn-default btn-xs
+                    {% if period_number == 4 %}
+                        btn-info
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                    "><a href="{% url 'smartfeed:calendar' p_period=4 %}">4d</a></button>
+                        </div>
+                        {% trans ' ago' %}
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        {% if squarefollowings_count < 10 %}
+                            <div class="alert alert-info">
+                                <p>{% blocktrans %}You have only {{ squarefollowings_count }} SquareFollowings defined. Minimum is 10.{% endblocktrans %}</p>
+                                <p>{% trans 'Please go to your SmartFeed configuration page and import some of your Instagram followings.' %}</p>
+                                <form method="get" action="{% url 'smartfeed:configure' %}">
+                                    <button class="btn btn-default">{% trans 'SmartFeed Configuration' %}</button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <p>{% trans 'Your SmartFeed is currently empty. There are no new photos available for SmartFeed.' %}</p>
+                                <p>{% trans 'Options' %}:</p>
+                                <ol>
+                                    <li>{% trans 'Come back later when SmartFeed fills with new photos.' %}</li>
+                                    <li>{% trans 'Pick a day - view SmartFeed contents from that day, no matter if you have seen it before.' %}</li>
+                                    <li>{% trans 'Import more SquareFollowings.' %}</li>
+                                </ol>
+                                <form method="get" action="{% url 'smartfeed:configure' %}">
+                                    <button class="btn btn-default">{% trans 'SmartFeed Configuration' %}</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <p>{% trans 'Please add at least 10 SquareFollowings in your dashboard.' %}</p>
+            <form method="get" action="{% url 'smartfeed:configure' %}">
+                <button class="btn btn-default">{% trans 'SmartFeed Configuration' %}</button>
+            </form>
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

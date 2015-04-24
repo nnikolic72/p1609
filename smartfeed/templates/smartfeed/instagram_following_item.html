@@ -1,0 +1,38 @@
+{% load i18n %}
+{% load static %}
+
+<div id="instagram_following_{{ instagramfollowing.0.id }}">
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-xs-12 col-sm-2 text-center">
+            <div align="center">
+                <img src="{{ instagramfollowing.0.profile_picture }}" class="img-circle img-responsive small_profile_img">
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-5 text-center">
+            {% if instagramfollowing.1 == True %}
+                <span class="glyphicon glyphicon-user"></span>
+            {%  endif %}
+            @{{ instagramfollowing.0.username }}
+        </div>
+        <div class="col-xs-12 col-sm-5 text-center">
+            <div class="btn-group" role="group" aria-label="smartfeedselection" id="button_group_{{ instagramfollowing.0.id }}">
+                <p>{% trans 'Import' %}</p>
+                <button type="button" class="btn btn-default" id="smartfeed_g_{{ instagramfollowing.0.id }}"
+                        onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'green', '{% get_static_prefix %}');"
+                        >
+                    &nbsp;&nbsp;
+                </button>
+                <button type="button" class="btn btn-default" id="smartfeed_y_{{ instagramfollowing.0.id }}"
+                        onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'yellow', '{% get_static_prefix %}');"
+                        >
+                    &nbsp;&nbsp;
+                </button>
+                <button type="button" class="btn btn-default" id="smartfeed_r_{{ instagramfollowing.0.id }}"
+                        onclick="smart_feed_subscribe({{ instagramfollowing.0.id }}, 'red', '{% get_static_prefix %}');"
+                        >
+                    &nbsp;&nbsp;
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

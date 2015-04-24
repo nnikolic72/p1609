@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'My Squaresensor Account' %}{% endblock title %}
+{% block page-title %}{% trans 'My Squaresensor Account' %}{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/members.my_account.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/members.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <table class="table table-responsive">
+                    <tr>
+                        <td><b>{% trans 'Instagram user name' %}</b></td>
+                        <td>{{ logged_member.instagram_user_name }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'User type' %}</b></td>
+                        <td>{{ logged_member.user_type }}</td>
+                    </tr>
+
+                    <tr>
+                        <td><b>{% trans 'Membership type' %}</b></td>
+                        <td>{{ active_membership.membership_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'Recurring membership?' %}</b></td>
+                    <td>
+                        {% if active_membership.recurring_membership %}
+                            {% trans 'Yes' %}
+                        {% endif %}
+                        {% if not active_membership.recurring_membership %}
+                            {% trans 'No' %}
+                        {% endif %}
+                    </td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'Start time' %}</b></td>
+
+                        <td>{{ active_membership.membership_start_time }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'End time' %}</b></td>
+                        <td>{{ active_membership.membership_end_time }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>{% trans 'Status' %}</b></td>
+                        <td>
+                            {% if  is_monthly_member or is_yearly_member %}
+                                {% if  is_monthly_member %}
+                                    {% trans 'Monthly membership' %}
+                                {% endif %}
+                                {% if  is_yearly_member %}
+                                    {% trans 'Yearly membership' %}
+                                {% endif %}
+                            {% else %}
+                                {% trans 'No Membership' %}
+                            {% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if not is_monthly_member and not is_yearly_member %}
+                                <form action="{% url 'members:new_membership' %}" method="get">
+                                    <button type="submit" class="btn btn-success btn-block">
+                                        {% trans 'Become a member' %}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                        <td></td>
+                    </tr>
+
+
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-info">
+                    <h4>{% trans 'Information' %}</h4>
+                    <p>{% trans 'Here you can describe your Instagram gallery posts.' %}</p>
+                    <p>{% trans 'You can describe your preferred subjects and your preferred photography styles.' %}</p>
+                    <p>{% trans 'By accurately selecting Categories and Styles you increase the chances to find new friends using Squaresensor!' %}</p>
+                    <p>{% trans 'Select at least three Categories and three styles, and no more than ten.' %}</p>
+                </div>
+            </div>
+            <div class="col-xs-12" style="margin-top: 20px;">
+                <h4>{% trans 'My Categories' %} <small>{% trans 'Click to select/deselect' %}</small></h4>
+            </div>
+        </div>
+        <div class="row">
+            {% for category in categories %}
+
+                <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom: 5px;">
+                    <button type="button"
+                            id="category_button_{{ category.id }}"
+                            onclick="select_member_category({{ category.id }}, {{ logged_member.id }});"
+                            class="btn btn-block
+                    {% for checkcat in  logged_member.memberbelongstocategory_set.all %}
+                        {%  if category == checkcat.category %}
+                            btn-info
+                        {% else %}
+                            btn-default
+                        {% endif %}
+                    {% endfor %}
+                "><small>{{ category.title }}</small>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-xs-12">
+                <h4>{% trans 'My Styles' %} <small>{% trans 'Click to select/deselect' %}</small></h4>
+            </div>
+        </div>
+        <div class="row">
+            {% for attribute in attributes %}
+                <div class="col-xs-12 col-sm-6 col-md-4"  style="margin-bottom: 5px;">
+                    <button type="button"
+                            id="attribute_button_{{ attribute.id }}"
+                            onclick="select_member_attribute({{ attribute.id }}, {{ logged_member.id }});"
+                            class="btn btn-block
+                    {% for checkatr in  logged_member.memberbelongstoattribute_set.all %}
+                        {%  if attribute == checkatr.attribute %}
+                            btn-info
+                        {% else %}
+                            btn-default
+                        {% endif %}
+                    {% endfor %}
+                "><small>{{ attribute.title }}</small>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{% trans 'Add new inspiring Instagram user' %}{% endblock title %}
+{% block page-title %}{% trans 'New' %} <small>{% trans 'inspiring Instagram user' %}</small>{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/instagramuser.add.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/instagramuser.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/photos.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+
+    <div class="container-fluid">
+        <form id="username" class="form-horizontal" action="#" method="post" role="form">
+            {% crispy form %}
+            <button type="button" id="searchSubmit" class="btn btn-submit col-xs-offset-4 col-xs-4" onclick="analyze_user();">
+                <div id="analyze_button"><span id="analyze_text">{% trans 'Analyze' %}</span><span id="spinner" style="display: none;"><img src="{{ STATIC_URL }}img/ajax_loader-small.gif"/></span></div>
+            </button>
+        </form>
+    </div>
+
+
+    <div class="container-fluid" style="margin-top: 20px; margin-bottom: 20px;">
+        <div class="row">
+            <div id="bestphotos">
+
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

@@ -1,0 +1,2 @@
+django-heroku-memcacheify==0.8
+pylibmc==1.2.3

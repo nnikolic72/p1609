@@ -1,0 +1,85 @@
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+<h3 class="lead text-center"><i class="fa fa-magic" style="color: green;"></i> {% trans 'Squaresensor Welcome Wizard' %}</h3>
+
+<hr>
+
+<div id="wizard-placeholder">
+    <div class="alert alert-success">
+        <h3>{% trans 'Information:' %}</h3>
+        <ul>
+            <li>{% trans 'This is then Squaresensor Welcome Wizard.' %}</li>
+            <li>{% trans 'Wizard is shown first time you log in on Squaresensor.' %}</li>
+            <li>{% trans 'It will guide you through a few easy steps to set up your preferencess.' %}</li>
+        </ul>
+    </div>
+    <h4 style="margin-bottom: 10px;">{% trans 'You are three steps away from your Squaresensor experience:' %}</h4>
+    <ul class="lead fa-ul">
+        <li style="margin-bottom: 10px;">
+            {% if logged_member.help_first_time_wizard_cur_step > 1  %}
+                <span class="fa-li fa fa-check-square"></span>&nbsp;
+                {% else %}
+                <span class="fa-li fa fa-square"></span>&nbsp;
+            {% endif %}
+            {% trans 'STEP 1: Describe your Instagram photography subjects.' %}&nbsp;
+
+                <button type="button" class="btn btn-info btn-default btn-xs" data-toggle="tooltip" data-placement="top"
+                        title="{% trans 'In this step, you select from a list of subjects like Landscape, Architecture, ... and describe what subjects you photograph.' %}"
+                        >{% trans 'Learn more' %}</button>
+
+        </li>
+        <li style="margin-bottom: 10px;">
+            {% if logged_member.help_first_time_wizard_cur_step > 2  %}
+                <span class="fa-li fa fa-check-square"></span>&nbsp;
+                {% else %}
+                <span class="fa-li fa fa-square"></span>&nbsp;
+            {% endif %}
+            {% trans 'STEP 2: Describe your Instagram photography styles.' %}&nbsp;
+
+                <button type="button" class="btn btn-info btn-default btn-xs" data-toggle="tooltip" data-placement="top"
+                        title="{% trans 'In this step, you select from a list of styles like Color, Black and White, HDR, ... and describe what styles you use in your photography.' %}"
+                        >{% trans 'Learn more' %}</button>
+
+        </li>
+        <li
+                style="margin-bottom: 10px;">
+            {% if logged_member.help_first_time_wizard_cur_step > 3  %}
+                <span class="fa-li fa fa-check-square"></span>&nbsp;
+                {% else %}
+                <span class="fa-li fa fa-square"></span>&nbsp;
+            {% endif %}
+            {% trans 'STEP 3: Import your Instagram Followings to Squaresensor.' %}&nbsp;
+
+                <button type="button" class="btn btn-info btn-default btn-xs" data-toggle="tooltip" data-placement="top"
+                        title="{% trans 'In this step, you import your Instagram Followings to Squaresensor. This sets up your SmartFeed, your new way of enjoying Instagram photos.' %}"
+                        >{% trans 'Learn more' %}</button>
+
+        </li>
+    </ul>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-sm-offset-4 col-sm-4">
+                {% if logged_member.help_first_time_wizard_cur_step < 4 %}
+                    <button type="button"
+                            class="btn btn-lg btn-success  btn-block"
+                            onclick="squaresensor_wizard('{{ logged_member.help_first_time_wizard_cur_step }}')"
+                            style="margin-top: 20px; margin-bottom: 20px;"
+                            >
+
+                        {% trans 'Proceed to Step ' %}{{ logged_member.help_first_time_wizard_cur_step }} <span class="glyphicon glyphicon-play"></span></button>
+                {% endif %}
+                {% if logged_member.help_first_time_wizard_cur_step >= 4 %}
+                    <form method="get" action="{% url 'members:dashboard' %}">
+                        <button type="submit"
+                                class="btn btn-lg btn-success btn-block"
+                                onclick="squaresensor_wizard_complete();"
+                                style="margin-top: 20px; margin-bottom: 20px;"
+                                >{% trans 'Go to Dashboard ' %} <span class="glyphicon glyphicon-play"></span></button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

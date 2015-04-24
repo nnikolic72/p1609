@@ -1,0 +1,76 @@
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+{% load staticfiles %}
+
+<div class="alert alert-success">
+    <h3>{% trans 'Instagram Followings Import Information:' %}</h3>
+    <ul>
+        <li>{% trans 'This is then Squaresensor Welcome Wizard Instagram Followings Import step.' %}</li>
+        <li>{% trans 'Here you set up your Squaresensor SmartFeed, by selecting which Instagram users will be featured in it.' %}</li>
+        <li>{% trans 'You can change your settings later. Start by selecting a few Yellow SquareFollowings below' %}</li>
+    </ul>
+</div>
+<h4 class="lead">{% trans 'STEP ' %} {{ current_step }}: {% trans 'Import your Instagram Followings.' %}<br><small>{% trans 'Best practice is to select less than 100 SquareFollowings in first configuration. You can add more SquareFollowings later.' %}</small></h4>
+<div class="alert alert-success alert-dismissible" role="alert"
+     id="help_smartfeed_configure">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+    <h3>{% trans 'Information:' %}</h3>
+    <ul>
+        <li>{% trans 'We are loading a list of your Instagram Followings.' %}</li>
+        <li>{% trans 'SquareFollowing is Instagram user that you want to appear in your SquareSensor SmartFeed.' %}</li>
+        <li>{% trans "In this screen you can configure your SquareFollowings levels." %}</li>
+        <li>{% trans 'There are three SquareFollowings levels:' %}</li>
+        <ol>
+            <li>{% trans 'Green - high - all posts appear in your SmartFeed' %}
+                <br>
+                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                    <button type="button" class="btn btn-success">&nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                </div>
+            </li>
+            <li><b>{% trans '(recommended) Yellow - medium - only the best posts appear in your SmartFeed' %}</b>
+                <br>
+                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-warning">&nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                </div>
+            </li>
+            <li>{% trans 'Red - off - no posts appear in your SmartFeed' %}
+                <br>
+                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-danger">&nbsp;&nbsp;</button>
+                </div>
+            </li>
+        </ol>
+        <li>{% trans 'SquareFollowings levels are changed by clicking on three buttons next to Instagram user name.' %}</li>
+
+    </ul>
+</div>
+
+<div class="row">
+    <div id="instagram_followings_placeholder">
+        <div class="col-xs-12 col-sm-offset-3 col-sm-6 well well-lg text-center">
+            <h4 style="margin-bottom: 20px; margin-top: 20px;">{% trans 'Importing Instagram Followings - Please wait... ' %} <img src="{% static "img/ajax_loader-small.gif" %}" class="img-responsive center-block"></h4>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12 col-sm-offset-4 col-sm-4 text-center">
+        <p>{% trans 'After configuring your SquareFollowings your Squaresensor is ready!' %}</p>
+        <form method="get" action="{% url 'members:dashboard' %}">
+            <button type="submit"
+                    class="btn btn-lg btn-success btn-block"
+                    onclick="squaresensor_wizard_complete();"
+                    style="margin-top: 20px; margin-bottom: 20px;"
+                    >{% trans 'Go to Dashboard ' %} <span class="glyphicon glyphicon-play"></span></button>
+        </form>
+    </div>
+</div>

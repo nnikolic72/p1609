@@ -10,7 +10,7 @@ from django.conf import settings
 from squaresensor.settings.base import BROKER_URL
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'squaresensor.settings.local')
+#os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'squaresensor.settings.local')
 
 app = Celery('squaresensor',
              broker=BROKER_URL,

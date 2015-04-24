@@ -1,0 +1,129 @@
+{% load i18n %}
+{% load emoji_tags %}
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">{% trans 'Comments' %}</h4>
+</div>
+<div class="modal-body">
+    {% if logged_member.help_photos_modal_comment_section == True %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4>{% trans 'Comments Information' %}</h4>
+            <ul>
+                <li>{% trans 'Comments for this post are displayed in this window' %}</li>
+                <li>{% trans 'Comments are ordered in threads - conversations' %}</li>
+                <li>{% blocktrans %}By pressing on <small><span class="glyphicon glyphicon-option-horizontal"></span></small> button you can reply to comment{% endblocktrans %}</li>
+                <li>{% trans 'You can add a new comment at the bottom of the comment list' %}</li>
+                <li>{% trans 'Please do not spam and be polite! You are interacting with real people.' %}</li>
+                <li>{% trans 'Please do not post more than three hashtags in one comment' %}</li>
+            </ul>
+            <button type="button"
+                    class="btn btn-default btn-sm"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                    onclick="dismiss_help('help_photos_modal_comment_section')"
+                    style="margin-top: 20px;"
+                    >{% trans 'Do not show again' %}</button>
+        </div>
+    {% endif %}
+    <div align="center">
+        <img class="img-responsive img-thumbnail" src="{{ instagram_thumbnail_url }}">
+        <p>{% if photo_caption %}{{ photo_caption }}{% else %}{% trans '[No caption]' %}{% endif %}</p>
+    </div>
+
+</div>
+<div class="modal-footer">
+    {% if comments %}
+        <div class="row">
+            {% if p_new_friends_interaction == 1 %}
+                <button class="btn btn-default squaresensor-button-with-margin center-block" onclick="show_hidden_comments('{{ p_photo_id }}');">{% trans 'Show comments' %}</button>
+                <div id='hidden-comments_{{ p_photo_id }}' style="display: none;">
+            {% endif %}
+            {% for comment in comments %}
+                {% autoescape off %}
+                    {% if comment.3 == False %}<hr>{% endif %}
+                    <div  class="col-xs-12 squaresensor_comment_row
+                                    {% if comment.3 == True %}
+                                    text-right
+                                    {% else %}
+                                    text-left
+                                    {% endif %}
+                                "
+                            >
+                        {% if comment.3 == True %}{{ comment.1  }}: {% endif %}<b>
+                        {% if comment.3 == False %}
+                            {% if p_new_friends_interaction == 0 %}
+                                <span class="btn btn-xs btn-default" onclick="inline_comment_toggler('comments_actions_{{ p_photo_id }}_{{ forloop.counter }}', '{{ p_photo_id }}', '{{ comment.2 }}', {{ comment.0 }});">
+                                <small><span class="glyphicon glyphicon-option-horizontal"></span></small>
+                                </span>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if comment.3 == True %}
+                            <span >&nbsp;<img class="img-responsive img-circle comments_profile_img" style="float: right; margin-left: 10px;" src="{{ comment.6 }}">
+                        {% else %}
+                            <span ><img class="img-responsive img-circle comments_profile_img" style="float: left; margin-right: 10px;" src="{{ comment.6 }}">&nbsp;
+                        {% endif %}
+                        {{ comment.2 }}</span>
+                        {% if comment.3 == True %}
+                            {% if p_new_friends_interaction == 0 %}
+                                <span class="btn btn-xs btn-default" onclick="inline_comment_toggler('comments_actions_{{ p_photo_id }}_{{ forloop.counter }}', '{{ p_photo_id }}', '{{ comment.2 }}', {{ comment.0 }});">
+                                <small><span class="glyphicon glyphicon-option-horizontal"></span></small>
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                    </b>{% if comment.3 == False %}: {{ comment.1  }}{% endif %}
+                        {% if comment.5 == True and comment.3 == False %}
+                            <small><span class="glyphicon glyphicon-ok"></span></small>
+                        {% endif %}</div>
+
+                {% endautoescape %}
+                <div id="comments_actions_{{ p_photo_id }}_{{ forloop.counter }}" style="display: none;"
+                     class="
+                                    {% if comment.3 == True %}
+                                    text-right
+                                    {% else %}
+                                    text-left
+                                    {% endif %}
+                                "
+                        >
+                    <form class="form" id="inline_comment_form_{{ p_photo_id }}_{{ comment.0 }}">
+                        <div class="input-group-sm">
+                            <input type="text" class="form-control input-sm" name="new_comment_{{ p_photo_id }}_{{ comment.0 }}" id="new_comment_{{ p_photo_id }}_{{ comment.0 }}" value="">
+
+                            <button type="button"
+                                    class="btn btn-default btn-sm"
+                                    id="inline_comment_{{ p_photo_id }}_{{ comment.0 }}"
+                                    data-loading-text="<i class='fa fa-comment'></i> {% trans 'Sending...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                                    onclick="send_instagram_inline_comment('{{ p_photo_id }}', '{{ comment.0 }}');"
+                                    ><i class="fa fa-comment "></i> {% trans 'Send' %}</button>
+                        </div>
+                    </form>
+                </div>
+                {% if comment.5 == True and comment.3 == True %}
+                    <br><br>
+                {% endif %}
+            {% endfor %}
+            {% if p_new_friends_interaction == 1 %}
+                </div>
+            {% endif  %}
+        </div>
+    {% else %}
+        <p class="text-left">{% trans 'No comments.' %}</p>
+    {% endif %}
+    <form action="" method="POST" id="comment_form_{{ p_photo_id }}" class="form">
+        <div class="form-group">
+            <input type="text" class="input-sm col-xs-12" name="new_comment_{{ p_photo_id }}"  style="margin-bottom: 10px;">
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Discard' %}</button>
+            <button type="button"
+                    class="btn btn-primary"
+                    id="send_comment_{{ p_photo_id }}"
+                    data-loading-text="<i class='fa fa-comment'></i> {% trans 'Sending...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="send_instagram_comment('{{ p_photo_id }}', {{ p_new_friends_interaction }});">
+                <i class="fa fa-comment "></i> {% trans 'Send' %}</button>
+        </div>
+    </form>
+</div>

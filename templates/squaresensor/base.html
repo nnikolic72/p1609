@@ -4,17 +4,35 @@
 {% load i18n %}
 
 
+
 {% block bootstrap3_title %}{% block title %}{% endblock title %}{% endblock bootstrap3_title%}
 
 {% block bootstrap3_extra_head %}
+    {# Stops zooming on touchscren devices #}
+    <meta name="viewport" content="width=device-width,
+                                     initial-scale=1.0,
+                                     maximum-scale=1.0,
+                                     user-scalable=no">
     {% block css %}
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet">
     {% endblock css %}
 {% endblock bootstrap3_extra_head %}
 
 {% block bootstrap3_extra_script %}
     {% block script %}
+        {% dajaxice_js_import %}
+
+        <script src="{{ STATIC_URL }}js/vendor/jquery.ba-serializeobject.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="{{ STATIC_URL }}js/base.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            function display_ajax_img(p_div_id, p_static_url) {
+                var div_id = '#' + p_div_id;
+                var ajax_img = '<img class="img-responsive center-block" src="' + '{{ STATIC_URL }}' + 'img/ajax_loader-small.gif">';
+                $(div_id).html(ajax_img);
+            }
+        </script>
+
     {% endblock script %}
 {% endblock %}
 
@@ -32,26 +50,18 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Squaresensor</a>
+                    <a class="navbar-brand" href="{% url 'members:dashboard' %}" id="toolbar-dashboard" onclick="display_loading_text('toolbar-dashboard', '{{ STATIC_URL }}')">Squaresensor <small><span style="color: white;">&beta;</span></small></a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse color-primary-1" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li class="active">
-                        <li><a href="{% url 'members:dashboard' %}">Home</a></li>
-                        <li><a href="#">{% trans 'Smart Feed' %}</a></li>
-                        <li><a href="#">{% trans 'Find Friends' %}</a></li>
-                        <li><a href="#">{% trans 'Inspiring Artists' %}</a></li>
-
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans 'Browse' %} <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">{% trans 'Find IG User' %}</a></li>
-                                <li><a href="#">{% trans 'Categories' %}</a></li>
-                                <li><a href="#">{% trans 'Styles' %}</a></li>
-                            </ul>
-                        </li>
+                        <li><a href="{% url 'members:dashboard' %}" id="toolbar-dashboard2" onclick="display_loading_text('toolbar-dashboard2', '{{ STATIC_URL }}')">{% trans 'Dashboard' %}</a></li>
+                        <li><a href="{% url 'smartfeed:index' %}" id="toolbar-smartfeed-index" onclick="display_loading_text('toolbar-smartfeed-index', '{{ STATIC_URL }}')">{% trans 'Smart Feed' %}</a></li>
+                        <li><a href="{% url 'instagramuser:new_friends' %}" id="toolbar-find-friends" onclick="display_loading_text('toolbar-find-friends', '{{ STATIC_URL }}')">{% trans 'Find Friends' %}</a></li>
+                        <li><a href="{% url 'instagramuser:index_inspiring_artists' %}" id="toolbar-inspiring-artists" onclick="display_loading_text('toolbar-inspiring-artists', '{{ STATIC_URL }}')">{% trans 'Inspiring Artists' %}</a></li>
+                        <li><a href="{% url 'members:commenter_index' %}" id="toolbar-responder" onclick="display_loading_text('toolbar-responder', '{{ STATIC_URL }}')">{% trans 'Responder' %}</a></li>
                     </ul>
 
 
@@ -60,12 +70,12 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My account <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">{% trans 'Import IG Followings' %}</a></li>
-                                    <li><a href="#">{% trans 'Preferences' %}</a></li>
-                                    <li><a href="#">{% trans 'Information' %}</a></li>
+                                    <li><a href="{% url 'members:my_account' %}">{% trans 'Configure My Account' %}</a></li>
+                                    <li><a href="{% url 'smartfeed:configure' %}">{% trans 'Configure SmartFeed' %}</a></li>
+                                    <li><a href="{% url 'members:new_friends_response' %}">{% trans 'New Friends Response' %}</a></li>
 
                                     <li class="divider"></li>
-                                    <li><a href="{% url 'members:logout' %}">{% trans 'Logout' %}</a></li>
+                                    <li><a href="{% url 'members:logout' %}">{% trans 'Logout' %} @{{ logged_member.instagram_user_name }}</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -79,37 +89,116 @@
     <div class="page-header">
         <div class="container">
             <h1 class="squaresensor-page-title">{% block page-title %}{% endblock page-title %}</h1>
+
         </div>
     </div>
 
-    <div class="container squaresensor-content-panel">
-    <div class="row">
-        <div class="col-xs-12 col-md-8 squaresensor-sub-panel center-block">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-lg-8
+            {% if not is_monthly_member and not is_yearly_member %}
+            col-lg-offset-1
+            {% else %}
+            col-lg-offset-2
+            {% endif %}
+            squaresensor-content-panel" style="padding-bottom: 50px;">
 
-            <!-- Main content-->
-            {% block content %}
-            {% endblock content %}
-        </div>
+                <!-- Main content-->
+                {% block content %}
+                {% endblock content %}
+            </div>
 
-        <div class="col-xs-12 col-md-4 squaresensor-sub-panel center-block">
-            {% block aside %}
-            {% endblock aside %}
+            {% if not is_monthly_member and not is_yearly_member %}
+                <div class="col-xs-12 col-lg-2 squaresensor-content-panel" style="padding-bottom: 50px;">
+                    {% block aside %}
+                        <div class="well text-center">
+                            <h4 class="lead">{% trans 'Become a Squaresensor member' %}</h4>
+                            <form action="{% url 'members:new_membership' %}" method="get">
+                                <button type="submit"
+                                        style="margin-top: 20px; margin-bottom: 20px;"
+                                        class="btn btn-success btn-block">
+                                    {% trans 'Details' %}
+                                </button>
+                            </form>
+                            <p>{% trans 'Discover the full power of Squaresenor now!' %}</p>
+                        </div>
+                    {% endblock aside %}
+                </div>
+            {% endif %}
         </div>
     </div>
+
 
     {% block statusbar %}
         <div class="navbar-xs">
             <div class="navbar-primary">
                 <nav class="navbar navbar-default navbar-fixed-bottom">
                     <div class="container">
-                        <button class="btn btn-sm statusbar-text">LTM <span class="badge">{{ logged_member.likes_in_last_minute }}</span></button>
-                        <button class="btn btn-sm statusbar-text">CTM <span class="badge">{{ logged_member.comments_in_last_minute }}</span></button>
-                        <button class="btn btn-sm statusbar-text">IG limit used <span class="badge">{{ x_limit_pct }}%</span></button>
+                        <button class="btn btn-xs statusbar-text"><span class="glyphicon glyphicon-step-backward" onclick="back_button();"></span></button>
+                        <button class="btn btn-xs statusbar-text">LTH <span class="badge" id="ltm">{{ logged_member.likes_in_last_minute }}</span></button>
+                        <button class="btn btn-xs statusbar-text">CTH <span class="badge" id="ctm">{{ logged_member.comments_in_last_minute }}</span></button>
+                        <button class="btn btn-xs statusbar-text">IGLU <span class="badge" id="iglu">{{ x_limit_pct }}%</span></button>
+                        <button class="btn btn-xs statusbar-text"
+                                onclick="status_bar_help();"
+                                ><span class="glyphicon glyphicon-question-sign" id="question"></span></button>
                     </div>
                 </nav>
             </div>
         </div>
     {% endblock statusbar %}
+
+    <div class="modal fade" id="ErrorDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Information</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning"><div id="error-message"></div></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <div class="modal fade" id="StatusBarHelpDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Status-bar Tutorial</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans 'This is the Squaresensor Status-bar.' %}</p>
+                    <p>{% trans 'Here we display Instagram limits.' %}</p>
+                    <p>{% trans 'Instagram has three limits for your Squaresensor experience:' %}</p>
+                    <ol>
+                        <li>{% trans 'Number of interactions is limited to 5000 per hour.' %}</li>
+                        <li>{% trans 'Number of likes is limited to 100 per hour.' %}</li>
+                        <li>{% trans 'Number of comments is limited to 60 per hour.' %}</li>
+                    </ol>
+                    <p>{% trans 'We display your usage of those limits in our Status-bar.' %}</p>
+                    <ul>
+                        <li><b>{% trans 'LTH number shows how many likes you have given this hour.' %}</b></li>
+                        <li><b>{% trans 'CTH number shows how many comments you have posted this hour.' %}</b></li>
+                        <li><b>{% trans 'IGLU number shows how many percent of 5000 interactions you used this hour.' %}</b></li>
+                    </ul>
+                    <p>{% trans 'Every hour, Instagram resets those limitations, and you are able to use Squaresensor normally.' %}</p>
+                    <p>{% trans 'Imposed limits do not prevent normal usage of Squaresensor. They are in place to prevent spammers for flooding likes and comments.' %}</p>
+                    <p>{% trans 'If you go over those limits, Squaresensor will disable liking and/or commenting until hour passes. This is to prevent your Squaresensor account to be put on hold by Instagram.' %}</p>
+                    <p>{% trans 'These limits have nothing to do with Instagram application on your mobile device. It works independently from Squaresensor and these limits do not apply to it.' %}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 
 {% endblock bootstrap3_content %}
 

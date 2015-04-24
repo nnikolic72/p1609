@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{% trans 'New SquareSensor Membership' %}{% endblock title %}
+{% block page-title %}{% trans 'New SquareSensor Membership' %}{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/members.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/members.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="container-fluid">
+        <div class="row visible-xs hidden-sm hidden-md hidden-lg">
+
+            <div class="col-xs-12 col-sm-5 col-sm-offset-0 text-center well">
+                <h4 class="lead">{% trans 'Purchase Monthly Squaresensor Membership' %}</h4>
+                <h3>{% blocktrans %}Price: {{ squaresensor_monthly_membership }} EUR{%  endblocktrans %}</h3>
+                <p class="text-left">Benefits:</p>
+                <ul class="text-left">
+                    <li>{% trans 'Contact 30 new friends per day instead of 10 in free membership plan.' %}</li>
+                    <li>{% trans 'Commenter analyzes last 30 posts for unanswered comments instead of 10 in free membership plan.' %}</li>
+                    <li>{% trans 'No advertisements.' %}</li>
+                    <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
+                </ul>
+                <br><br>
+                {% if is_payment_live == '1' %}
+                    <form method="get" action="{% url 'members:new_monthly_membership' %}">
+                        <button type="submit" class="btm btn-lg btn-success btn-block">
+                            {% trans 'Purchase Monthly Membership' %}
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+            <div class="col-xs-12 col-sm-5 col-sm-offset-1 text-center well bg-success">
+                <h4 class="lead">{% trans 'Purchase Yearly Premium Squaresensor Membership' %}</h4>
+                <h3>{% blocktrans %}Price: {{ squaresensor_yearly_membership }} EUR{%  endblocktrans %}</h3>
+                <p class="text-left">Benefits:</p>
+                <ul class="text-left">
+                    <li>{% trans 'Better price than month by month membership.' %}</li>
+                    <li>{% trans 'Contact 30 new friends per day instead of 10 in free membership plan.' %}</li>
+                    <li>{% trans 'Commenter analyzes last 30 posts for unanswered comments instead of 10 in free membership plan.' %}</li>
+                    <li>{% trans 'No advertisements.' %}</li>
+                    <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
+                </ul>
+                {% if is_payment_live == '1' %}
+                    <form method="get" action="{% url 'members:new_yearly_membership' %}">
+                        <button type="submit" class="btm btn-lg btn-success btn-block">
+                            {% trans 'Purchase Yearly Premium Membership' %}
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row hidden-xs visible-sm visible-md visible-lg">
+
+            <div class="col-xs-12">
+                <table class="table table-responsive text-center">
+                    <tr>
+                        <td></td>
+                        <td colspan="3"><h3>{% trans 'Membership options' %}</h3></td>
+
+                    </tr>
+                    <tr class="lead">
+                        <td class="col-md-4"></td>
+                        <td class="col-md-2">{% trans 'Free' %}</td>
+                        <td class="col-md-3">{% trans 'Monthly Premium' %}</td>
+                        <td class="col-md-3">{% trans 'Yearly Premium' %}<br><small style="color: red;"><i class="fa fa-star"></i> {% trans 'HOT' %} <i class="fa fa-star"></i></small></td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Contact new friends/day' %}</td>
+                        <td>{{ contact_new_friends_free }}</td>
+                        <td>{{ contact_new_friends_monthly }}</td>
+                        <td>{{ contact_new_friends_yearly }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Responder looks at last' %}</td>
+                        <td>{{ responder_free }} posts</td>
+                        <td>{{ responder_monthly }} posts</td>
+                        <td>{{ responder_yearly }} posts</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Advertisements on site' %}</td>
+                        <td>{% trans 'Shown' %}</td>
+                        <td>{% trans 'Not Shown' %}</td>
+                        <td>{% trans 'Not Shown' %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Supporting Squaresensor team :-)' %}</td>
+                        <td>{% trans 'No' %}</td>
+                        <td>{% trans 'YES' %}</td>
+                        <td>{% trans 'YES' %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Monthly Price' %}</td>
+                        <td>{% trans 'Free' %}</td>
+                        <td>{{ price_monthly_per_month|floatformat:2 }} EUR <small>/ {% trans 'per month' %}</small></td>
+                        <td>{{ price_monthly_per_year|floatformat:2 }} EUR <small>/ {% trans 'per month' %}</small></td>
+                    </tr>
+                    <tr>
+                        <td>{% trans 'Price' %}</td>
+                        <td>{% trans 'Free' %}</td>
+                        <td>{{ price_monthly_per_month|floatformat:2 }} EUR</td>
+                        <td>{{ price_yearly|floatformat:2 }} EUR</td>
+                    </tr>
+                    <tr>
+                        <td class="lead">{% trans 'Become a premium member' %}</td>
+                        <td></td>
+                        <td>
+                            <form method="get" action="{% url 'members:new_monthly_membership' %}">
+                                <button type="submit" class="btm btn-lg btn-success btn-block">
+                                    {% trans 'Get Monthly Premium Membership Now!' %}
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="get" action="{% url 'members:new_yearly_membership' %}">
+                                <button type="submit" class="btm btn-lg btn-success btn-block">
+                                    {% trans 'Get Yearly Premium Membership Now!' %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,79 @@
+{% load i18n %}
+{% load static %}
+
+<div class="col-xs-12 col-sm-6" style="margin-bottom: 20px;">
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3 text-center">
+            <div align="center">
+                <img class="img-responsive img-circle photo_profile_img squaresensor-image-circular" src="{{ photo.user.profile_picture }}">
+            </div>
+            <a href="{% url 'instagramuser:any_user_recent_best' p_instagram_user_name=photo.user.username %}"><small>@{{ photo.user.username|truncatechars:15 }}</small></a>
+
+        </div>
+        <div class="col-xs-12 col-sm-9 text-center">
+            <span class="glyphicon glyphicon-time"></span> <small>{{ photo.created_time|date:"D, d-M"  }}</small><br><small>{{ photo.created_time|timesince|truncatechars:15 }} ago</small>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div align="center" style="margin-top: 10px; margin-bottom: 10px;">
+                <img class="img-responsive img-thumbnail"
+                     src="{{ photo.images.standard_resolution.url }}"
+                     title="{{ photo.caption.text }}"
+                        >
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-xs-5">
+            <button
+                    id="like_button_{{ photo.id }}"
+                    onclick="like_instagram_picture('{{ photo.id }}', '{% get_static_prefix %}');"
+                    class="btn btn-xs squaresensor-image-button btn-block
+                    {%  if photo.id in liked_photos %}
+                        btn-danger
+                    {% else %}
+                        btn-default
+                    {% endif %}
+                ">
+                <small><span class="glyphicon glyphicon-heart-empty
+                    "></span>
+                    <span class="badge" id="instagram_likes_text_{{ photo.id }}">{{ photo.like_count }}</span></small>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            {%  if show_describe_button %}
+                <button class="btn btn-xs btn-default squaresensor-image-button btn-block" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
+                    <small><span class="glyphicon glyphicon-list-alt"></span>
+                    </small>
+                </button>
+            {% endif %}
+        </div>
+        <div class="col-xs-5">
+            <button class="btn btn-xs btn-default squaresensor-image-button btn-block" onclick="load_instagram_comments('{{ photo.id }}', {{ new_friends_interaction }});">
+                <small><span class="glyphicon glyphicon-comment"></span>
+                    <span class="badge" id="instagram_comments_text_{{ photo.id }}">{{ photo.comment_count }}</span></small>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- Modal comments -->
+<div class="modal fade" id="myModal_comments_{{ photo.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <div id="myModal_comments_text_{{ photo.id }}">
+                    <p>Komentari</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

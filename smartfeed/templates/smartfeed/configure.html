@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'SmartFeed Configuration' %}{% endblock title %}
+{% block page-title %}{% trans 'SmartFeed' %} <small>{% trans 'Configuration' %}{% if logged_member.help_smartfeed_configure == False %} <span class="glyphicon glyphicon-question-sign" onclick="show_div('help_smartfeed_configure');"></span>{% endif %}</small>{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/smartfeed.configuration.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/smartfeed.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div class="alert alert-success alert-dismissible" role="alert"
+                     id="help_smartfeed_configure"
+                     {% if logged_member.help_smartfeed_configure == False %}
+                     style="display: none"
+                     {% endif %}
+                        >
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Information:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is a list of your SquareFollowings.' %}</li>
+                        <li>{% trans "First step is to import your Instagram followings by clicking on a button 'Import My Instagram Followings'." %}</li>
+                        <li>{% trans 'SquareFollowing is Instagram user that you want to appear in your SquareSensor SmartFeed.' %}</li>
+                        <li>{% trans "In this screen you can configure your SquareFollowings levels." %}</li>
+                        <li>{% trans 'There are three SquareFollowings levels:' %}</li>
+                        <ol>
+                            <li>{% trans 'Green - high - all posts appear in your SmartFeed' %}
+                                <br>
+                                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                                    <button type="button" class="btn btn-success">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                </div>
+                            </li>
+                            <li><b>{% trans '(recommended) Yellow - medium - only best posts appear in your SmartFeed' %}</b>
+                                <br>
+                                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-warning">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                </div>
+                            </li>
+                            <li>{% trans 'Red - off - no posts appear in your SmartFeed' %}
+                                <br>
+                                <div class="btn-group btn-group-xs" role="group" aria-label="smartfeedselection">
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-default">&nbsp;&nbsp;</button>
+                                    <button type="button" class="btn btn-danger">&nbsp;&nbsp;</button>
+                                </div>
+                            </li>
+                        </ol>
+                        <li>{% trans 'SquareFollowings levels are changed by clicking on three buttons next to Instagram user name.' %}</li>
+                        <li><b>{% trans 'You can change SquareFollowing level at any point on this screen.' %}</b></li>
+                    </ul>
+                    <button type="button"
+                            class="btn btn-default btn-sm"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            onclick="dismiss_help('help_smartfeed_configure')"
+                            style="margin-top: 20px;"
+                            >{% trans 'Do not show again' %}</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-xs-12 text-center">
+                <button data-loading-text="Loading..."
+                        id="import_instagram_followings"
+                        class="btn btn-success"
+                                    onclick="import_instagram_followings('{{ logged_member.instagram_user_id }}')">
+                    {% trans 'Import My Instagram Followings' %}
+                </button>
+
+            </div>
+        </div>
+        <div class="row">
+            <div id="instagram_followings_placeholder"></div>
+        </div>
+
+        <div class="container-fluid" style="margin-top: 50px;">
+            {% if l_squarefollowing_queryset %}
+                <h4 class="text-center">{% trans 'Your SmartFeed Subscriptions' %}</h4>
+                {% for squarefollowing in l_squarefollowing_queryset %}
+
+                    {% include 'smartfeed/squarefollowing-item.html' %}
+                {% endfor %}
+
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    {% trans 'You have no SquareFollowings defined. You can import them from Instagram.' %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

@@ -1,0 +1,10 @@
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+{% load emoji_tags %}
+
+{% if unanswered_comments_media_list %}
+    {% for photo in unanswered_comments_media_list %}
+        {% include 'photos/commenter_photo_block.html' %}
+    {% endfor %}
+{% endif %}

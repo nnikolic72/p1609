@@ -28,11 +28,74 @@ settings_path = PROJECT_DIR.child('squaresensor').child("settings")
 settings_path = Path(settings_path, 'settings.ini')
 config.read(settings_path)
 
+INSTAGRAM_AUTH_EXTRA_ARGUMENTS = {'scope': 'likes comments relationships'}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
+try:
+    PAYPAL_TEST_ENV = os.environ['PAYPAL_TEST']
+except:
+    PAYPAL_TEST_ENV = None
+if not PAYPAL_TEST_ENV:
+    try:
+        PAYPAL_TEST_ENV = config.get('squaresensor', 'PAYPAL_TEST')
+    except:
+        PAYPAL_TEST_ENV = None
+
+PAYPAL_TEST = True
+if PAYPAL_TEST_ENV:
+    if PAYPAL_TEST_ENV == '1':
+        PAYPAL_TEST = True
+
+    if PAYPAL_TEST_ENV == '0':
+        PAYPAL_TEST = False
+else:
+    PAYPAL_TEST = True
+
+
+try:
+    PAYPAL_RECEIVER_EMAIL = os.environ['PAYPAL_RECEIVER_EMAIL']
+except:
+    PAYPAL_RECEIVER_EMAIL = None
+if not PAYPAL_RECEIVER_EMAIL:
+    try:
+        PAYPAL_RECEIVER_EMAIL = config.get('squaresensor', 'PAYPAL_RECEIVER_EMAIL')
+    except:
+        PAYPAL_RECEIVER_EMAIL = None
+
+try:
+    ROOT_SITE_URL = os.environ['ROOT_SITE_URL']
+except:
+    ROOT_SITE_URL = None
+if not ROOT_SITE_URL:
+    try:
+        ROOT_SITE_URL = config.get('squaresensor', 'ROOT_SITE_URL')
+    except:
+        ROOT_SITE_URL = None
+
+try:
+    IS_PAYMENT_LIVE = os.environ['IS_PAYMENT_LIVE']
+except:
+    IS_PAYMENT_LIVE = None
+if not IS_PAYMENT_LIVE:
+    try:
+        IS_PAYMENT_LIVE = config.get('squaresensor', 'IS_PAYMENT_LIVE')
+    except:
+        IS_PAYMENT_LIVE = None
+
+try:
+    INSTAGRAM_COMMENTS_ALLOWED = os.environ['INSTAGRAM_COMMENTS_ALLOWED']
+except:
+    INSTAGRAM_COMMENTS_ALLOWED = None
+if not INSTAGRAM_COMMENTS_ALLOWED:
+    try:
+        INSTAGRAM_COMMENTS_ALLOWED = config.get('instagram', 'INSTAGRAM_COMMENTS_ALLOWED')
+    except:
+        INSTAGRAM_COMMENTS_ALLOWED = None
+
 try:
     INSTAGRAM_CLIENT_ID = os.environ['CLIENT_ID']
 except:
@@ -85,7 +148,7 @@ if not INSTAGRAM_SECRET_KEY:
 
 # RabbitMQ URI
 try:
-    BROKER_URL = os.environ['BROKER_URL']
+    BROKER_URL = os.environ['RABBITMQ_BIGWIG_TX_URL']
 except:
     BROKER_URL = None
 if not BROKER_URL:
@@ -93,6 +156,18 @@ if not BROKER_URL:
         BROKER_URL = config.get('rabbitmq', 'BROKER_URL')
     except:
         BROKER_URL = None
+
+try:
+    CELERY_RESULT_BACKEND = os.environ['RABBITMQ_BIGWIG_RX_URL']
+except:
+    CELERY_RESULT_BACKEND = None
+if not BROKER_URL:
+    try:
+        CELERY_RESULT_BACKEND = config.get('rabbitmq', 'CELERY_RESULT_BACKEND')
+    except:
+        CELERY_RESULT_BACKEND = None
+
+BROKER_POOL_LIMIT = 1
 
 try:
     IS_APP_LIVE = environ.get('IS_APP_LIVE')
@@ -104,8 +179,6 @@ if not IS_APP_LIVE:
     except:
         IS_APP_LIVE = None
 
-
-# SECURITY WARNING: don't run with debug turned on in production!
 
 # Application definition
 
@@ -124,6 +197,9 @@ INSTALLED_APPS = (
     'social_auth',
     'djcelery',
     'crispy_forms',
+    'emoji',
+    'paypal.standard.ipn',
+
 
     'lander',
     'instagramuser',
@@ -131,6 +207,9 @@ INSTALLED_APPS = (
     'attributes',
     'categories',
     'photos',
+    'smartfeed',
+    'hashtags',
+    'ads',
 )
 
 
@@ -177,6 +256,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+
 )
 
 
@@ -245,8 +325,6 @@ STATICFILES_FINDERS = (
 
 STATIC_URL = '/static/'
 
-
-
 IGNORABLE_404_URLS = (
     re.compile(r'^/apple-touch-icon.*\.png$'),
     re.compile(r'^/favicon\.ico$'),
@@ -268,26 +346,51 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Squaresensor globals -------------------------------------------------------
 
+#GOOGLE_ANALYTICS_MODEL = True
 
-#GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-14845987-3'
+#GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-60120379-1'
+
 #GOOGLE_ANALYTICS_DOMAIN = 'squaresensor.com'
 
-TEST_APP = False
+TEST_APP = True
 #Used for testing
-TEST_APP_FRIENDS_TR_ANALYZE_N_FRIENDS = 50
-TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS = 300
+TEST_APP_FRIENDS_TR_ANALYZE_N_FRIENDS = 199
+TEST_APP_FRIENDS_TR_ANALYZE_N_FOLLOWINGS = 299
+TEST_APP_LIKE_PER_PERIOD_LIMIT = 60
+TEST_APP_COMMENT_PER_PERIOD_LIMIT = 60
 
-# APP settings: goodusers
-GOODUSERS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find
-GOODUSERS_SEARCH_N_PHOTOS = 500  # how many last photos to search while finding the best ones
+# Squaresensor Membership Prices
+SQUARESENSOR_MONTHLY_MEMBERSHIP = 4.95
+SQUARESENSOR_YEARLY_MEMBERSHIP = 49.95
+
+# Instagram limits for signed calls
+INSTAGRAM_LIKES_PER_HOUR_LIMIT = 100
+INSTAGRAM_COMMENTS_PER_HOUR_LIMIT = 60
+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS = 1  # when Instagram resets their limits
+INSTAGRAM_HASHTAGS_PER_COMMENT_LIMIT = 3
+
+# Commenting parameters
+COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT = 10
+COMMENTER_NO_OF_PICS_MEMBER_LIMIT = 30
+
+# Find New Friends parameters
+FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS = 10
+FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS = 30
+FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS = 1
+
+# Recent Best search settings
+RECENT_BEST_SEARCH_LAST_N_PHOTOS = 99
+
+# APP settings: inpiring users
+INSPIRING_USERS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find
+INSPIRING_USERS_SEARCH_N_PHOTOS = 500  # how many last photos to search while finding the best ones
 
 # APP settings: followings
 FOLLOWINGS_FIND_TOP_N_PHOTOS = 10  # how may best photos to find
 FOLLOWINGS_SEARCH_N_PHOTOS = 500  # how many last photos to search while finding the best ones
 
-
-# APP settings: friends
-FRIENDS_FIND_TOP_N_PHOTOS = 5  # how may best photos to find
+# APP settings: friends/followers
+FRIENDS_FIND_TOP_N_PHOTOS = 4  # how may best photos to find
 FRIENDS_SEARCH_N_PHOTOS = 100  # how many last photos to search while finding the best ones
 
 # APP settings: members
@@ -320,3 +423,13 @@ FOLLOWINGS_TR_MAX_FF_RATIO = 1.5
 
 #General threshold - when to stop processing Instagram requests
 INSTAGRAM_API_THRESHOLD = 500
+
+# SmartFeed
+IMPORT_MAX_INSTAGRAM_FOLLOWINGS = 2000
+IMPORT_MAX_INSTAGRAM_FOLLOWERS = 10000
+
+SMART_FEED_BATCH_SIZE = 20
+SMART_FEED_MAX_LOAD_PICS = 2000
+
+MIN_SQUAREFOLLOWINGS = 15
+MAX_SQUAREFOLLOWINGS = 2000

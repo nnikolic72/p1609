@@ -1,12 +1,11 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
 
 from categories.models import Category
 from attributes.models import Attribute
-
-
 
 
 # Create your models here.
@@ -90,6 +89,18 @@ class InstagramUser(models.Model):
                                           help_text=_('Number of Instagram posts')
     )
 
+    poly_theta_0 = models.FloatField(default=0, null=True, blank=True)
+    poly_theta_1 = models.FloatField(default=0, null=True, blank=True)
+    poly_theta_2 = models.FloatField(default=0, null=True, blank=True)
+    poly_theta_3 = models.FloatField(default=0, null=True, blank=True)
+    poly_theta_4 = models.FloatField(default=0, null=True, blank=True)
+    poly_min_days = models.IntegerField(default=0, null=True, blank=True)
+    poly_max_days = models.IntegerField(default=0, null=True, blank=True)
+    poly_min_likes = models.IntegerField(default=0, null=True, blank=True)
+    poly_max_likes = models.IntegerField(default=0, null=True, blank=True)
+
+    poly_order = models.IntegerField(default=2, null=True, blank=True)
+
     '''Number of times Instagram user is processed for basic info'''
     times_processed_for_basic_info = models.IntegerField(
         _('Number of times Instagram user was processed for basic info'),
@@ -163,8 +174,8 @@ class InstagramUser(models.Model):
     def save(self, *args, **kwargs):
         """ On save, update timestamps """
         if not self.id:
-            self.creation_date = datetime.today()
-        self.last_update_date = datetime.today()
+            self.creation_date = timezone.now()
+        self.last_update_date = timezone.now()
         return super(InstagramUser, self).save(*args, **kwargs)
 
     class Meta:
@@ -260,6 +271,15 @@ class FollowerBelongsToAttribute(models.Model):
     weight = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
 
+class NewFriendContactedByMember(models.Model):
+    member = models.ForeignKey('members.Member', null=True, blank=True)
+    friend = models.ForeignKey('instagramuser.Follower', null=True, blank=True)
+    contact_date = models.DateTimeField(null=True, blank=True)
+    response_date = models.DateField(null=True, blank=True)
+    contact_count = models.IntegerField(default=0, null=False, blank=False)
+    interaction_type = models.CharField(default='C', max_length=1, null=True, blank=True)
+
+
 class Follower(InstagramUser):
     """
 
@@ -271,6 +291,9 @@ class Follower(InstagramUser):
     is_potential_friend = models.BooleanField(default=False, null=False, blank=False)
     inspiringuser = models.ManyToManyField('instagramuser.InspiringUser', null=True, blank=True)
     member = models.ManyToManyField('members.Member', null=True, blank=True)
+    deactivated_by_mod = models.BooleanField(default=False, null=False, blank=False)
+
+    interaction_count = models.IntegerField(default=0, null=False, blank=False)
 
     class Meta:
         verbose_name = _('Follower')
@@ -300,14 +323,14 @@ class Following(InstagramUser):
 
     user_type = models.CharField(editable=False, default='following', max_length=50)
     is_potential_friend = models.BooleanField(default=False, null=False, blank=False)
-    def followed_by_n_goodusers(self):
+    def followed_by_n_inspiring_users(self):
         '''How many goodusers follow this Following'''
         gooduser_count = self.inspiringuser.count()
 
         return gooduser_count
     #followed_by_n_goodusers.admin_order_field = 'gooduser__count'
     #followed_by_n_goodusers.boolean = True
-    followed_by_n_goodusers.short_description = '# of GoodUsers'
+    followed_by_n_inspiring_users.short_description = '# of GoodUsers'
 
     inspiringuser = models.ManyToManyField('instagramuser.InspiringUser', null=True, blank=True)
     member = models.ManyToManyField('members.Member', null=True, blank=True)

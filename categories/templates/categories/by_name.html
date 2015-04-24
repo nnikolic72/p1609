@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'Category - ' %}{{ l_category.title }}{% endblock title %}
+{% block page-title %}{% trans 'Category' %} <small>{{ l_category.title }}</small>
+    <br>
+    <h4>{% trans 'Inspiring artists' %}</h4>
+{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/categories.by_name.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/categories.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    {% if inspiring_users %}
+        <div class="container-fluid">
+            {% for inspiring_user in inspiring_users %}
+                {% include 'instagramuser/inspiring_user_small_panel.html' %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+        {% trans 'No Inspiring artists in category' %} "{{ l_category.title }}".
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

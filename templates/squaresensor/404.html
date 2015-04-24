@@ -1,0 +1,50 @@
+{% extends 'bootstrap3/bootstrap3.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block bootstrap3_title %}{% block title %}Whoops! Something went wrong!{% endblock title %}{% endblock bootstrap3_title%}
+
+{% block bootstrap3_extra_head %}
+    {% block css %}
+        <link href="{{ STATIC_URL }}css/lander.base.css" rel="stylesheet">
+    {% endblock css %}
+{% endblock bootstrap3_extra_head %}
+
+{% block bootstrap3_extra_script %}
+    {% block script %}
+        <script src="{{ STATIC_URL }}js/base.js" type="text/javascript" charset="utf-8"></script>
+    {% endblock script %}
+{% endblock %}
+
+{% bootstrap_messages %}
+
+
+
+
+
+{% block bootstrap3_content %}
+    {% block content %}
+        <div class="page-header">
+            <div class="container">
+                <h1 class="squaresensor-page-title">{% trans 'Squaresensor 404 page' %}</h1>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-offset-2 col-sm-8">
+            <h5>{% trans 'Sorry! Something went wrong on Squaresensor.' %}</h5>
+        </div>
+        <div class="col-xs-12 col-sm-offset-2 col-sm-8">
+            <h5>{% trans 'Here are some of the valid locations on Squaresensor.' %}</h5>
+            <ul class="list-unstyled">
+                <li><a href="{% url 'lander:index' %}" class="btn" >{% trans 'Home page' %}</a></li>
+                <li><a href="{% url 'members:dashboard' %}" class="btn" >{% trans 'Your Dashboard' %}</a></li>
+                <li><a href="{% url 'members:my_account' %}" class="btn" >{% trans 'My Account Setup' %}</a></li>
+            </ul>
+        </div>
+
+
+
+    {% endblock content %}
+{% endblock bootstrap3_content %}
+

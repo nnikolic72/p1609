@@ -4,12 +4,20 @@ from django.core.exceptions import ObjectDoesNotExist
 from libs.instagram.tools import InstagramUserAdminUtils
 
 from squaresensor.settings.base import (INSTAGRAM_CLIENT_ID, INSTAGRAM_CLIENT_SECRET, INSTAGRAM_REDIRECT_URI,
-INSTAGRAM_SECRET_KEY)
+                                        INSTAGRAM_SECRET_KEY)
 
 from .models import (
     Member,
-    Membership
-)
+    Membership,
+    Invoice, PaymentLog)
+
+
+class CategoryInlineAdmin(admin.TabularInline):
+    model = Member.categories.through
+
+
+class AttributeInlineAdmin(admin.TabularInline):
+    model = Member.attributes.through
 
 
 class MemberAdmin(admin.ModelAdmin):
@@ -114,6 +122,8 @@ class MemberAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     set_members_process_followings_false.short_description = 'Set "To Be Processed for Friends" to "No"'
 
+    inlines = (CategoryInlineAdmin, AttributeInlineAdmin,)
+
     # Register your models here.
     list_display = ('django_user', 'instagram_user_name',
                     'number_of_followers', 'creation_date',
@@ -132,7 +142,7 @@ class MemberAdmin(admin.ModelAdmin):
                set_members_process_friends_true,
                set_members_process_followings_false,
                set_members_process_followings_true,
-               )
+    )
 
     '''Which fields are editable in Admin list view'''
     list_editable = (
@@ -148,12 +158,12 @@ class MemberAdmin(admin.ModelAdmin):
 
     '''Add fields from the model by which we want to filter list'''
     list_filter = (
-                   'to_be_processed_for_basic_info',
-                   'to_be_processed_for_friends',
-                   'to_be_processed_for_followings',
-                   'to_be_processed_for_photos',
-                   'instagram_user_name_valid',
-                   'creation_date',
+        'to_be_processed_for_basic_info',
+        'to_be_processed_for_friends',
+        'to_be_processed_for_followings',
+        'to_be_processed_for_photos',
+        'instagram_user_name_valid',
+        'creation_date',
     )
 
     '''Add a field from the model by which you want to search'''
@@ -176,7 +186,53 @@ class MemberAdmin(admin.ModelAdmin):
                                             ]
         }
         ),
-
+        ('New Friends Interactions', {'fields': ['daily_new_friends_interactions',
+                                                 'daily_new_friends_interactions_date',
+                                                 ]
+        }
+        ),
+        ('Instagram Limits Use', {'fields': ['likes_in_last_minute',
+                                             'likes_in_last_minute_interval_start',
+                                             'comments_in_last_minute',
+                                             'comments_in_last_minute_interval_start',
+                                             'new_friends_in_last_day',
+                                             'new_friends_in_last_day_interval_start',
+                                             ]
+        }
+        ),
+        ('Maths', {'fields': ['poly_order',
+                              'poly_theta_0',
+                              'poly_theta_1',
+                              'poly_theta_2',
+                              'poly_theta_3',
+                              'poly_theta_4',
+                              'poly_min_days',
+                              'poly_max_days',
+                              'poly_min_likes',
+                              'poly_max_likes',
+                              ]
+        }
+        ),
+        ('Tutorial Flags', {'fields': ['help_first_time_wizard',
+                                       'help_first_time_wizard_cur_step',
+                                       'help_members_dashboard',
+                                       'help_members_commenter',
+                                       'help_photos_modal_comment_section',
+                                       'help_photos_allbest',
+                                       'help_smartfeed_index',
+                                       'help_smartfeed_configure',
+                                       'help_instagramuser_find_new_friends',
+                                       'help_instagramuser_index_inspiring_artists2',
+                                       'help_categories_index',
+                                       'help_attributes_index',
+                                       'help_reserved1',
+                                       'help_reserved2',
+                                       'help_reserved3',
+                                       'help_reserved4',
+                                       'help_reserved5',
+                                       ]
+        }
+        ),
         ('Member Processing Information', {'fields': ['last_processed_for_basic_info_date',
                                                       'times_processed_for_basic_info',
                                                       'to_be_processed_for_basic_info',
@@ -199,7 +255,8 @@ class MemberAdmin(admin.ModelAdmin):
                                               'number_of_followers', 'number_of_followings',
                                               'instagram_user_full_name', 'instagram_profile_picture_URL',
                                               'instagram_user_bio', 'instagram_user_website_URL',
-                                              'instagram_user_id', 'instagram_user_name_valid']
+                                              'instagram_user_id', 'instagram_user_name_valid',
+                                              'smartfeed_last_seen_instagram_photo_id']
         }
         ),
 
@@ -218,4 +275,51 @@ class MemberAdmin(admin.ModelAdmin):
         #('Time Information', {'fields': ['creation_date', 'last_update_date']})
     ]
 
+
+class MembershipAdmin(admin.ModelAdmin):
+    list_display = ('membership_type', 'member', 'active_membership', 'recurring_membership', 'membership_start_time',
+                    'membership_end_time', 'invoice', 'pk'
+    )
+    fieldsets = [
+        ('General Information', {'fields': ['member', 'membership_type',
+                                            'active_membership', 'recurring_membership',
+                                            'membership_start_time', 'membership_end_time',
+                                            'invoice'
+
+        ]
+        }
+        ),
+        ]
+
+
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = ('invoice_number', 'member', 'membership_type', 'invoice_status',
+                    'pk'
+    )
+    fieldsets = [
+        ('General Information', {'fields': ['invoice_number',
+                                            'member',
+                                            'membership_type',
+                                            'invoice_status',
+                                            ]
+        }
+        ),
+        ]
+
+
+class PaymentLogAdmin(admin.ModelAdmin):
+    list_display = ('invoice_number', 'message',
+                    'pk'
+    )
+    fieldsets = [
+        ('General Information', {'fields': ['invoice_number', 'message',
+                                            ]
+        }
+        ),
+        ]
+
+
 admin.site.register(Member, MemberAdmin)
+admin.site.register(Invoice, InvoiceAdmin)
+admin.site.register(PaymentLog, PaymentLogAdmin)
+admin.site.register(Membership, MembershipAdmin)

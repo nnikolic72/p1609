@@ -5,8 +5,8 @@ from squaresensor.settings.base import *
 import os
 import dj_database_url
 
-#from memcacheify import memcacheify  # @UnresolvedImport
-#CACHES = memcacheify()
+from memcacheify import memcacheify  # @UnresolvedImport
+CACHES = memcacheify()
 
 #Prod environment settings
 

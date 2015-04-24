@@ -1,0 +1,14 @@
+{% load i18n %}
+
+{% if l_instagram_followings %}
+    <h3 class="text-center">{% trans 'Your Instagram Followings' %} <small>{% trans 'Make a selection' %}</small></h3>
+    <div class="container-fluid">
+    {% for instagramfollowing in l_instagram_followings %}
+        {% include 'smartfeed/instagram_following_item.html' %}
+    {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info" role="alert">
+    {% trans 'You have no Instagram Followings. Nothing to import.' %}
+    </div>
+{% endif %}

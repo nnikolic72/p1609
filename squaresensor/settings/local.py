@@ -20,8 +20,6 @@ DATABASE_NAME = config.get('database', 'DATABASE_NAME')
 
 #INSTAGRAM_API_KEY = config.get('instagram', 'INSTAGRAM_API_KEY')
 
-
-
 DATABASES = {
     'default': {
         'ENGINE': DATABASE_ENGINE,
@@ -45,6 +43,6 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS += ('debug_toolbar',)

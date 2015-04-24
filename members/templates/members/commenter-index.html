@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+{% load emoji_tags %}
+
+
+{% block title %}{% trans 'Squaresensor Responder' %}{% endblock title %}
+{% block page-title %}{% trans 'Squaresensor Responder' %} <small>Rule the Comments</small>{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/photos.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/photos.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    {% if logged_member.help_members_commenter == True %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3>{% trans 'Information' %}</h3>
+            <ul>
+                <li>{% trans 'This is your Responder page.' %}</li>
+                <li>{% trans 'You can respond to unanswered comments on your instagram posts here.' %}</li>
+                <li>{% trans 'It is customary on Instagram to thank people for supportive comments.' %}</li>
+                <li>{% trans 'LIMITATION: If Instagram users changes their user name, we can not detect this. Their comments will be displayed as unanswered, even if you answered them before their user name change.' %}</li>
+                <li>{% trans 'Steps:' %}</li>
+                <ol>
+                    <li>{% trans 'Pick a photo with unanswered comment(s).' %}</li>
+                    <li>{% trans 'Click on the "Answer" button.' %}</li>
+                    <li>{% trans 'Response form appears below the photo.' %}</li>
+                    <li>{% blocktrans %}In the panel that opens, click on <span class="fa fa-reply" ></span> icon next to the comment to insert that user's username in comment form.{% endblocktrans %}</li>
+                    <li>{% trans 'Insert up to five usernames in one comment.' %}</li>
+                    <li>{% trans 'Type a thank you note in your response.' %}</li>
+                    <li>{% trans 'Click on "Send Response" button to respond to their comments.' %}</li>
+                </ol>
+            </ul>
+            <button type="button"
+                    class="btn btn-default btn-sm"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                    onclick="dismiss_help('help_members_commenter')"
+                    style="margin-top: 20px;"
+                    >{% trans 'Do not show again' %}</button>
+        </div>
+    {% endif %}
+
+    <div id="commenter_comment_block">
+        {%  if unanswered_comments_media_list %}
+            <div class="alert alert-info">
+                {% blocktrans %}Showing your posts with unanswered comments. Analyzed last {{ search_photos_amount }} photos.{% endblocktrans %}
+                {% if not is_monthly_member and not is_yearly_member %}
+                    <br>{% blocktrans %}Become a premium member{% endblocktrans %} <a class="btn btn-xs btn-default" href="{% url 'members:new_membership' %}">{% trans 'here' %}</a> {% blocktrans %}to receive information about more ({{ membership_allowance }}) posts with unanswered comments.{% endblocktrans %}
+                {% endif %}
+            </div>
+            {% for photo in unanswered_comments_media_list %}
+                {% include 'photos/commenter_photo_block.html' %}
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                {% trans 'You have no unanswered comments!' %}
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

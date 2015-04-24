@@ -1,12 +1,11 @@
-__author__ = 'tanja'
 from squaresensor.settings.base import *
 import os
 import dj_database_url
 
 #Heroku deployment
 
-#from memcacheify import memcacheify  # @UnresolvedImport
-#CACHES = memcacheify()
+from memcacheify import memcacheify  # @UnresolvedImport
+CACHES = memcacheify()
 
 
 SECRET_KEY = os.environ['SECRET_KEY']
@@ -29,5 +28,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = ['*']
 
 MIDDLEWARE_CLASSES += ('django.middleware.clickjacking.XFrameOptionsMiddleware',)
+
+
 
 

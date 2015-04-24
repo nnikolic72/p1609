@@ -1,0 +1,7 @@
+.squaresensor_attribute {
+    -webkit-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    box-shadow: 1px 7px 10px -6px rgba(0,0,0,0.75);
+    margin-top: 5px;
+    padding: 20px;
+}

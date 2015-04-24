@@ -1,10 +1,68 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
 
-</body>
-</html>
+
+{% block title %}{% trans 'Squaresensor Styles' %}{% endblock title %}
+{% block page-title %}{% trans 'Browse' %} <small>{% trans 'Squaresensor Styles' %}</small>{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/attributes.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/attributes.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                {% if logged_member.help_attributes_index == True %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Information about Inspiring Artists Styles:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is a list of SquareSensor photography styles.' %}</li>
+                        <li>{% trans 'Each style name has a number of Inspiring Artists assigned to it.' %}</li>
+                        <li>{% trans "Zero by SquareSensor style name means there are no Inspiring Artists currently assigned in this style." %}</li>
+                    </ul>
+                    <button type="button"
+                            class="btn btn-default btn-sm"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            onclick="dismiss_help('help_attributes_index')"
+                            style="margin-top: 20px;"
+                            >{% trans 'Do not show again' %}</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {%  if attributes_list  %}
+            {% for attribute in attributes_list %}
+                <div class="row squaresensor_attribute">
+                    <div class="col-xs-12 col-sm-5">
+                        <form action="{% url 'attributes:attribute_slug' attribute.2 %}" method="get"><button style="white-space: normal;" class="btn btn-default btn-block" type="submit"><h4><small>{{ attribute.0 }}<br><span class="badge">{{ attribute.3 }}</span></small></h4></button></form>
+                    </div>
+                    <div class="col-xs-12 col-sm-7 text-justify">
+                        <small class="">{{ attribute.1 }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info" role="alert">
+            {% trans 'There are no inspiring artists categorized in Styles on Squaresensor yet.' %}
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

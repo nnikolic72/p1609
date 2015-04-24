@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'Squaresensor Inspiring Artists' %}{% endblock title %}
+{% block page-title %}{% trans 'Squaresensor' %} <small>{% trans 'Inspiring Artists' %}</small>{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/inspiringusers.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/instagramuser.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Information about Inspiring Artists:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is hand picked selection of fine Instagram Photographers.' %}</li>
+                        <li>{% trans 'Here you can choose how you will search for Inspiring Artists.' %}</li>
+                        <li>{% trans "'Search by Category' with display a list of photography subject categories." %}</li>
+                        <li>{% trans "'Search by Style' with display a list of styles of photography." %}</li>
+                        <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    {%  if inspiring_users  %}
+
+        {% for inspiring_user in inspiring_users %}
+            <div class="container-fluid squaresensor-inspiring-user-panel">
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-2">
+                        <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user_name %}">
+                            <img class="img-responsive img-circle small_profile_img squaresensor-image-circular center-block" src="{{ inspiring_user.instagram_profile_picture_URL }}">
+
+                            <h5 class="text-center">@{{ inspiring_user.instagram_user_name }}</h5></a>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-3">
+                        <button class="btn btn-primary btn-block" style="margin-bottom: 5px;"><small>Posts<br><span class="badge"><small>{{ inspiring_user.number_of_media }}</small></span></small></button>
+                    </div>
+                    <div class="col-xs-12 col-sm-3 ">
+                        <button class="btn btn-primary btn-block" style="margin-bottom: 5px;"><small>Followers<br><span class="badge"><small>{{ inspiring_user.number_of_followers }}</small></span></small></button>
+                    </div>
+                    <div class="col-xs-12 col-sm-3 ">
+                        <button class="btn btn-primary btn-block" style="margin-bottom: 5px;"><small>Follows<br><span class="badge"><small>{{ inspiring_user.number_of_followings }}</small></span></small></button>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-1 ">
+                        <button class="btn btn-default btn-block" style="margin-bottom: 5px;">
+                            <span class="glyphicon glyphicon-bookmark"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p class="text-left"><b>{% trans 'Name' %}:</b> {{ inspiring_user.instagram_user_full_name }}</p>
+                        <p class="text-justify"><b>{% trans 'Bio' %}:</b> {{ inspiring_user.instagram_user_bio }}</p>
+                        <p class="text-left"></p><b>{% trans 'Web Site' %}:</b> <small><a href="{{ inspiring_user.instagram_user_website_URL }}">{{ inspiring_user.instagram_user_website_URL }}</a></small></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 text-center">
+
+                        <form method="get" action="{% url 'instagramuser:alltimebest' p_username=inspiring_user.instagram_user_name p_mode='view' %}">
+                            <button type="button" class="btn btn-sm btn-default squaresensor-button btn-block" style="margin-bottom: 10px;">{% trans 'Best photos' %}</button>
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 text-center">
+                        <form method="get" action="{% url 'instagramuser:any_user_recent_best' p_instagram_user_name=inspiring_user.instagram_user_name %}">
+                            <button type="button" class="btn btn-sm btn-default squaresensor-button btn-block" style="margin-bottom: 10px;">{% trans 'Recent good photos' %}</button>
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 text-center">
+                        <form method="get" action="{{ inspiring_user.instagram_user_profile_page_URL }}" target="_blank">
+                            <button class="btn btn-sm btn-default squaresensor-button btn-block" style="margin-bottom: 10px;">{% trans 'IG Profile' %}</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+
+    {% else %}
+        <div class="alert alert-info" role="alert">
+        {% trans 'There are no inspiring artists on Squaresensor yet.' %}
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

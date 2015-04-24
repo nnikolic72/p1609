@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'Squaresensor Inspiring Artists' %}{% endblock title %}
+{% block page-title %}{% trans 'Squaresensor' %} <small>{% trans 'Inspiring Artists' %}</small>{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/inspiringusers.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/instagramuser.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="row">
+        <div class="col-xs-12">
+            {% if logged_member.help_instagramuser_index_inspiring_artists2 == True %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Information about Inspiring Artists:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is hand picked selection of fine Instagram Photographers.' %}</li>
+                        <li>{% trans 'Here you can choose how you will search for Inspiring Artists.' %}</li>
+                        <li>{% trans "'Search by Category' with display a list of photography subject categories." %}</li>
+                        <li>{% trans "'Search by Style' with display a list of styles of photography." %}</li>
+                        <li><b>{% trans 'REMEMBER - you are interacting with real, living people.' %}</b></li>
+                    </ul>
+                    <button type="button"
+                            class="btn btn-default btn-sm"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            onclick="dismiss_help('help_instagramuser_index_inspiring_artists2')"
+                            style="margin-top: 20px;"
+                            >{% trans 'Do not show again' %}</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {%  if inspiring_users  %}
+        <h4 class="text-center">{% trans 'Browse Inspiring Artists' %}</h4>
+        <div class="row">
+            <div class="col-xs-12 col-sm-offset-4 col-sm-4">
+                <form method="get" action="{% url 'categories:index' %}">
+                    <button type="submit"
+                            id="inspiring_artists_categories"
+                            data-loading-text="<i class='fa fa-sitemap fa-3x'></i><br>{% trans 'Categories loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('inspiring_artists_categories');"
+                            class="btn btn-default btn-block squaresensor-button-with-margin">
+                        <i class="fa fa-sitemap fa-3x"></i><br>
+                        {% trans 'Search by Category' %}
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-offset-4 col-sm-4">
+                <form method="get" action="{% url 'attributes:index' %}">
+                    <button type="submit"
+                            id="inspiring_artists_attributes"
+                            data-loading-text="<i class='fa fa-camera fa-3x'></i><br>{% trans 'Styles loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('inspiring_artists_attributes');"
+                            class="btn btn-default btn-block squaresensor-button-with-margin">
+                        <i class="fa fa-camera fa-3x"></i><br>
+                        {% trans 'Search by Style' %}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            {% trans 'There are no inspiring artists on Squaresensor yet.' %}
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

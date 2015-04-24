@@ -1,0 +1,24 @@
+{% load i18n %}
+{% load static %}
+
+<div id="instagram_following_{{ instagramuser.id }}">
+    <div class="row squaresensor_instagramfollowing_panel" style="margin-bottom: 20px;">
+        <div class="col-xs-12 col-sm-2">
+            <img
+                    src="{{ instagramuser.profile_picture }}"
+                    class="img-circle img-responsive small_profile_img squaresensor-image-circular center-block"
+                    style="margin-top: 10px; margin-bottom: 20px;"
+                    >
+
+        </div>
+        <div class="col-xs-12 col-sm-10">
+            <div class="text-center">
+                <span class="btn btn-primary" style="margin-bottom: 5px;">Posts <span class="badge">{{ instagramuser.counts.media }}</span></span>
+
+                <span class="btn btn-primary" style="margin-bottom: 5px;">Followers <span class="badge">{{ instagramuser.counts.followed_by }}</span></span>
+
+                <span class="btn btn-primary" style="margin-bottom: 5px;">Follows <span class="badge">{{ instagramuser.counts.follows }}</span></span>
+            </div>
+        </div>
+    </div>
+</div>

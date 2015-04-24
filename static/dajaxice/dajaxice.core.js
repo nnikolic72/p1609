@@ -7,6 +7,114 @@ var Dajaxice = {
     
 
     
+    instagramuser: {
+    
+    skip_new_friend: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('instagramuser.skip_new_friend', 'POST', callback_function, argv, custom_settings);
+    },
+
+    remove_new_friend: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('instagramuser.remove_new_friend', 'POST', callback_function, argv, custom_settings);
+    },
+
+    analyze_user: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('instagramuser.analyze_user', 'POST', callback_function, argv, custom_settings);
+    }
+
+
+    
+    
+    }
+    
+,
+    
+    photos: {
+    
+    load_instagram_commenter_comments: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.load_instagram_commenter_comments', 'POST', callback_function, argv, custom_settings);
+    },
+
+    send_instagram_commenter_comment: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.send_instagram_commenter_comment', 'POST', callback_function, argv, custom_settings);
+    },
+
+    send_instagram_comment: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.send_instagram_comment', 'POST', callback_function, argv, custom_settings);
+    },
+
+    save_attributes_and_categories: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.save_attributes_and_categories', 'POST', callback_function, argv, custom_settings);
+    },
+
+    load_instagram_comments: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.load_instagram_comments', 'POST', callback_function, argv, custom_settings);
+    },
+
+    like_instagram_picture: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('photos.like_instagram_picture', 'POST', callback_function, argv, custom_settings);
+    }
+
+
+    
+    
+    }
+    
+,
+    
+    smartfeed: {
+    
+    import_instagram_followings: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('smartfeed.import_instagram_followings', 'POST', callback_function, argv, custom_settings);
+    },
+
+    smart_feed_subscribe: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('smartfeed.smart_feed_subscribe', 'POST', callback_function, argv, custom_settings);
+    }
+
+
+    
+    
+    }
+    
+,
+    
+    members: {
+    
+    select_member_category: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.select_member_category', 'POST', callback_function, argv, custom_settings);
+    },
+
+    check_members_limits: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.check_members_limits', 'POST', callback_function, argv, custom_settings);
+    },
+
+    squaresensor_wizard: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.squaresensor_wizard', 'POST', callback_function, argv, custom_settings);
+    },
+
+    squaresensor_wizard_complete: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.squaresensor_wizard_complete', 'POST', callback_function, argv, custom_settings);
+    },
+
+    dismiss_help: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.dismiss_help', 'POST', callback_function, argv, custom_settings);
+    },
+
+    squaresensor_wizard_increase_step: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.squaresensor_wizard_increase_step', 'POST', callback_function, argv, custom_settings);
+    },
+
+    select_member_attribute: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('members.select_member_attribute', 'POST', callback_function, argv, custom_settings);
+    }
+
+
+    
+    
+    }
+    
+,
+    
 
     get_cookie: function(name)
     {

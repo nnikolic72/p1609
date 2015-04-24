@@ -1,0 +1,44 @@
+{% load i18n %}
+
+<div class="row">
+    <div class="col-xs-12 col-sm-3">
+
+        <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user.instagram_user_name %}">
+            <img src="{{ inspiring_user.instagram_user.instagram_profile_picture_URL }}" class="img-responsive img-circle center-block small_profile_img squaresensor-image-circular"><br>
+            <h4 class="text-center">@{{ inspiring_user.instagram_user.instagram_user_name }}</h4></a>
+
+    </div>
+    <div class="col-xs-12 col-sm-3">
+        <form action="{% url 'instagramuser:alltimebest' p_username=inspiring_user.instagram_user.instagram_user_name p_mode='view' %}">
+            <button type="submit"
+                    id="alltimebest_{{ inspiring_user.instagram_user.instagram_user_name }}"
+                    onclick="bootstrap_loading_button('alltimebest_{{ inspiring_user.instagram_user.instagram_user_name }}');"
+                    data-loading-text="<i class='fa fa-diamond fa-3x'></i><br>{% trans 'Best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                <i class="fa fa-diamond fa-3x"></i><br>
+                {% trans 'Best Photos' %}
+            </button>
+        </form>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+        <form action="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.instagram_user.instagram_user_name %}" method="get">
+            <button type="submit"
+                    id="recentbest_{{ inspiring_user.instagram_user.instagram_user_name }}"
+                    onclick="bootstrap_loading_button('recentbest_{{ inspiring_user.instagram_user.instagram_user_name }}');"
+                    data-loading-text="<i class='fa fa-calendar fa-3x'></i><br>{% trans 'Recent best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                <i class="fa fa-calendar fa-3x"></i><br>
+                {% trans 'Recent Best' %}
+            </button>
+        </form>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+        <form action="{{ inspiring_user.instagram_user.instagram_user_profile_page_URL }}/" target="_blank" method="get">
+            <button type="submit" class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                <i class="fa fa-external-link fa-3x"></i><br>
+                {% trans 'IG Profile Page' %}
+            </button>
+        </form>
+    </div>
+</div>
+<hr>

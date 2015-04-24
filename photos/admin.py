@@ -52,7 +52,7 @@ class PhotoAdmin(admin.ModelAdmin):
         ig_session.init_instagram_API()
 
         self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
-             ig_session.get_api_limits()
+            ig_session.get_api_limits()
 
         l_counter = 0
 
@@ -67,18 +67,18 @@ class PhotoAdmin(admin.ModelAdmin):
 
 
         self.l_instagram_api_limit_end, self.l_instagram_api_limit = \
-             ig_session.get_api_limits()
+            ig_session.get_api_limits()
 
         if l_counter == 1:
             buf = '1 photo processed successfully. Instagram API (%s - %s/%s / diff: %s)' % \
-                    (self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
-                     self.l_instagram_api_limit, (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
-                     )
+                  (self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
+                   self.l_instagram_api_limit, (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
+                  )
         else:
             buf = '%s photos processed successfully.  Instagram API (%s - %s/%s / diff: %s)' % \
-                    (l_counter, self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
-                     self.l_instagram_api_limit, (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
-                     )
+                  (l_counter, self.l_instagram_api_limit_start, self.l_instagram_api_limit_end,
+                   self.l_instagram_api_limit, (int(self.l_instagram_api_limit_start) - int(self.l_instagram_api_limit_end))
+                  )
         self.message_user(request, buf)
     process_photos_by_instagram_api.short_description = 'Process photos by Instagram API'
 
@@ -86,7 +86,7 @@ class PhotoAdmin(admin.ModelAdmin):
                     'following_id', 'member_id',
                     'photo_rating', 'admin_thumbnail',
                     'instagram_photo_processed',
-                    )
+    )
 
     list_filter = ('instagram_photo_processed',
 
@@ -94,13 +94,13 @@ class PhotoAdmin(admin.ModelAdmin):
                    'friend_id',
                    'member_id',
                    'following_id',
-                   )
+    )
 
     ordering = ('inspiring_user_id', '-photo_rating', )
 
     '''Search by foreign key example!'''
     search_fields = ('inspiring_user_id__instagram_user_name',
-                      )
+    )
 
     filter_horizontal = ('photo_category', 'photo_attribute', )
     readonly_fields = ('admin_thumbnail',)
@@ -109,28 +109,35 @@ class PhotoAdmin(admin.ModelAdmin):
         ('General Information', {'fields': ['instagram_photo_id',
                                             'inspiring_user_id',
                                             'friend_id',
+                                            'member_id',
+                                            'following_id',
                                             'instagram_caption',
                                             'instagram_tags',
                                             'instagram_photo_valid',
                                             'photo_rating'
-                                            ]
-                                 }
-         ),
+        ]
+        }
+        ),
         ('Instagram Stats', {'fields': ['instagram_likes', 'instagram_comments'
-                                        ]
-                             }
-         ),
-
+        ]
+        }
+        ),
+        ( 'Photo URLS', {'fields': ['instagram_low_resolution_URL', 'instagram_thumbnail_URL',
+                                                   'instagram_standard_resolution_URL',
+                                                   'instagram_link_URL'
+        ]
+        }
+        ),
         ( 'Categories and Attributes', {'fields': ['admin_thumbnail', 'photo_category',
-                                                        'photo_attribute'
-                                                        ]
-                                             }
-         ),
+                                                   'photo_attribute'
+        ]
+        }
+        ),
 
         ('Date and time information', {'fields': ['instagram_created_time'
-                                                  ]
-                                       }
-         )
+        ]
+        }
+        )
     ]
 
     actions = (process_photos_by_instagram_api, )
