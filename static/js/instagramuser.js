@@ -56,6 +56,9 @@ function skip_new_friend_callback(data) {
     var p_instagram_user_id = data.p_instagram_user_id;
     var result = data.result;
     var new_friend_id = "#new_friend_" + p_instagram_user_id;
+    var interactions_remaining = data.interactions_remaining;
+
+    $('#interactions_remaining_text').html(interactions_remaining);
 
     $('html, body').animate({
         scrollTop: $(new_friend_id).offset().top - 50

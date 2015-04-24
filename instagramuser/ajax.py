@@ -1,11 +1,13 @@
 from __future__ import division
 import json
+from datetime import timedelta
 
 from django.http import HttpResponseNotFound
 from django.template.loader import render_to_string
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+
 
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils
 from dajaxice.decorators import dajaxice_register
@@ -16,6 +18,8 @@ from categories.models import Category
 from attributes.models import Attribute
 from .forms import AddInspiringUserForm
 from instagramuser.models import InspiringUser, Follower, NewFriendContactedByMember
+from squaresensor.settings.base import FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS, \
+    FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS, FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS
 
 __author__ = 'n.nikolic'
 
@@ -152,6 +156,7 @@ def skip_new_friend(req, p_instagram_user_id):
     :return:
     :rtype:
     """
+    result = "error"
 
     try:
         logged_member = Member.objects.get(django_user__username=req.user)
@@ -182,9 +187,35 @@ def skip_new_friend(req, p_instagram_user_id):
         l_new_interaction.save()
         result = 'skipped'
 
+        # update limits
+        l_timedelta_day = timedelta(days=+FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS)
+        l_new_friends_in_last_day_interval_start = logged_member.new_friends_in_last_day_interval_start
+        if l_new_friends_in_last_day_interval_start:
+            l_diff = l_new_friends_in_last_day_interval_start - timezone.now()
+            if l_diff > l_timedelta_day:
+                # hour has passed - reset the counters
+                logged_member.new_friends_in_last_day = 1
+                logged_member.new_friends_in_last_day_interval_start = timezone.now()
+                logged_member.save()
+            else:
+                logged_member.new_friends_in_last_day += 1
+                logged_member.save()
+        else:
+            logged_member.new_friends_in_last_day = 1
+            logged_member.new_friends_in_last_day_interval_start = timezone.now()
+            logged_member.save()
+
+        if (logged_member.is_monthly_member() == True) or (logged_member.is_yearly_member() == True):
+            l_interactions_remaining = \
+                FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS - logged_member.new_friends_in_last_day
+        else:
+            l_interactions_remaining = \
+                FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS - logged_member.new_friends_in_last_day
+
     return json.dumps({
         'p_instagram_user_id': p_instagram_user_id,
         'result': result,
+        'interactions_remaining': l_interactions_remaining,
         }
     )
 

@@ -23,6 +23,8 @@ from .views import (
     CommenterIndexView,
     MemberNewMonthlyMembershipView,
     MemberNewYearlyMembershipView,
+    MemberContactFormView,
+    MemberCommentSentView,
 )
 
 
@@ -32,6 +34,8 @@ urlpatterns = patterns('',
                        url(r'^disabled/$', MemberDisabledView.as_view(), name='disabled'),
                        url(r'^logout/$', login_required(MemberLogoutView.as_view()), name='logout'),
                        url(r'^account/$', login_required(MemberMyAccountView.as_view()), name='my_account'),
+                       url(r'^contact-form/$', login_required(MemberContactFormView.as_view()), name='contact_form'),
+                       url(r'^comment-sent/$', login_required(MemberCommentSentView.as_view()), name='comment_sent'),
                        url(r'^responder/$', login_required(CommenterIndexView.as_view()), name='commenter_index'),
                        url(r'^new-membership/$', login_required(MemberNewMembershipView.as_view()), name='new_membership'),
                        url(r'^new-monthly-membership/$', login_required(MemberNewMonthlyMembershipView.as_view()), name='new_monthly_membership'),

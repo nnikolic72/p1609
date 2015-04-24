@@ -663,6 +663,12 @@ class FindFriendsView(TemplateView):
         """
 
         liked_photos = []
+        max_interactions = None
+        l_new_friends_remaining = None
+        show_describe_button = None
+        is_monthly_member = None
+        is_yearly_member = None
+        l_hours_remaining = None
 
         # Common for all members views ===================================================
         l_categories = Category.objects.all()

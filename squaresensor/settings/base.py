@@ -200,6 +200,7 @@ INSTALLED_APPS = (
     'emoji',
     'paypal.standard.ipn',
 
+
     'lander',
     'instagramuser',
     'members',
@@ -255,6 +256,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+
 )
 
 
@@ -344,8 +346,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Squaresensor globals -------------------------------------------------------
 
+#GOOGLE_ANALYTICS_MODEL = True
 
-#GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-14845987-3'
+#GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-60120379-1'
+
 #GOOGLE_ANALYTICS_DOMAIN = 'squaresensor.com'
 
 TEST_APP = True
