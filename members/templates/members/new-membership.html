@@ -34,13 +34,13 @@
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
                 <br><br>
-                {% if is_payment_live == '1' %}
+
                     <form method="get" action="{% url 'members:new_monthly_membership' %}">
                         <button type="submit" class="btm btn-lg btn-success btn-block">
                             {% trans 'Purchase Monthly Membership' %}
                         </button>
                     </form>
-                {% endif %}
+
             </div>
             <div class="col-xs-12 col-sm-5 col-sm-offset-1 text-center well bg-success">
                 <h4 class="lead">{% trans 'Purchase Yearly Premium Squaresensor Membership' %}</h4>
@@ -53,13 +53,13 @@
                     <li>{% trans 'No advertisements.' %}</li>
                     <li>{% trans 'Support Squaresensor team and our efforts to make your Instagram experience better!' %}</li>
                 </ul>
-                {% if is_payment_live == '1' %}
+
                     <form method="get" action="{% url 'members:new_yearly_membership' %}">
                         <button type="submit" class="btm btn-lg btn-success btn-block">
                             {% trans 'Purchase Yearly Premium Membership' %}
                         </button>
                     </form>
-                {% endif %}
+
             </div>
         </div>
 
