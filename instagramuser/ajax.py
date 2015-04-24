@@ -21,6 +21,8 @@ from instagramuser.models import InspiringUser, Follower, NewFriendContactedByMe
 from squaresensor.settings.base import FIND_FRIENDS_LIMIT_PERIOD_RESET_TIME_DAYS, \
     FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS, FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS
 
+from .tasks import process_instagram_user
+
 __author__ = 'n.nikolic'
 
 @dajaxice_register
@@ -257,5 +259,36 @@ def remove_new_friend(req, p_instagram_user_id):
     return json.dumps({
         'p_instagram_user_id': p_instagram_user_id,
         'result': result,
+        }
+    )
+
+@dajaxice_register
+def analyze_for_friends(req, p_instagram_user_id):
+    """
+    Remove new friend, by moderator only, while trying to find new friends
+    :param req:
+    :type req:
+    :param p_instagram_user_id:
+    :type p_instagram_user_id:
+    :return:
+    :rtype:
+    """
+    result = 'error'
+    try:
+        l_inspiring_user = InspiringUser.objects.get(instagram_user_id=p_instagram_user_id)
+        l_inspiring_user.to_be_processed_for_friends = True
+        l_inspiring_user.save()
+    except ObjectDoesNotExist:
+        l_inspiring_user = None
+
+    if l_inspiring_user:
+        inspiring_users_id_list = []
+        inspiring_users_id_list.extend([p_instagram_user_id])
+        process_instagram_user.delay(None, inspiring_users_id_list)
+        result = 'running'
+
+    return json.dumps({
+        'result': result,
+        'p_instagram_user_id': p_instagram_user_id,
         }
     )
