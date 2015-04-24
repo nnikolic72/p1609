@@ -865,3 +865,81 @@ class InspiringUserIndexAllView(TemplateView):
                           attributes=l_attributes,
                           )
         )
+
+
+
+class NewFriendsProcessingView(TemplateView):
+    """
+    display list of all inspiring artists on Squaresensor with stats
+    """
+
+    template_name = 'instagramuser/new-friends-processing.html'
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handle get request - display photos and all controls
+
+        :param request:
+        :type request:
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+        # END Limit calculation ----------------------------------------------------------
+        # END Common for all members views ===============================================
+        l_inspiring_users_queryset = InspiringUser.objects.all().order_by('-times_processed_for_friends')
+
+        l_inspiring_users_list = []
+        for inspiring_user in l_inspiring_users_queryset:
+            l_inspiring_user_categories = InspiringUserBelongsToCategory.objects.filter(instagram_user=inspiring_user)
+            l_inspiring_user_attributes = InspiringUserBelongsToAttribute.objects.filter(instagram_user=inspiring_user)
+
+            l_inspiring_users_list.append([inspiring_user,
+                                           len(l_inspiring_user_categories),
+                                           len(l_inspiring_user_attributes),
+                                           inspiring_user.times_processed_for_friends
+            ]
+            )
+
+        # Limit calculation --------------------------------------------------------------
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+        # END Common for all members views ===============================================
+        return render(request,
+                      self.template_name,
+                      dict(
+                          inspiring_users_list=l_inspiring_users_list,
+
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
+        )

@@ -216,23 +216,36 @@
 
                 <h4 style="padding-top: 40px;">{% trans 'Admin' %}</h4>
             </div>
-            <div class="col-xs-12 col-sm-6 text-center">
+            <div class="col-xs-12 col-sm-4 text-center">
                 <form action="{% url 'instagramuser:addinspiring' %}" method="get">
                     <button type="submit"
                             id="add-inspiring-user"
-                            onclick="display_ajax_img('add-inspiring-user', '{{ STATIC_URL }}')"
+                            data-loading-text="{% trans 'Adding Inspiring Artist...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('add-inspiring-user');"
                             class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
                         {% trans 'Add Inspiring Artist' %}
                     </button>
                 </form>
             </div>
-            <div class="col-xs-12 col-sm-6 text-center">
+            <div class="col-xs-12 col-sm-4 text-center">
                 <form action="{% url 'instagramuser:index_all_inspiring_artists' %}" method="get">
                     <button type="submit"
                             id="index_all_inspiring_artists"
-                            onclick="display_ajax_img('index_all_inspiring_artists', '{{ STATIC_URL }}')"
+                            data-loading-text="{% trans 'Inspiring Artists loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('index_all_inspiring_artists');"
                             class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
                         {% trans 'All Inspiring Artists' %}
+                    </button>
+                </form>
+            </div>
+            <div class="col-xs-12 col-sm-4 text-center">
+                <form action="{% url 'instagramuser:new_friends_processing' %}" method="get">
+                    <button type="submit"
+                            id="new_friends_processing"
+                            data-loading-text="{% trans 'New Friends Processing...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('new_friends_processing');"
+                            class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                        {% trans 'New Friends Processing' %}
                     </button>
                 </form>
             </div>

@@ -9,7 +9,8 @@ from .views import (AddInspiringUserView,
     UsersBestPhotosView,
     AnyUserRecentBestView,
     FindFriendsView,
-    InspiringUserIndexAllView
+    InspiringUserIndexAllView,
+    NewFriendsProcessingView,
 )
 
 
@@ -30,7 +31,9 @@ urlpatterns = patterns('',
                        url(r'^all-inspiring-artists/$', login_required(InspiringUserIndexAllView.as_view()),
                            name='index_all_inspiring_artists'
                        ),
-
+                       url(r'^new-friends-processing/$', login_required(NewFriendsProcessingView.as_view()),
+                           name='new_friends_processing'
+                       ),
                        url(r'^recent-best/(?P<p_inspiring_user_name>[_a-zA-Z\d\.]+)/$',
                            login_required(InspiringUserNameView.as_view()),
                            name='inspiring_user'
