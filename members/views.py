@@ -139,8 +139,8 @@ class MemberDashboardView(TemplateView):
             instagram_session.init_instagram_API()
             user_search = instagram_session.is_instagram_user_valid(request.user)
 
-            ig_utils = InstagramUserAdminUtils()
-            ig_utils.process_instagram_user(request, queryset)
+            ig_utils = InstagramUserAdminUtils(p_is_admin=False, p_token=l_token['access_token'])
+            ig_utils.process_instagram_user(queryset)
             logged_member = Member.objects.get(django_user__username=request.user)
 
             profile_photo_url = None

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.core.handlers.wsgi import WSGIRequest
 from django.utils.text import slugify
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -32,10 +33,13 @@ class InspiringUserAdmin(admin.ModelAdmin):
         '''
         buf = 'Finished.'
         #instagram_utils = InstagramUserAdminUtils()
+
         inspiring_users_id_list = []
         for inspiring_user in queryset:
             inspiring_users_id_list.extend([inspiring_user.instagram_user_id])
-        process_instagram_user.delay(None, inspiring_users_id_list)
+        l_is_admin = True
+        l_token = ''
+        process_instagram_user.delay(None, inspiring_users_id_list, l_is_admin, l_token )
 
         self.message_user(request, buf)
     process_inspiringuser.short_description = 'Process Inspiring User by Instagram API'
@@ -318,10 +322,10 @@ class InspiringUserRawAdmin(ImportExportModelAdmin):
                                 q = InspiringUser.objects.filter(instagram_user_name=inspiring_user.instagram_user_name)
                                 if len(q) > 0:
                                     ig_admin_utils = InstagramUserAdminUtils()
-                                    ig_admin_utils.process_instagram_user(request, q)
+                                    ig_admin_utils.process_instagram_user(q)
                                     l_photos_queryset = Photo.objects.filter(inspiring_user_id=l_inspiring_user_new)
                                     if l_photos_queryset.count() > 0:
-                                        ig_admin_utils.process_photos_by_instagram_api(request, l_photos_queryset)
+                                        ig_admin_utils.process_photos_by_instagram_api(l_photos_queryset)
                             except:
                                 l_errors += 1
                         else:
@@ -408,7 +412,7 @@ class FollowingAdmin(admin.ModelAdmin):
         '''
 
         instagram_utils = InstagramUserAdminUtils()
-        buf = instagram_utils.process_instagram_user(request, queryset)
+        buf = instagram_utils.process_instagram_user(queryset)
 
         self.message_user(request, buf)
     process_following.short_description = 'Process Following by Instagram API'
@@ -600,7 +604,7 @@ class FollowerAdmin(admin.ModelAdmin):
         '''
 
         instagram_utils = InstagramUserAdminUtils()
-        buf = instagram_utils.process_instagram_user(request, queryset)
+        buf = instagram_utils.process_instagram_user(queryset)
 
         self.message_user(request, buf)
     process_friend.short_description = 'Process Follower by Instagram API'

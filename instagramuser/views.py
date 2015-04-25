@@ -430,8 +430,8 @@ class UsersBestPhotosView(TemplateView):
                 q.to_be_processed_for_basic_info = True
                 q.to_be_processed_for_photos = True
                 q.save()
-            ig_admin_utils = InstagramUserAdminUtils()
-            ig_admin_utils.process_instagram_user(request, queryset)
+            ig_admin_utils = InstagramUserAdminUtils(p_is_admin=False, p_token=l_token['access_token'])
+            ig_admin_utils.process_instagram_user(queryset)
 
             user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
 
@@ -466,10 +466,10 @@ class UsersBestPhotosView(TemplateView):
                         if self.is_following:
                             l_photos_queryset = Photo.objects.filter(following_id=squaresensor_user).order_by('-photo_rating')
 
-        ig_utils = InstagramUserAdminUtils()
-        ig_utils.process_instagram_user(request, queryset)
+        ig_utils = InstagramUserAdminUtils(p_is_admin=False, p_token=l_token['access_token'])
+        ig_utils.process_instagram_user(queryset)
         if (l_photos_queryset.count() > 0):
-            ig_utils.process_photos_by_instagram_api(request, l_photos_queryset)
+            ig_utils.process_photos_by_instagram_api(l_photos_queryset)
 
         liked_photos = []
         for x_media in l_photos_queryset:

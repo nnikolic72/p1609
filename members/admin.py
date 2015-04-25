@@ -27,7 +27,7 @@ class MemberAdmin(admin.ModelAdmin):
         '''
 
         instagram_utils = InstagramUserAdminUtils()
-        buf = instagram_utils.process_instagram_user(request, queryset)
+        buf = instagram_utils.process_instagram_user(queryset)
 
 
         self.message_user(request, buf)
