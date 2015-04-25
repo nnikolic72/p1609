@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from instagramuser.models import InspiringUser
+from celery.contrib import rdb
 
 __author__ = 'n.nikolic'
 
@@ -8,9 +9,11 @@ from celery import shared_task
 from libs.instagram.tools import InstagramUserAdminUtils
 
 @shared_task
-def process_instagram_user(request, inspiring_users_id_list):
-    instagram_utils = InstagramUserAdminUtils()
+def process_instagram_user(requestNone, inspiring_users_id_list, l_is_admin, l_token):
+
+    instagram_utils = InstagramUserAdminUtils(l_is_admin, l_token)
 
     queryset = InspiringUser.objects.filter(instagram_user_id__in=inspiring_users_id_list)
+
     if instagram_utils:
-        buf = instagram_utils.process_instagram_user(None, queryset)
+        buf = instagram_utils.process_instagram_user(queryset)

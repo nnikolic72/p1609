@@ -84,7 +84,7 @@ def analyze_user(req, form):
             user_search = instagram_session.is_instagram_user_valid(instagram_user_name)
             if len(user_search) > 0:
                 if user_search[0].username == instagram_user_name:
-                    ig_utils = InstagramUserAdminUtils()
+                    ig_utils = InstagramUserAdminUtils(p_is_admin=False, p_token=l_token['access_token'])
                     inspiring_user = InspiringUser(instagram_user_name=instagram_user_name,
                                                    to_be_processed_for_basic_info=True,
                                                    to_be_processed_for_photos=True)
@@ -92,11 +92,11 @@ def analyze_user(req, form):
                         inspiring_user.save()
                         queryset = InspiringUser.objects.filter(instagram_user_name=instagram_user_name)
                         if queryset.count() > 0:
-                            ig_utils.process_instagram_user(req, queryset)
+                            ig_utils.process_instagram_user(queryset)
                             l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
 
                             if l_photos_queryset.count() > 0:
-                                ig_utils.process_photos_by_instagram_api(req, l_photos_queryset)
+                                ig_utils.process_photos_by_instagram_api(l_photos_queryset)
                                 l_photos_queryset = Photo.objects.filter(inspiring_user_id=inspiring_user).order_by('-photo_rating')
 
 
@@ -273,6 +273,22 @@ def analyze_for_friends(req, p_instagram_user_id):
     :return:
     :rtype:
     """
+
+    is_member_admin = False
+    try:
+        from members.models import Member
+        logged_member = Member.objects.get(django_user__username=req.user)
+        l_token_obj = logged_member.get_member_token(req)
+        l_token = l_token_obj['access_token']
+        #instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+        is_member_admin = False
+    except ObjectDoesNotExist:
+        logged_member = None
+        l_token = ''
+        is_member_admin = True
+    except:
+        raise
+
     result = 'error'
     try:
         l_inspiring_user = InspiringUser.objects.get(instagram_user_id=p_instagram_user_id)
@@ -284,7 +300,9 @@ def analyze_for_friends(req, p_instagram_user_id):
     if l_inspiring_user:
         inspiring_users_id_list = []
         inspiring_users_id_list.extend([p_instagram_user_id])
-        process_instagram_user.delay(None, inspiring_users_id_list)
+
+
+        process_instagram_user.delay(None, inspiring_users_id_list, is_member_admin , l_token)
         result = 'running'
 
     return json.dumps({

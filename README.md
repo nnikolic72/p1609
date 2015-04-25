@@ -77,6 +77,11 @@ BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 celery -A squaresensor worker -l info
 // Starting Celery on Heroku as a worker
 worker: celery -A squaresensor worker -l info
+// Celery Debugger:
+Enable Telnet Client on Windows 
+1. Programs and Features > Turn Windows features on or off > Check "Telnet Client", wait to install. No reboot.
+2. rdb.set_trace() in tasks.py to enable debugger
+3. telnet to opened port, as shown in Celery terminal window
 
 // Group
 Inspiring User Editor

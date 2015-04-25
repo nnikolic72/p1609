@@ -1,11 +1,14 @@
 from __future__ import division
+from celery.contrib import rdb
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.handlers.wsgi import WSGIRequest
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseNotFound
 from django.utils import timezone
 from emoji.models import Emoji
 #from members.models import Membership
+
 from photos.models import Photo
 from smartfeed.models import SquareFollowing, SquareFollowingMember
 
@@ -71,6 +74,7 @@ class InstagramSession():
         """
 
         try:
+            # rdb.set_trace()
             self.api = InstagramAPI(access_token=self.access_token)
             if self.api:
                 temp = self.api.user_search(q='instagram', count=1)  # @UnusedVariable
@@ -929,7 +933,17 @@ class InstagramUserAdminUtils():
     l_instagram_api_limit_start = 0
     l_instagram_api_limit_end = 0
 
-    def analyze_instagram_user_find_friends(self, request, obj):
+    l_is_admin = False
+    l_token = ''
+
+    def __init__(self, p_is_admin=True, p_token=''):
+        if p_token == '':
+            self.l_is_admin = True
+        else:
+            self.l_is_admin = p_is_admin
+            self.l_token = p_token
+
+    def analyze_instagram_user_find_friends(self, obj):
         ''' Analyze Instagram Users followers and find potential
            Friends.
         '''
@@ -943,8 +957,11 @@ class InstagramUserAdminUtils():
 
         #queryset = queryset.filter(to_be_processed_for_friends=True)
 
+        is_member_admin = True
+
+
         if obj.to_be_processed_for_friends == True:
-            ig_session = InstagramSession(p_is_admin=True, p_token='')
+            ig_session = InstagramSession(p_is_admin=self.l_is_admin, p_token=self.l_token)
             ig_session.init_instagram_API()
 
             #self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
@@ -993,7 +1010,7 @@ class InstagramUserAdminUtils():
                                 for follower in l_instagram_friends:
                                     l_exists = Follower.objects.filter(instagram_user_id=follower.id)
 
-                                    instagram_utils = InstagramUserAdminUtils()
+                                    instagram_utils = InstagramUserAdminUtils(p_is_admin=self.l_is_admin, p_token=self.l_token)
                                     if l_exists.count() == 0:
                                         l_new_friend = \
                                             Follower(instagram_user_id=follower.id,
@@ -1115,7 +1132,7 @@ class InstagramUserAdminUtils():
         return buf
     analyze_instagram_user_find_friends.short_description = 'Find new friends from Instagram user'
 
-    def analyze_instagram_user_find_followings(self, request, obj):
+    def analyze_instagram_user_find_followings(self, obj):
         """ Analyze Instagram Users followings and find potential
            Friends.
         """
@@ -1132,7 +1149,7 @@ class InstagramUserAdminUtils():
 
         if obj.to_be_processed_for_followings == True:
             ig_session = InstagramSession(
-                p_is_admin=True, p_token=''
+                p_is_admin=self.l_is_admin, p_token=self.l_token
             )
             ig_session.init_instagram_API()
 
@@ -1274,7 +1291,7 @@ class InstagramUserAdminUtils():
 
         return p_instagram_user, buf
 
-    def process_instagram_user(self, request, queryset):
+    def process_instagram_user(self, queryset):
         """Do what is needed to process a Instagram User with Instagram API
            Process only users that are marked to be processed -> to_be_processed==True
         """
@@ -1295,9 +1312,17 @@ class InstagramUserAdminUtils():
         message_best_photos = None
         message_followings = None
 
+        is_member_admin = False
+        ig_session = None
+
+        #if is_member_admin == False :
+        #    ig_session = InstagramSession(p_is_admin=False, p_token=l_token)
+        #else:
+
         ig_session = InstagramSession(
-            p_is_admin=True, p_token=''
+            p_is_admin=self.l_is_admin, p_token=self.l_token
         )
+        ##rdb.set_trace()
         ig_session.init_instagram_API()
 
         self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
@@ -1308,7 +1333,7 @@ class InstagramUserAdminUtils():
                 obj.to_be_processed_for_basic_info = False
                 obj.last_processed_date = timezone.datetime.now()
                 obj.times_processed_for_basic_info = obj.times_processed_for_basic_info + 1
-                instagram_utils = InstagramUserAdminUtils()
+                instagram_utils = InstagramUserAdminUtils(p_is_admin=self.l_is_admin, p_token=self.l_token)
                 obj.instagram_user_profile_page_URL = instagram_utils.generate_instagram_profile_page_URL(obj.instagram_user_name)
                 obj.iconosquare_user_profile_page_URL = instagram_utils.generate_iconosquare_profile_page_URL(obj.instagram_user_id)
                 # get Instagram user data
@@ -1411,7 +1436,7 @@ class InstagramUserAdminUtils():
 
             # Analyze followers of this user for friends
             if obj.to_be_processed_for_friends == True:
-                message_find_friends = self.analyze_instagram_user_find_friends(request, obj)
+                message_find_friends = self.analyze_instagram_user_find_friends(obj)
                 obj.to_be_processed_for_friends = False
                 obj.times_processed_for_friends = obj.times_processed_for_friends + 1
                 obj.last_processed_for_friends_date = timezone.now()
@@ -1420,7 +1445,7 @@ class InstagramUserAdminUtils():
 
             # Analyze followers of this user for followings
             if obj.to_be_processed_for_followings == True:
-                message_followings = self.analyze_instagram_user_find_followings(request, obj)
+                message_followings = self.analyze_instagram_user_find_followings(obj)
                 l_counter_for_followings += 1
                 obj.times_processed_for_followings = obj.times_processed_for_followings + 1
                 obj.to_be_processed_for_followings = False
@@ -1635,10 +1660,10 @@ class InstagramUserAdminUtils():
         return p_photo
 
 
-    def process_photos_by_instagram_api(self, request, queryset):
+    def process_photos_by_instagram_api(self, queryset):
         """Action -> process photos by Instagram API"""
 
-        ig_session = InstagramSession(p_is_admin=True, p_token='')
+        ig_session = InstagramSession(p_is_admin=self.l_is_admin, p_token=self.l_token)
         ig_session.init_instagram_API()
 
         self.l_instagram_api_limit_start, self.l_instagram_api_limit = \
