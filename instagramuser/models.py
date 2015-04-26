@@ -124,7 +124,8 @@ class InstagramUser(models.Model):
     )
     '''Number of times Instagram user is processed for friends'''
     times_processed_for_friends = models.IntegerField(
-        _('Number of times Instagram user was processed for friends'),
+        verbose_name='#P Friends',
+        help_text=_('Number of times Instagram user was processed for friends'),
         default=0, null=False
     )
     '''GoodUser is marked for processing for friends next time Instagram user Batch Processing is run'''
@@ -140,7 +141,8 @@ class InstagramUser(models.Model):
     )
     '''Number of times Instagram user is processed for friends'''
     times_processed_for_followings = models.IntegerField(
-        _('Number of times Instagram user was processed for Followings'),
+        verbose_name='#P Followings',
+        help_text=_('Number of times Instagram user was processed for Followings'),
         default=0, null=False
     )
     '''GoodUser is marked for processing for Followings next time Instagram user Batch Processing is run'''

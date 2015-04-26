@@ -145,6 +145,8 @@ class InspiringUserAdmin(admin.ModelAdmin):
     list_display = ('instagram_user_name',
                     'number_of_followers',
                     'creation_date',
+                    'times_processed_for_friends',
+                    'times_processed_for_followings',
                     'to_be_processed_for_basic_info',
                     'to_be_processed_for_friends',
                     'to_be_processed_for_followings',
