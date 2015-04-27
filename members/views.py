@@ -147,9 +147,15 @@ class MemberDashboardView(TemplateView):
             if logged_member.instagram_profile_picture_URL:
                 profile_photo_url = logged_member.instagram_profile_picture_URL
 
-            if logged_member.help_first_time_wizard == True:
+            if logged_member.help_first_time_wizard == True and logged_member.help_first_time_wizard_cur_step > 3:
+                logged_member.help_first_time_wizard = False
+                logged_member.save()
+
+            if logged_member.help_first_time_wizard == True and logged_member.help_first_time_wizard_cur_step < 4:
                 # Show the tutorial wizard
                 return HttpResponseRedirect(reverse("members:tutorial"))
+
+
 
         except ObjectDoesNotExist:
             logged_member = None

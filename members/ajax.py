@@ -209,6 +209,7 @@ def squaresensor_wizard_increase_step(req, p_current_step):
         l_current_step = int(logged_member.help_first_time_wizard_cur_step)
         l_next_step = l_current_step + 1
         logged_member.help_first_time_wizard_cur_step = str(l_next_step)
+
         logged_member.save()
 
     except ObjectDoesNotExist:
