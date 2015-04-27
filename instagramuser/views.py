@@ -375,6 +375,7 @@ class UsersBestPhotosView(TemplateView):
         show_describe_button = False
         liked_photos = []
 
+
         squaresensor_user, queryset = self.find_squaresensor_user(instagram_user_name)
 
 
@@ -496,6 +497,7 @@ class UsersBestPhotosView(TemplateView):
                           photo_owner=squaresensor_user,
                           liked_photos=liked_photos,
                           new_friends_interaction=0,
+                          og_url=request.build_absolute_uri(),
 
                           is_monthly_member=is_monthly_member,
                           is_yearly_member=is_yearly_member,

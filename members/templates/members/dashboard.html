@@ -22,233 +22,246 @@
 
 
 {% block content %}
-
+    {% if site_messages %}
         <div class="col-xs-12 text-left">
-            {% if logged_member.help_members_dashboard == True %}
-                <div class="alert alert-success alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="text-center">{% trans 'Welcome to your Dashboard!' %}</h4>
-                    <h3>{% trans 'Information' %}</h3>
-                    <ul>
-                        <li>{% trans 'This is your Squaresenfor home page.' %}</li>
-                        <li>{% trans 'You can access all features from this page by clicking on buttons below.' %}</li>
-                    </ul>
-                    <button type="button"
-                            class="btn btn-default btn-sm"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            onclick="dismiss_help('help_members_dashboard')"
-                            style="margin-top: 20px;"
-                            >{% trans 'Do not show again' %}</button>
-                </div>
-            {% endif %}
+            <div class="alert alert-info">
+                <h4>{% trans 'Messages' %}</h4>
+                <ul>
+                    {% for message in site_messages %}
+                        {% if message.show %}
+                            <li>{{ message.title }}: {{ message.text }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+    <div class="col-xs-12 text-left">
+        {% if logged_member.help_members_dashboard == True %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="text-center">{% trans 'Welcome to your Dashboard!' %}</h4>
+                <h3>{% trans 'Information' %}</h3>
+                <ul>
+                    <li>{% trans 'This is your Squaresenfor home page.' %}</li>
+                    <li>{% trans 'You can access all features from this page by clicking on buttons below.' %}</li>
+                </ul>
+                <button type="button"
+                        class="btn btn-default btn-sm"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                        onclick="dismiss_help('help_members_dashboard')"
+                        style="margin-top: 20px;"
+                        >{% trans 'Do not show again' %}</button>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-xs-12 text-center">
+
+        <h4 style="margin-top: 40px; margin-bottom: 20px;">{% trans 'My Instagram data' %}</h4>
+
+    </div>
+
+    <div class="col-xs-12 col-sm-3">
+
+        <img class="img-responsive img-circle squaresensor-normal-profile-pic squaresensor-image-circular center-block" src="{{ logged_member.instagram_profile_picture_URL }}">
+    </div>
+    <div class="col-xs-12 col-sm-9">
+
+        <div class="row text-center" style="margin-bottom: 20px;">
+            <div class="col-xs-12 col-lg-4 btn-block">
+                <span class="btn btn-primary">Posts <span class="badge">{{ logged_member.number_of_media }}</span></span>
+            </div>
+            <div class="col-xs-12 col-lg-4 btn-block">
+                <span class="btn btn-primary">Followers <span class="badge">{{ logged_member.number_of_followers }}</span></span>
+            </div>
+            <div class="col-xs-12 col-lg-4 btn-block">
+                <span class="btn btn-primary">Follows <span class="badge">{{ logged_member.number_of_followings }}</span></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" style="margin-bottom: 10px;">
+                <b>{% trans 'Name' %}:</b> {{ logged_member.instagram_user_full_name }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12"  style="margin-bottom: 10px;">
+                <b>{% trans 'Bio' %}:</b> {{ logged_member.instagram_user_bio }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12"  style="margin-bottom: 10px;"><b>{% trans 'Web Site' %}:</b> <a href="{{ logged_member.instagram_user_website_URL }}">{{ logged_member.instagram_user_website_URL }}</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-lg-6">
+                <form action="{% url 'instagramuser:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}" method="get">
+                    <button type="submit"
+                            id="my-best-photos"
+                            data-loading-text="<i class='fa fa-diamond fa-3x'></i><br>{% trans 'My best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            class="btn btn-sm btn-default btn-block squaresensor-button-with-margin"
+                            onclick="bootstrap_loading_button('my-best-photos');"
+                            >
+                        <i class="fa fa-diamond fa-3x"></i><br>
+                        {% trans 'My best photos' %}
+                    </button>
+                </form>
+            </div>
+            <div class="col-xs-12 col-lg-6">
+                <form action="{% url 'instagramuser:any_user_recent_best' p_instagram_user_name=logged_member.instagram_user_name %}" method="get">
+                    <button type="submit"
+                            id="my-recent-best"
+                            data-loading-text="<i class='fa fa-calendar fa-3x'></i><br>{% trans 'My recent best loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('my-recent-best');"
+                            class="btn btn-sm btn-default btn-block squaresensor-button-with-margin">
+                        <i class="fa fa-calendar fa-3x"></i><br>
+                        {% trans 'My recent best' %}
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <div class="col-xs-12 text-center">
-
-            <h4 style="margin-top: 40px; margin-bottom: 20px;">{% trans 'My Instagram data' %}</h4>
-
-        </div>
-
-        <div class="col-xs-12 col-sm-3">
-
-            <img class="img-responsive img-circle squaresensor-normal-profile-pic squaresensor-image-circular center-block" src="{{ logged_member.instagram_profile_picture_URL }}">
-        </div>
-        <div class="col-xs-12 col-sm-9">
-
-                <div class="row text-center" style="margin-bottom: 20px;">
-                    <div class="col-xs-12 col-lg-4 btn-block">
-                        <span class="btn btn-primary">Posts <span class="badge">{{ logged_member.number_of_media }}</span></span>
-                    </div>
-                    <div class="col-xs-12 col-lg-4 btn-block">
-                        <span class="btn btn-primary">Followers <span class="badge">{{ logged_member.number_of_followers }}</span></span>
-                    </div>
-                    <div class="col-xs-12 col-lg-4 btn-block">
-                        <span class="btn btn-primary">Follows <span class="badge">{{ logged_member.number_of_followings }}</span></span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12" style="margin-bottom: 10px;">
-                        <b>{% trans 'Name' %}:</b> {{ logged_member.instagram_user_full_name }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12"  style="margin-bottom: 10px;">
-                        <b>{% trans 'Bio' %}:</b> {{ logged_member.instagram_user_bio }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12"  style="margin-bottom: 10px;"><b>{% trans 'Web Site' %}:</b> <a href="{{ logged_member.instagram_user_website_URL }}">{{ logged_member.instagram_user_website_URL }}</a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12 col-lg-6">
-                        <form action="{% url 'instagramuser:alltimebest' p_username=logged_member.instagram_user_name p_mode='view' %}" method="get">
-                            <button type="submit"
-                                    id="my-best-photos"
-                                    data-loading-text="<i class='fa fa-diamond fa-3x'></i><br>{% trans 'My best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                                    class="btn btn-sm btn-default btn-block squaresensor-button-with-margin"
-                                    onclick="bootstrap_loading_button('my-best-photos');"
-                                    >
-                                <i class="fa fa-diamond fa-3x"></i><br>
-                                {% trans 'My best photos' %}
-                            </button>
-                        </form>
-                    </div>
-                    <div class="col-xs-12 col-lg-6">
-                        <form action="{% url 'instagramuser:any_user_recent_best' p_instagram_user_name=logged_member.instagram_user_name %}" method="get">
-                            <button type="submit"
-                                    id="my-recent-best"
-                                    data-loading-text="<i class='fa fa-calendar fa-3x'></i><br>{% trans 'My recent best loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                                    onclick="bootstrap_loading_button('my-recent-best');"
-                                    class="btn btn-sm btn-default btn-block squaresensor-button-with-margin">
-                                <i class="fa fa-calendar fa-3x"></i><br>
-                                {% trans 'My recent best' %}
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-        </div>
+    </div>
 
 
 
-        <div class="col-xs-12 col-sm-12 text-center">
-            <h4 style="padding-top: 40px;">{% trans 'Squaresensor Activities' %}</h4>
-        </div>
-        <div class="col-xs-12 col-sm-6 text-center">
-            <form action="{% url 'smartfeed:index' %}" method="get">
-                <button type="submit"
-                        id="view-smartfeed"
-                        data-loading-text="<i class='fa fa-heartbeat fa-3x'></i><br>{% trans 'SmartFeed loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                        onclick="bootstrap_loading_button('view-smartfeed');"
-                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                    <i class="fa fa-heartbeat fa-3x"></i><br>
-                    {% trans 'View SmartFeed' %}
-                </button>
-            </form>
-        </div>
-        <div class="col-xs-12 col-sm-6 text-center">
-            <form action="{% url 'instagramuser:new_friends' %}" method="get">
-                <button type="submit"
-                        id="find-new-friends"
-                        data-loading-text="<i class='fa fa-search fa-3x'></i><br>{% trans 'New Friends loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                        onclick="bootstrap_loading_button('find-new-friends');"
-                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                    <i class="fa fa-search fa-3x"></i><br>
-                    {% trans 'Find New Friends' %}
-                </button>
-            </form>
-        </div>
-        <div class="col-xs-12 col-sm-6 text-center">
-            <form action="{% url 'instagramuser:index_inspiring_artists' %}" method="get">
-                <button type="submit"
-                        id="find-inspiring-artists"
-                        data-loading-text="<i class='fa fa-lightbulb-o fa-3x'></i><br>{% trans 'Inspiring Artists loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                        onclick="bootstrap_loading_button('find-inspiring-artists');"
-                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                    <i class="fa fa-lightbulb-o fa-3x"></i><br>
-                    {% trans 'Find Inspiring Artists' %}
-                </button>
-            </form>
-        </div>
+    <div class="col-xs-12 col-sm-12 text-center">
+        <h4 style="padding-top: 40px;">{% trans 'Squaresensor Activities' %}</h4>
+    </div>
+    <div class="col-xs-12 col-sm-6 text-center">
+        <form action="{% url 'smartfeed:index' %}" method="get">
+            <button type="submit"
+                    id="view-smartfeed"
+                    data-loading-text="<i class='fa fa-heartbeat fa-3x'></i><br>{% trans 'SmartFeed loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="bootstrap_loading_button('view-smartfeed');"
+                    class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                <i class="fa fa-heartbeat fa-3x"></i><br>
+                {% trans 'View SmartFeed' %}
+            </button>
+        </form>
+    </div>
+    <div class="col-xs-12 col-sm-6 text-center">
+        <form action="{% url 'instagramuser:new_friends' %}" method="get">
+            <button type="submit"
+                    id="find-new-friends"
+                    data-loading-text="<i class='fa fa-search fa-3x'></i><br>{% trans 'New Friends loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="bootstrap_loading_button('find-new-friends');"
+                    class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                <i class="fa fa-search fa-3x"></i><br>
+                {% trans 'Find New Friends' %}
+            </button>
+        </form>
+    </div>
+    <div class="col-xs-12 col-sm-6 text-center">
+        <form action="{% url 'instagramuser:index_inspiring_artists' %}" method="get">
+            <button type="submit"
+                    id="find-inspiring-artists"
+                    data-loading-text="<i class='fa fa-lightbulb-o fa-3x'></i><br>{% trans 'Inspiring Artists loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="bootstrap_loading_button('find-inspiring-artists');"
+                    class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                <i class="fa fa-lightbulb-o fa-3x"></i><br>
+                {% trans 'Find Inspiring Artists' %}
+            </button>
+        </form>
+    </div>
 
-        <div class="col-xs-12 col-sm-6 text-center">
-            <form action="{% url 'members:commenter_index' %}" method="get">
-                <button type="submit"
-                        id="commenter_index"
-                        data-loading-text="<i class='fa fa-reply fa-3x'></i><br>{% trans 'Responder loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                        onclick="bootstrap_loading_button('commenter_index');"
-                        class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
-                    <i class="fa fa-reply fa-3x"></i><br>
-                    {% trans 'Responder' %}
-                </button>
-            </form>
+    <div class="col-xs-12 col-sm-6 text-center">
+        <form action="{% url 'members:commenter_index' %}" method="get">
+            <button type="submit"
+                    id="commenter_index"
+                    data-loading-text="<i class='fa fa-reply fa-3x'></i><br>{% trans 'Responder loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="bootstrap_loading_button('commenter_index');"
+                    class="btn btn-md btn-success btn-block squaresensor-button-with-margin">
+                <i class="fa fa-reply fa-3x"></i><br>
+                {% trans 'Responder' %}
+            </button>
+        </form>
 
-        </div>
+    </div>
 
 
 
-        <div class="col-xs-12 text-center">
-            <h4 style="padding-top: 40px;">{% trans 'My Account' %}</h4>
-        </div>
-        <div class="col-xs-12 col-sm-4 text-center">
-            <form action="{% url 'members:my_account' %}" method="get">
-                <button type="submit"
-                        id="configure-my-account"
-                        data-loading-text="<i class='fa fa-cog fa-spin fa-3x'></i><br>{% trans 'Configuration loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                        onclick="bootstrap_loading_button('configure-my-account');"
-                        class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
-                    <i class="fa fa-cog fa-3x"></i><br>
-                    {% trans 'Configure My Account' %}
-                </button>
-            </form>
-        </div>
-        <div class="col-xs-12 col-sm-4 text-center">
-            <form action="{% url 'smartfeed:configure' %}" method="get">
-                <button type="submit"
-                        id="configure-smartfeed"
-                        data-loading-text="<i class='fa fa-adjust fa-3x'></i><br>{% trans 'SmartFeed Configuration loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                        onclick="bootstrap_loading_button('configure-smartfeed');"
-                        class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
-                    <i class="fa fa-adjust fa-3x"></i><br>
-                    {% trans 'Configure SmartFeed' %}
-                </button>
-            </form>
-        </div>
-        <div class="col-xs-12 col-sm-4 text-center">
-            <form action="{% url 'members:new_friends_response' %}" method="get">
-                <button type="submit"
-                        id="new_friends_response"
-                        data-loading-text="<i class='fa fa-users fa-3x'></i><br>{% trans 'Response loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                        onclick="bootstrap_loading_button('new_friends_response');"
-                        class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
-                    <i class="fa fa-users fa-3x"></i><br>
-                    {% trans 'New Friends Response' %}
-                </button>
-            </form>
-        </div>
+    <div class="col-xs-12 text-center">
+        <h4 style="padding-top: 40px;">{% trans 'My Account' %}</h4>
+    </div>
+    <div class="col-xs-12 col-sm-4 text-center">
+        <form action="{% url 'members:my_account' %}" method="get">
+            <button type="submit"
+                    id="configure-my-account"
+                    data-loading-text="<i class='fa fa-cog fa-spin fa-3x'></i><br>{% trans 'Configuration loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="bootstrap_loading_button('configure-my-account');"
+                    class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
+                <i class="fa fa-cog fa-3x"></i><br>
+                {% trans 'Configure My Account' %}
+            </button>
+        </form>
+    </div>
+    <div class="col-xs-12 col-sm-4 text-center">
+        <form action="{% url 'smartfeed:configure' %}" method="get">
+            <button type="submit"
+                    id="configure-smartfeed"
+                    data-loading-text="<i class='fa fa-adjust fa-3x'></i><br>{% trans 'SmartFeed Configuration loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="bootstrap_loading_button('configure-smartfeed');"
+                    class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
+                <i class="fa fa-adjust fa-3x"></i><br>
+                {% trans 'Configure SmartFeed' %}
+            </button>
+        </form>
+    </div>
+    <div class="col-xs-12 col-sm-4 text-center">
+        <form action="{% url 'members:new_friends_response' %}" method="get">
+            <button type="submit"
+                    id="new_friends_response"
+                    data-loading-text="<i class='fa fa-users fa-3x'></i><br>{% trans 'Response loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                    onclick="bootstrap_loading_button('new_friends_response');"
+                    class="btn btn-md btn-primary btn-block squaresensor-button-with-margin">
+                <i class="fa fa-users fa-3x"></i><br>
+                {% trans 'New Friends Response' %}
+            </button>
+        </form>
+    </div>
 
 
     {% if show_describe_button %}
 
-            <div class="col-xs-12 text-center">
+        <div class="col-xs-12 text-center">
 
-                <h4 style="padding-top: 40px;">{% trans 'Admin' %}</h4>
-            </div>
-            <div class="col-xs-12 col-sm-4 text-center">
-                <form action="{% url 'instagramuser:addinspiring' %}" method="get">
-                    <button type="submit"
-                            id="add-inspiring-user"
-                            data-loading-text="{% trans 'Adding Inspiring Artist...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                            onclick="bootstrap_loading_button('add-inspiring-user');"
-                            class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
-                        {% trans 'Add Inspiring Artist' %}
-                    </button>
-                </form>
-            </div>
-            <div class="col-xs-12 col-sm-4 text-center">
-                <form action="{% url 'instagramuser:index_all_inspiring_artists' %}" method="get">
-                    <button type="submit"
-                            id="index_all_inspiring_artists"
-                            data-loading-text="{% trans 'Inspiring Artists loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                            onclick="bootstrap_loading_button('index_all_inspiring_artists');"
-                            class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
-                        {% trans 'All Inspiring Artists' %}
-                    </button>
-                </form>
-            </div>
-            <div class="col-xs-12 col-sm-4 text-center">
-                <form action="{% url 'instagramuser:new_friends_processing' %}" method="get">
-                    <button type="submit"
-                            id="new_friends_processing"
-                            data-loading-text="{% trans 'New Friends Processing...' %} <i class='fa fa-spinner fa-pulse'></i>"
-                            onclick="bootstrap_loading_button('new_friends_processing');"
-                            class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
-                        {% trans 'New Friends Processing' %}
-                    </button>
-                </form>
-            </div>
+            <h4 style="padding-top: 40px;">{% trans 'Admin' %}</h4>
+        </div>
+        <div class="col-xs-12 col-sm-4 text-center">
+            <form action="{% url 'instagramuser:addinspiring' %}" method="get">
+                <button type="submit"
+                        id="add-inspiring-user"
+                        data-loading-text="{% trans 'Adding Inspiring Artist...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('add-inspiring-user');"
+                        class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                    {% trans 'Add Inspiring Artist' %}
+                </button>
+            </form>
+        </div>
+        <div class="col-xs-12 col-sm-4 text-center">
+            <form action="{% url 'instagramuser:index_all_inspiring_artists' %}" method="get">
+                <button type="submit"
+                        id="index_all_inspiring_artists"
+                        data-loading-text="{% trans 'Inspiring Artists loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('index_all_inspiring_artists');"
+                        class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                    {% trans 'All Inspiring Artists' %}
+                </button>
+            </form>
+        </div>
+        <div class="col-xs-12 col-sm-4 text-center">
+            <form action="{% url 'instagramuser:new_friends_processing' %}" method="get">
+                <button type="submit"
+                        id="new_friends_processing"
+                        data-loading-text="{% trans 'New Friends Processing...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('new_friends_processing');"
+                        class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                    {% trans 'New Friends Processing' %}
+                </button>
+            </form>
+        </div>
 
     {% endif %}
 {% endblock content %}
@@ -257,4 +270,20 @@
     {{ block.super }}
 {% endblock aside %}
 
+{% block footer %}
+    <hr>
 
+        <ul class="list-unstyled">
+            <li class="lead">{% trans 'ABOUT' %}</li>
+            <li>{% trans 'Squaresensor is the new experience for people who use Instagram professionaly.' %}</li>
+            <li>{% trans 'Contact Squaresensor on squaresensor@gmail.com' %}</li>
+            <br>
+            <li><div
+                    class="fb-like"
+                    data-share="true"
+                    data-width="450"
+                    data-show-faces="true">
+            </div></li>
+        </ul>
+
+{% endblock footer %}

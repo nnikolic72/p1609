@@ -287,3 +287,23 @@ class Membership(models.Model):
         return super(Membership, self).save(*args, **kwargs)
 
 
+class MembersMessage(models.Model):
+    """
+    Class to contain messages to be displayed on the dashboard
+    """
+
+    title = models.CharField(max_length=100, null=False, blank=False,
+
+                                       verbose_name=_('Message Title'),
+                                       help_text=_('Message Title')
+    )
+
+    text =  models.CharField(max_length=500, null=False, blank=False,
+
+                                       verbose_name=_('Message Text'),
+                                       help_text=_('Message Text')
+    )
+    show = models.BooleanField(default=True, null=False, blank=False,
+                                            verbose_name=_('Show'),
+                                            help_text=_('Do we show message?')
+    )

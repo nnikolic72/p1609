@@ -1,9 +1,10 @@
 {% load i18n %}
 {% load static %}
 
-<div class="col-xs-12 col-sm-6">
-    <div class="container-fluid squaresensor-image-panel-body">
-        <div class="row">
+<div class="col-xs-12 col-sm-6" style="margin-bottom: 20px;">
+
+    <div class="row">
+        <div class="col-xs-12">
             <div align="center" style="margin-top: 10px; margin-bottom: 10px;">
                 {% if photo.instagram_standard_resolution_URL %}
                     <img class="img-responsive img-thumbnail" src="{{ photo.instagram_standard_resolution_URL }}"
@@ -11,40 +12,41 @@
                 {% endif %}
             </div>
         </div>
+    </div>
 
-        <div class="row">
+    <div class="row">
 
-            <div class="col-xs-4 text-left">
-                <button id="like_button_{{ photo.instagram_photo_id }}"
-                        onclick="like_instagram_picture('{{ photo.instagram_photo_id }}', '{% get_static_prefix %}');"
-                        class="btn btn-xs squaresensor-image-button btn-block
+        <div class="col-xs-4 text-left">
+            <button id="like_button_{{ photo.instagram_photo_id }}"
+                    onclick="like_instagram_picture('{{ photo.instagram_photo_id }}', '{% get_static_prefix %}');"
+                    class="btn btn-xs squaresensor-image-button btn-block
                     {%  if photo.instagram_photo_id in liked_photos %}
                         btn-danger
                     {% else %}
                         btn-default
                     {% endif %}
                 ">
-                    <small><span class="glyphicon glyphicon-heart-empty
+                <small><span class="glyphicon glyphicon-heart-empty
                     "></span>
-                        <span class="badge" id="instagram_likes_text_{{ photo.instagram_photo_id }}">{{ photo.instagram_likes }}</span></small>
+                    <span class="badge" id="instagram_likes_text_{{ photo.instagram_photo_id }}">{{ photo.instagram_likes }}</span></small>
+            </button>
+        </div>
+        <div class="col-xs-4 text-center">
+            {%  if show_describe_button %}
+                <button class="btn btn-xs btn-default squaresensor-image-button btn-block" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
+                    <small><span class="glyphicon glyphicon-list-alt"></span>
+                    </small>
                 </button>
-            </div>
-            <div class="col-xs-4 text-center">
-                {%  if show_describe_button %}
-                    <button class="btn btn-xs btn-default squaresensor-image-button btn-block" data-toggle="modal" data-target="#myModal_{{ photo.id }}">
-                        <small><span class="glyphicon glyphicon-list-alt"></span>
-                        </small>
-                    </button>
-                {% endif %}
-            </div>
-            <div class="col-xs-4 text-right">
-                <button class="btn btn-xs btn-default squaresensor-image-button btn-block" onclick="load_instagram_comments('{{ photo.instagram_photo_id }}');">
-                    <small><span class="glyphicon glyphicon-comment"></span>
-                        <span class="badge" id="instagram_comments_text_{{ photo.instagram_photo_id }}">{{ photo.instagram_comments }}</span></small>
-                </button>
-            </div>
+            {% endif %}
+        </div>
+        <div class="col-xs-4 text-right">
+            <button class="btn btn-xs btn-default squaresensor-image-button btn-block" onclick="load_instagram_comments('{{ photo.instagram_photo_id }}');">
+                <small><span class="glyphicon glyphicon-comment"></span>
+                    <span class="badge" id="instagram_comments_text_{{ photo.instagram_photo_id }}">{{ photo.instagram_comments }}</span></small>
+            </button>
         </div>
     </div>
+
 </div>
 
 
