@@ -722,7 +722,7 @@ class FindFriendsView(TemplateView):
             if follower_category in l_followers_attributes:
                 l_new_friends_list.extend([follower_category[u'instagram_user']])
 
-        l_followers_set_filtered = Follower.objects.filter(id__in=l_new_friends_list)
+        l_followers_set_filtered = Follower.objects.filter(id__in=l_new_friends_list).order_by('-interaction_count')
 
         if l_new_friends_remaining > 10:
             l_followers_set_filtered = l_followers_set_filtered[:10] # Get a number of new friends form membership level
