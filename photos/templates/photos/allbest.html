@@ -8,6 +8,23 @@
 
 {% block css %}
     {{ block.super }}
+    <meta property="og:url"                content="{{ request.path }}" />
+    <meta property="og:type"               content="article" />
+    <meta property="og:title"              content="@{{ photo_owner.instagram_user_name }} - My All Time Instagram Best" />
+    <meta property="og:description"        content="Check out my best Instagram photos on Squaresensor!" />
+    <meta property="og:site_name"          content="Squaresensor"
+    <meta property="og:image"              content="
+    {% if photos %}
+        {% if photos.0 %}
+            {{ photos.0.instagram_thumbnail_URL }}
+        {% endif %}
+    {% else %}
+        {% if photo_owner %}
+           {{ photo_owner.instagram_profile_picture_URL }}
+        {% endif %}
+    {% endif %}
+    " />
+
     <link href="{{ STATIC_URL }}css/photos.allbest.css" rel="stylesheet">
 {% endblock css %}
 
@@ -54,13 +71,13 @@
             <div class="row" style="margin-top: 20px;">
                 <div class="col-xs-12 col-sm-4 col-sm-offset-4 text-center">
                     {% if show_describe_button %}
-                    <form class="form" method="get" action="{% url 'instagramuser:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}">
-                        <button type="submit" class="btn btn-default btn-block"
-                                id="alltimebest-refresh"
-                                onclick="display_ajax_img('alltimebest-refresh', '{{ STATIC_URL }}')"
-                                >
-                            {% trans 'Refresh' %}</button>
-                    </form>
+                        <form class="form" method="get" action="{% url 'instagramuser:alltimebest' p_username=photo_owner.instagram_user_name p_mode='refresh' %}">
+                            <button type="submit" class="btn btn-default btn-block"
+                                    id="alltimebest-refresh"
+                                    onclick="display_ajax_img('alltimebest-refresh', '{{ STATIC_URL }}')"
+                                    >
+                                {% trans 'Refresh' %}</button>
+                        </form>
                     {% endif %}
                 </div>
             </div>
