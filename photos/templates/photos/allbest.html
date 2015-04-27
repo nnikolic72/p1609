@@ -8,9 +8,16 @@
 
 {% block css %}
     {{ block.super }}
+
+    <meta property="og:title" content="@{{ photo_owner.instagram_user_name }} Instagram Best"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="{{ og_url }}"/>
+    <meta property="og:image" content="{{photos.0.instagram_thumbnail_URL}}"/>
+    <meta property="og:description" content="See my featured best Instagram photos on Squaresensor! "/>
+
     <script type="text/javascript">var switchTo5x=true;</script>
     <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-    <script type="text/javascript">stLight.options({publisher: "4db241f4-e61c-437d-b58c-c4645c7bfb76", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+    <script type="text/javascript">stLight.options({publisher: "4db241f4-e61c-437d-b58c-c4645c7bfb76", doNotHash: false, doNotCopy: false, hashAddressBar: false, shorten:false});</script>
 
 
     <link href="{{ STATIC_URL }}css/photos.allbest.css" rel="stylesheet">
@@ -24,6 +31,16 @@
 {% block content %}
     {{ block.super }}
     <div class="container-fluid">
+
+        <div class="col-xs-12 well well-lg text-center" style="margin-bottom: 20px; margin-top: 20px;">
+            <h4>{% trans 'Share your all time best with your friends!' %}</h4>
+            <p>{% trans 'Your friends will need to have Instagram account to see this page.' %}</p>
+            <br>
+
+            <span class='st_sharethis_large' displayText='ShareThis'></span>
+            <span class='st_email_large' displayText='Email'></span>
+        </div>
+
         <div class="row">
             <div class="col-xs-12">
                 {% if logged_member.help_photos_allbest == True %}
@@ -58,18 +75,14 @@
             </div>
 
 
-                <div class="col-xs-12 well well-lg text-center" style="margin-bottom: 20px; margin-top: 20px;">
-                    <h4>{% trans 'Share your all time best with your friends!' %}</h4>
-                    <p>{% trans 'Your friends will need to have Instagram account to see this page.' %}</p>
-                    <br>
+            <div class="col-xs-12 well well-lg text-center" style="margin-bottom: 20px; margin-top: 20px;">
+                <h4>{% trans 'Share your all time best with your friends!' %}</h4>
+                <p>{% trans 'Your friends will need to have Instagram account to see this page.' %}</p>
+                <br>
 
-                    <span class='st_sharethis_large' displayText='ShareThis'></span>
-                    <span class='st_facebook_large' displayText='Facebook'></span>
-                    <span class='st_twitter_large' displayText='Tweet'></span>
-                    <span class='st_linkedin_large' displayText='LinkedIn'></span>
-                    <span class='st_pinterest_large' displayText='Pinterest'></span>
-                    <span class='st_email_large' displayText='Email'></span>
-                </div>
+                <span class='st_sharethis_large' displayText='ShareThis'></span>
+                <span class='st_email_large' displayText='Email'></span>
+            </div>
 
 
 
