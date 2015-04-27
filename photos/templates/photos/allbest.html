@@ -13,7 +13,7 @@
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="{{ og_url }}"/>
     <meta property="og:image" content="{{photos.0.instagram_thumbnail_URL}}"/>
-    <meta property="og:description" content="See my featured best Instagram photos on Squaresensor! "/>
+    <meta property="og:description" content="See my featured best Instagram photos on Squaresensor! Make sure you open your Squaresensor account before, and share your own best!"/>
 
     <script type="text/javascript">var switchTo5x=true;</script>
     <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
@@ -31,15 +31,16 @@
 {% block content %}
     {{ block.super }}
     <div class="container-fluid">
+        {% if logged_member.instagram_user_name == photo_owner.instagram_user_name %}
+            <div class="col-xs-12 well well-lg text-center" style="margin-bottom: 20px; margin-top: 20px;">
+                <h4>{% trans 'Share your all time best with your friends!' %}</h4>
+                <p>{% trans 'Your friends will need to have Squaresensor account to see this page.' %}</p>
+                <br>
 
-        <div class="col-xs-12 well well-lg text-center" style="margin-bottom: 20px; margin-top: 20px;">
-            <h4>{% trans 'Share your all time best with your friends!' %}</h4>
-            <p>{% trans 'Your friends will need to have Instagram account to see this page.' %}</p>
-            <br>
-
-            <span class='st_sharethis_large' displayText='ShareThis'></span>
-            <span class='st_email_large' displayText='Email'></span>
-        </div>
+                <span class='st_sharethis_large' displayText='ShareThis'></span>
+                <span class='st_email_large' displayText='Email'></span>
+            </div>
+        {% endif %}
 
         <div class="row">
             <div class="col-xs-12">
@@ -74,15 +75,16 @@
                 {% endif %}
             </div>
 
+            {% if logged_member.instagram_user_name == photo_owner.instagram_user_name %}
+                <div class="col-xs-12 well well-lg text-center" style="margin-bottom: 20px; margin-top: 20px;">
+                    <h4>{% trans 'Share your all time best with your friends!' %}</h4>
+                    <p>{% trans 'Your friends will need to have Instagram account to see this page.' %}</p>
+                    <br>
 
-            <div class="col-xs-12 well well-lg text-center" style="margin-bottom: 20px; margin-top: 20px;">
-                <h4>{% trans 'Share your all time best with your friends!' %}</h4>
-                <p>{% trans 'Your friends will need to have Instagram account to see this page.' %}</p>
-                <br>
-
-                <span class='st_sharethis_large' displayText='ShareThis'></span>
-                <span class='st_email_large' displayText='Email'></span>
-            </div>
+                    <span class='st_sharethis_large' displayText='ShareThis'></span>
+                    <span class='st_email_large' displayText='Email'></span>
+                </div>
+            {% endif %}
 
 
 
