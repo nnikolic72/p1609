@@ -32,7 +32,7 @@ from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, upda
     BestPhotos, InstagramComments
 from .forms import MembershipForm
 
-from .models import Member, Membership, Invoice, PaymentLog
+from .models import Member, Membership, Invoice, PaymentLog, MembersMessage
 from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWERS, COMMENTER_NO_OF_PICS_MEMBER_LIMIT, \
     COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT, IS_PAYMENT_LIVE, PAYPAL_RECEIVER_EMAIL, ROOT_SITE_URL, \
     SQUARESENSOR_YEARLY_MEMBERSHIP, SQUARESENSOR_MONTHLY_MEMBERSHIP, TEST_APP, PAYPAL_TEST, \
@@ -154,6 +154,8 @@ class MemberDashboardView(TemplateView):
         except ObjectDoesNotExist:
             logged_member = None
 
+        site_messages = MembersMessage.objects.all()
+
         l_categories = Category.objects.all()
         l_attributes = Attribute.objects.all()
         # Limit calculation --------------------------------------------------------------
@@ -172,6 +174,7 @@ class MemberDashboardView(TemplateView):
                       dict(photo_owner=logged_member,
                            logged_member=logged_member,
                            profile_photo_url=profile_photo_url,
+                           site_messages=site_messages,
 
                            is_monthly_member=is_monthly_member,
                            is_yearly_member=is_yearly_member,
@@ -304,9 +307,9 @@ class MemberContactFormView(TemplateView):
         except:
             raise HttpResponseNotFound
 
-        contact_form = ContactForm(request=request)
-        contact_form.from_email = 'squaresensor@gmail.com'
-        contact_form.recipient_list = 'squaresensor@gmail.com'
+        #contact_form = ContactForm(request=request)
+        #contact_form.from_email = 'squaresensor@gmail.com'
+        #contact_form.recipient_list = 'squaresensor@gmail.com'
 
         # END Common for all members views ===============================================
 
@@ -330,7 +333,7 @@ class MemberContactFormView(TemplateView):
                       dict(
                           #logged_members_categories=l_logged_members_categories,
                           #logged_members_attributes=l_logged_members_categories,
-                          form=contact_form,
+                          #form=contact_form,
 
                           is_monthly_member=is_monthly_member,
                           is_yearly_member=is_yearly_member,
@@ -377,9 +380,9 @@ class MemberCommentSentView(TemplateView):
         except:
             raise HttpResponseNotFound
 
-        contact_form = ContactForm(request=request)
-        contact_form.from_email = 'squaresensor@gmail.com'
-        contact_form.recipient_list = 'squaresensor@gmail.com'
+        #contact_form = ContactForm(request=request)
+        #contact_form.from_email = 'squaresensor@gmail.com'
+        #contact_form.recipient_list = 'squaresensor@gmail.com'
 
         # END Common for all members views ===============================================
 
@@ -401,7 +404,7 @@ class MemberCommentSentView(TemplateView):
                       dict(
                           #logged_members_categories=l_logged_members_categories,
                           #logged_members_attributes=l_logged_members_categories,
-                          form=contact_form,
+                          #form=contact_form,
 
                           is_monthly_member=is_monthly_member,
                           is_yearly_member=is_yearly_member,

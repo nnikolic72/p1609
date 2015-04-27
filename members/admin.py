@@ -9,7 +9,7 @@ from squaresensor.settings.base import (INSTAGRAM_CLIENT_ID, INSTAGRAM_CLIENT_SE
 from .models import (
     Member,
     Membership,
-    Invoice, PaymentLog)
+    Invoice, PaymentLog, MembersMessage)
 
 
 class CategoryInlineAdmin(admin.TabularInline):
@@ -319,7 +319,20 @@ class PaymentLogAdmin(admin.ModelAdmin):
         ]
 
 
+class MembersMessageAdmin(admin.ModelAdmin):
+    list_display = ('title', 'text',
+                    'show'
+    )
+    fieldsets = [
+        ('General Information', {'fields': ['title', 'text', 'show'
+                                            ]
+        }
+        ),
+        ]
+
+
 admin.site.register(Member, MemberAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(PaymentLog, PaymentLogAdmin)
 admin.site.register(Membership, MembershipAdmin)
+admin.site.register(MembersMessage, MembersMessageAdmin)
