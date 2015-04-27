@@ -160,23 +160,12 @@
     </div>
 
     <div class="container-fluid">
-        <div class="col-xs-12">
-            {% block footer %}
-                <hr>
-                <div class="panel">
-                    <ul class="list-unstyled">
-                        <li class="lead">{% trans 'ABOUT' %}</li>
-                        <li>{% trans 'Squaresensor is the new experience for people who use Instagram professionaly.' %}</li>
-                        <li>{% trans 'Contact Squaresensor on squaresensor@gmail.com' %}</li>
-                        <li><div
-                                class="fb-like"
-                                data-share="true"
-                                data-width="450"
-                                data-show-faces="true">
-                        </div></li>
-                    </ul>
+        <div class="row">
+            <div class="col-xs-12">
+                <div style="padding: 40px;">
+                {% block footer %}{% endblock footer %}
                 </div>
-            {% endblock footer %}
+            </div>
         </div>
     </div>
 

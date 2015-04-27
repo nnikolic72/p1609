@@ -269,3 +269,20 @@
 {% block aside %}
     {{ block.super }}
 {% endblock aside %}
+
+{% block footer %}
+    <hr>
+
+        <ul class="list-unstyled">
+            <li class="lead">{% trans 'ABOUT' %}</li>
+            <li>{% trans 'Squaresensor is the new experience for people who use Instagram professionaly.' %}</li>
+            <li>{% trans 'Contact Squaresensor on squaresensor@gmail.com' %}</li>
+            <li><div
+                    class="fb-like"
+                    data-share="true"
+                    data-width="450"
+                    data-show-faces="true">
+            </div></li>
+        </ul>
+
+{% endblock footer %}
