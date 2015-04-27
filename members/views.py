@@ -151,9 +151,9 @@ class MemberDashboardView(TemplateView):
                 logged_member.help_first_time_wizard = False
                 logged_member.save()
 
-            if logged_member.help_first_time_wizard == True and logged_member.help_first_time_wizard_cur_step < 4:
+            #if logged_member.help_first_time_wizard == True and logged_member.help_first_time_wizard_cur_step < 4:
                 # Show the tutorial wizard
-                return HttpResponseRedirect(reverse("members:tutorial"))
+            #    return HttpResponseRedirect(reverse("members:tutorial"))
 
 
 
