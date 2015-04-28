@@ -110,6 +110,7 @@
         {% else %}
             <div class="alert alert-info" role="alert">
                 {% trans 'There are no new friends available in Squaresensor at the moment!' %}
+                {% trans 'If you are a first-time user it is highly recommended to complete' %} <a class="btn btn-success" href="{% url 'members:tutorial' %}">{% trans 'First-Time User Wizard' %}</a>
             </div>
         {% endif %}
         <div class="row">
