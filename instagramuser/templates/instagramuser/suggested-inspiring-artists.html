@@ -49,7 +49,7 @@
 
                         <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.0.instagram_user_name %}">
                             <img src="{{ inspiring_user.0.instagram_profile_picture_URL }}" class="img-responsive img-circle center-block small_profile_img squaresensor-image-circular"><br>
-                            <h4 class="text-center">@{{ inspiring_user.0.instagram_user_name }}<br><small>{{ inspiring_user.2 }}%</small></h4></a>
+                            <h4 class="text-center">@{{ inspiring_user.0.instagram_user_name }}<br><small>{{ inspiring_user.2|floatformat:0 }}%</small></h4></a>
 
                     </div>
                     <div class="col-xs-12 col-sm-3">
