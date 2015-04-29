@@ -22,6 +22,7 @@ from photos.models import Photo
 
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, InstagramComments, MyLikes, BestPhotos
 from dajaxice.decorators import dajaxice_register
+from photos.tasks import like_instagram_media_task, send_instagram_comment_task
 
 from squaresensor.settings.base import INSTAGRAM_COMMENTS_ALLOWED, TEST_APP, INSTAGRAM_LIKES_PER_HOUR_LIMIT, \
     INSTAGRAM_COMMENTS_PER_HOUR_LIMIT, TEST_APP_LIKE_PER_PERIOD_LIMIT, TEST_APP_COMMENT_PER_PERIOD_LIMIT, \
@@ -395,7 +396,8 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
     except:
         raise HttpResponseNotFound
 
-    tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
+    #tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
+    tokens = logged_member.get_member_token(req)
     ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
     ig_session.init_instagram_API()
 
@@ -439,13 +441,19 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
         else:
             l_instagram_comments_per_hour_limit = INSTAGRAM_COMMENTS_PER_HOUR_LIMIT
 
-        l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
+
         if logged_member.comments_in_last_minute < l_instagram_comments_per_hour_limit:
             if INSTAGRAM_COMMENTS_ALLOWED == '1':
-                l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+                #l_result = l_instagram_comments.send_instagram_comment(p_comment_text=comment_text)
+                send_instagram_comment_task.delay(
+                    p_photo_id=p_photo_id,
+                    p_comment_text=comment_text,
+                    p_token=tokens['access_token']
+                )
                 l_comments_in_last_minute += 1
                 logged_member.comments_in_last_minute = l_comments_in_last_minute
                 logged_member.save()
+                l_result = 'ok'
             else:
                 l_comments_in_last_minute += 1
                 logged_member.comments_in_last_minute = l_comments_in_last_minute
@@ -509,8 +517,6 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
                     l_interactions_remaining = \
                         FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS - logged_member.new_friends_in_last_day
 
-        l_comments_count = l_instagram_comments.get_comments_count()
-
     # Limit calculation --------------------------------------------------------------
     x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
 
@@ -521,6 +527,8 @@ def send_instagram_comment(req, form, p_photo_id, p_inline, p_new_friends_intera
         x_limit_pct = 100
     # END Limit calculation ----------------------------------------------------------
     # END Common for all members views ===============================================
+    l_instagram_comments = InstagramComments(p_photo_id=p_photo_id, p_instagram_session=ig_session)
+    l_comments_count = l_instagram_comments.get_comments_count()
 
     return json.dumps(
         dict(p_photo_id=p_photo_id,
@@ -562,7 +570,8 @@ def like_instagram_picture(req, p_photo_id, current_likes_cnt):
     except:
         raise HttpResponseNotFound
 
-    tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
+    #tokens = UserSocialAuth.get_social_auth_for_user(req.user).get().tokens
+    tokens = logged_member.get_member_token(req)
     ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
     ig_session.init_instagram_API()
 
@@ -573,9 +582,8 @@ def like_instagram_picture(req, p_photo_id, current_likes_cnt):
 
     # END Common for all members views ===============================================
     # sleep(0.5)
-    x, no_of_likes = l_my_likes.has_user_liked_media()
+    l_has_already_liked_media, no_of_likes = l_my_likes.has_user_liked_media()
 
-    # Todo check likes per minute
     l_likes_in_last_minute = logged_member.likes_in_last_minute
     l_likes_in_last_minute_interval_start = logged_member.likes_in_last_minute_interval_start
     l_timedelta = timedelta(hours=+INSTAGRAM_LIMIT_PERIOD_RESET_TIME_HOURS)
@@ -605,7 +613,16 @@ def like_instagram_picture(req, p_photo_id, current_likes_cnt):
         l_instagram_likes_per_hour_limit = INSTAGRAM_LIKES_PER_HOUR_LIMIT
 
     if logged_member.likes_in_last_minute < l_instagram_likes_per_hour_limit:
-        result = l_my_likes.like_instagram_media()
+        like_instagram_media_task.delay(
+            p_instagram_user_name=logged_member.instagram_user_name,
+            p_photo_id=p_photo_id,
+            p_token=tokens['access_token']
+        )
+        if l_has_already_liked_media == True:
+            result = 'unlike'
+        if l_has_already_liked_media == False:
+            result = 'like'
+        #result = l_my_likes.like_instagram_media()
     else:
         result = 'limit'
 
