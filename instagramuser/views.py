@@ -1026,11 +1026,14 @@ class SuggestedInspiringUserIndexAllView(TemplateView):
 
         l_inspiring_users_list =  sorted(l_inspiring_users_list,key=lambda x: x[1], reverse=True)
 
+        l_len = len(l_inspiring_users_list)
+        if l_len > 30:
+            l_len = 30
 
         return render(request,
                       self.template_name,
                       dict(
-                          inspiring_users=l_inspiring_users_list[:30],
+                          inspiring_users=l_inspiring_users_list[:l_len],
 
 
 
