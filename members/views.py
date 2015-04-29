@@ -28,6 +28,7 @@ from social_auth.db.django_models import UserSocialAuth
 from attributes.models import Attribute
 from categories.models import Category
 from instagramuser.models import Follower, NewFriendContactedByMember
+from instagramuser.tasks import process_instagram_user, process_squaresensor_member
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, update_member_limits_f, BestFollowers, \
     BestPhotos, InstagramComments
 from .forms import MembershipForm
@@ -94,17 +95,17 @@ class MemberWelcomeView(TemplateView):
         return render(request,
                       self.template_name,
                       dict(
-                           logged_member=logged_member,
+                          logged_member=logged_member,
 
-                           is_monthly_member=is_monthly_member,
-                           is_yearly_member=is_yearly_member,
-                           x_ratelimit_remaining=x_ratelimit_remaining,
-                           x_ratelimit=x_ratelimit,
-                           x_limit_pct=x_limit_pct,
-                           categories=l_categories,
-                           attributes=l_attributes,
-                           show_describe_button=show_describe_button,
-                      )
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          show_describe_button=show_describe_button,
+                          )
         )
 
 
@@ -115,9 +116,8 @@ class MemberDashboardView(TemplateView):
         logged_member = None
         profile_photo_url = None
 
-        tokens = UserSocialAuth.get_social_auth_for_user(request.user).get().tokens
-        ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
-
+        #tokens = UserSocialAuth.get_social_auth_for_user(request.user).get().tokens
+        #ig_session = InstagramSession(p_is_admin=False, p_token=tokens['access_token'])
 
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
@@ -129,19 +129,29 @@ class MemberDashboardView(TemplateView):
             is_yearly_member = logged_member.is_yearly_member()
             queryset = Member.objects.filter(django_user__username=request.user)
 
-            for q in queryset:
-                q.to_be_processed_for_basic_info = True
-                #q.to_be_processed_for_photos = True
-                q.save()
+            logged_member.to_be_processed_for_basic_info = True
+            logged_member.save()
+            #for q in queryset:
+            #    q.to_be_processed_for_basic_info = True
+            #    #q.to_be_processed_for_photos = True
+            #    q.save()
 
             l_token = logged_member.get_member_token(request)
-            instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
-            instagram_session.init_instagram_API()
-            user_search = instagram_session.is_instagram_user_valid(request.user)
+            #instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
+            #instagram_session.init_instagram_API()
+            #user_search = instagram_session.is_instagram_user_valid(request.user)
 
-            ig_utils = InstagramUserAdminUtils(p_is_admin=False, p_token=l_token['access_token'])
-            ig_utils.process_instagram_user(queryset)
-            logged_member = Member.objects.get(django_user__username=request.user)
+            #ig_utils = InstagramUserAdminUtils(p_is_admin=False, p_token=l_token['access_token'])
+            #ig_utils.process_instagram_user(queryset)
+            inspiring_users_id_list = []
+            inspiring_users_id_list.extend([logged_member.instagram_user_id])
+
+            process_squaresensor_member.delay(
+                requestNone=None,
+                inspiring_users_id_list=inspiring_users_id_list,
+                l_is_admin=False,
+                l_token=l_token['access_token']
+            )
 
             profile_photo_url = None
             if logged_member.instagram_profile_picture_URL:
@@ -151,9 +161,9 @@ class MemberDashboardView(TemplateView):
                 logged_member.help_first_time_wizard = False
                 logged_member.save()
 
-            #if logged_member.help_first_time_wizard == True and logged_member.help_first_time_wizard_cur_step < 4:
+                #if logged_member.help_first_time_wizard == True and logged_member.help_first_time_wizard_cur_step < 4:
                 # Show the tutorial wizard
-            #    return HttpResponseRedirect(reverse("members:tutorial"))
+                #    return HttpResponseRedirect(reverse("members:tutorial"))
 
 
 
@@ -190,7 +200,7 @@ class MemberDashboardView(TemplateView):
                            categories=l_categories,
                            attributes=l_attributes,
                            show_describe_button=show_describe_button,
-                      )
+                           )
         )
 
 
@@ -278,7 +288,7 @@ class MemberMyAccountView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                      )
+                          )
         )
 
 
@@ -350,7 +360,7 @@ class MemberContactFormView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                      )
+                          )
         )
 
 
@@ -421,7 +431,7 @@ class MemberCommentSentView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                      )
+                          )
         )
 
 class MemberNewMembershipView(TemplateView):
@@ -461,30 +471,30 @@ class MemberNewMembershipView(TemplateView):
         return render(request,
                       self.template_name,
                       dict(
-                           is_payment_live=IS_PAYMENT_LIVE,
-                           squaresensor_yearly_membership=squaresensor_yearly_membership,
-                           squaresensor_monthly_membership=squaresensor_monthly_membership,
-                           contact_new_friends_free=FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS,
-                           contact_new_friends_monthly=FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS,
-                           contact_new_friends_yearly=FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS,
-                           responder_free=COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT,
-                           responder_monthly=COMMENTER_NO_OF_PICS_MEMBER_LIMIT,
-                           responder_yearly=COMMENTER_NO_OF_PICS_MEMBER_LIMIT,
-                           price_monthly_per_month=SQUARESENSOR_MONTHLY_MEMBERSHIP,
-                           price_monthly_per_year=SQUARESENSOR_YEARLY_MEMBERSHIP / 12,
-                           price_yearly=SQUARESENSOR_YEARLY_MEMBERSHIP,
+                          is_payment_live=IS_PAYMENT_LIVE,
+                          squaresensor_yearly_membership=squaresensor_yearly_membership,
+                          squaresensor_monthly_membership=squaresensor_monthly_membership,
+                          contact_new_friends_free=FIND_NEW_FRIENDS_MAX_NON_MEMBER_DAILY_INTERACTIONS,
+                          contact_new_friends_monthly=FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS,
+                          contact_new_friends_yearly=FIND_NEW_FRIENDS_MAX_MEMBER_DAILY_INTERACTIONS,
+                          responder_free=COMMENTER_NO_OF_PICS_NON_MEMBER_LIMIT,
+                          responder_monthly=COMMENTER_NO_OF_PICS_MEMBER_LIMIT,
+                          responder_yearly=COMMENTER_NO_OF_PICS_MEMBER_LIMIT,
+                          price_monthly_per_month=SQUARESENSOR_MONTHLY_MEMBERSHIP,
+                          price_monthly_per_year=SQUARESENSOR_YEARLY_MEMBERSHIP / 12,
+                          price_yearly=SQUARESENSOR_YEARLY_MEMBERSHIP,
 
 
 
-                           is_monthly_member=is_monthly_member,
-                           is_yearly_member=is_yearly_member,
-                           logged_member=logged_member,
-                           x_ratelimit_remaining=x_ratelimit_remaining,
-                           x_ratelimit=x_ratelimit,
-                           x_limit_pct=x_limit_pct,
-                           categories=l_categories,
-                           attributes=l_attributes,
-                      )
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          )
         )
 
 
@@ -526,7 +536,7 @@ class MemberNewYearlyMembershipView(TemplateView):
                               invoice_number=l_invoice_number,
                               membership_type='PRO',
                               invoice_status='unpaid'
-                              )
+        )
         new_invoice.save()
 
         if PAYPAL_TEST == True:
@@ -550,7 +560,7 @@ class MemberNewYearlyMembershipView(TemplateView):
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
             "currency_code": l_currency_code,
-        }
+            }
 
         form = PayPalPaymentsForm(initial=paypal_dict, button_type="subscribe")
 
@@ -568,7 +578,7 @@ class MemberNewYearlyMembershipView(TemplateView):
                            x_limit_pct=x_limit_pct,
                            categories=l_categories,
                            attributes=l_attributes,
-                      )
+                           )
         )
 
 
@@ -610,7 +620,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
                               invoice_number=l_invoice_number,
                               membership_type='MON',
                               invoice_status='unpaid'
-                              )
+        )
         new_invoice.save()
 
         if PAYPAL_TEST == True:
@@ -633,7 +643,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
             "return_url": ROOT_SITE_URL + reverse('members:new_membership_result'),
             "cancel_return": ROOT_SITE_URL + reverse('members:new_membership_cancel'),
             "currency_code": l_currency_code,
-        }
+            }
 
         form = PayPalPaymentsForm(initial=paypal_dict,  button_type="subscribe")
         #valid_ipn_received.connect(show_me_the_money)
@@ -652,7 +662,7 @@ class MemberNewMonthlyMembershipView(TemplateView):
                            x_limit_pct=x_limit_pct,
                            categories=l_categories,
                            attributes=l_attributes,
-                      )
+                           )
         )
 
 
@@ -749,7 +759,7 @@ class MemberNewMembershipResultView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                      )
+                          )
         )
 
 
@@ -811,7 +821,7 @@ class MemberNewMembershipCancelView(TemplateView):
             else:
                 l_recurring_membership = False
 
-            # old_membership = logged_member.membership
+                # old_membership = logged_member.membership
 
 
         return render(request,
@@ -826,7 +836,7 @@ class MemberNewMembershipCancelView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                      )
+                          )
         )
 
 
@@ -862,7 +872,7 @@ class MemberNewFriendsResponseView(TemplateView):
 
         l_contacted_new_friends = NewFriendContactedByMember.objects.filter(
             member=logged_member,
-        ).exclude(interaction_type='S')
+            ).exclude(interaction_type='S')
 
         l_new_friends_since_last_check = 0
         l_total_new_squaresensor_friends = 0
@@ -913,7 +923,7 @@ class MemberNewFriendsResponseView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                      )
+                          )
         )
 
 
@@ -1006,5 +1016,5 @@ class CommenterIndexView(TemplateView):
                           x_limit_pct=x_limit_pct,
                           categories=l_categories,
                           attributes=l_attributes,
-                      )
+                          )
         )

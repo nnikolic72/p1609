@@ -301,7 +301,6 @@ def analyze_for_friends(req, p_instagram_user_id):
         inspiring_users_id_list = []
         inspiring_users_id_list.extend([p_instagram_user_id])
 
-
         process_instagram_user.delay(None, inspiring_users_id_list, is_member_admin , l_token)
         result = 'running'
 
