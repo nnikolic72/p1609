@@ -47,6 +47,28 @@
 
     {%  if inspiring_users  %}
         <h4 class="text-center">{% trans 'Browse Inspiring Artists' %}</h4>
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-offset-4 col-sm-4">
+                <form method="get" action="{% url 'instagramuser:suggested_inspiring_artists' %}">
+                    <button type="submit"
+                            id="suggested_inspiring_artists"
+                            data-loading-text="<i class='fa fa-check-square-o fa-3x'></i><br>{% trans 'Suggested Inspiring Artists loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                            onclick="bootstrap_loading_button('suggested_inspiring_artists');"
+                            class="btn btn-default btn-block squaresensor-button-with-margin"
+                            {% if member_has_categories == False %}
+                                disabled
+                                title="{% trans 'Please choose some categories in your Account Setup screen' %}"
+                            {% endif %}
+
+                            >
+                        <i class="fa fa-check-square-o fa-3x"></i><br>
+                        {% trans 'Suggested Inspiring Artists' %}
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-xs-12 col-sm-offset-4 col-sm-4">
                 <form method="get" action="{% url 'categories:index' %}">

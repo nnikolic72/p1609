@@ -11,6 +11,7 @@ from .views import (AddInspiringUserView,
     FindFriendsView,
     InspiringUserIndexAllView,
     NewFriendsProcessingView,
+    SuggestedInspiringUserIndexAllView,
 )
 
 
@@ -30,6 +31,9 @@ urlpatterns = patterns('',
                        ),
                        url(r'^all-inspiring-artists/$', login_required(InspiringUserIndexAllView.as_view()),
                            name='index_all_inspiring_artists'
+                       ),
+                       url(r'^suggested-inspiring-artists/$', login_required(SuggestedInspiringUserIndexAllView.as_view()),
+                           name='suggested_inspiring_artists'
                        ),
                        url(r'^new-friends-processing/$', login_required(NewFriendsProcessingView.as_view()),
                            name='new_friends_processing'
