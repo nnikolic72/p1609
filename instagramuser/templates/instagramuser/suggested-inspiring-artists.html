@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'Suggested Inspiring Artists' %}{% endblock title %}
+{% block page-title %}{% trans 'Suggested Inspiring Artists' %}{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/inspiringusers.index.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/instagramuser.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    {% if inspiring_users %}
+        <div class="container-fluid">
+            {% if logged_member.help_reserved1 == True %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h3>{% trans 'Information about Suggested Inspiring Artists:' %}</h3>
+                    <ul>
+                        <li>{% trans 'This is hand picked selection of fine Instagram Photographers.' %}</li>
+                        <li>{% trans 'They are masters of photography categories and styles you selected while setting up your account.' %}</li>
+                        <li>{% trans 'If the list is empty - please go set up your preferred categories and styles' %} <a class="btn btn-xs btn-default" href="{% url 'members:my_account' %}">{% trans 'here' %}</a></li>
+                    </ul>
+                    <button type="button"
+                            class="btn btn-default btn-sm"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            onclick="dismiss_help('help_reserved1')"
+                            style="margin-top: 20px;"
+                            >{% trans 'Do not show again' %}</button>
+                </div>
+            {% endif %}
+            {% for inspiring_user in inspiring_users %}
+                {% load i18n %}
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3">
+
+                        <a href="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.0.instagram_user_name %}">
+                            <img src="{{ inspiring_user.0.instagram_profile_picture_URL }}" class="img-responsive img-circle center-block small_profile_img squaresensor-image-circular"><br>
+                            <h4 class="text-center">@{{ inspiring_user.0.instagram_user_name }}</h4></a>
+
+                    </div>
+                    <div class="col-xs-12 col-sm-3">
+                        <form action="{% url 'instagramuser:alltimebest' p_username=inspiring_user.0.instagram_user_name p_mode='view' %}">
+                            <button type="submit"
+                                    id="alltimebest_{{ inspiring_user.0.instagram_user_name }}"
+                                    onclick="bootstrap_loading_button('alltimebest_{{ inspiring_user.0.instagram_user_name }}');"
+                                    data-loading-text="<i class='fa fa-diamond fa-3x'></i><br>{% trans 'Best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                                    class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                                <i class="fa fa-diamond fa-3x"></i><br>
+                                {% trans 'Best Photos' %}
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-sm-3">
+                        <form action="{% url 'instagramuser:inspiring_user' p_inspiring_user_name=inspiring_user.0.instagram_user_name %}" method="get">
+                            <button type="submit"
+                                    id="recentbest_{{ inspiring_user.0.instagram_user_name }}"
+                                    onclick="bootstrap_loading_button('recentbest_{{ inspiring_user.0.instagram_user_name }}');"
+                                    data-loading-text="<i class='fa fa-calendar fa-3x'></i><br>{% trans 'Recent best photos loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                                    class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                                <i class="fa fa-calendar fa-3x"></i><br>
+                                {% trans 'Recent Best' %}
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-sm-3">
+                        <form action="{{ inspiring_user.0.instagram_user_profile_page_URL }}/" target="_blank" method="get">
+                            <button type="submit" class="btn btn-sm btn-default btn-block squaresensor-button" style="margin: 10px;">
+                                <i class="fa fa-external-link fa-3x"></i><br>
+                                {% trans 'IG Profile Page' %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            {% trans 'No Inspiring artists to suggest at the moment! We are adding Inspiring Artists frequently so check back later.' %} "{{ l_category.title }}".
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}

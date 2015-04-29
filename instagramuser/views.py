@@ -814,11 +814,15 @@ class InspiringUserIndexAllView(TemplateView):
         # Common for all members views ===================================================
         l_categories = Category.objects.all()
         l_attributes = Attribute.objects.all()
+        l_member_has_categories = False
         try:
             logged_member = Member.objects.get(django_user__username=request.user)
             show_describe_button = logged_member.is_editor(request)
             is_monthly_member = logged_member.is_monthly_member()
             is_yearly_member = logged_member.is_yearly_member()
+            l_members_categories = MemberBelongsToCategory.objects.filter(instagram_user=logged_member)
+            if len(l_members_categories) > 0:
+                l_member_has_categories = True
         except ObjectDoesNotExist:
             logged_member = None
         except:
@@ -856,6 +860,7 @@ class InspiringUserIndexAllView(TemplateView):
                       self.template_name,
                       dict(
                           inspiring_users_list=l_inspiring_users_list,
+                          member_has_categories=l_member_has_categories,
 
                           is_monthly_member=is_monthly_member,
                           is_yearly_member=is_yearly_member,
@@ -947,4 +952,88 @@ class NewFriendsProcessingView(TemplateView):
                           categories=l_categories,
                           attributes=l_attributes,
                           )
+        )
+
+
+class SuggestedInspiringUserIndexAllView(TemplateView):
+    """
+    Index view, displays list of categories
+    """
+    template_name = 'instagramuser/suggested-inspiring-artists.html'
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handle get request - display photos and all controls
+
+        :param request:
+        :type request:
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
+
+
+
+        # Common for all members views ===================================================
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+        # Limit calculation --------------------------------------------------------------
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+        # END Common for all members views ===============================================
+
+        l_members_categories = \
+            MemberBelongsToCategory.objects.filter(instagram_user=logged_member).select_related('category').values('category')
+        l_members_attributes = \
+            MemberBelongsToAttribute.objects.filter(instagram_user=logged_member).select_related('attribute').values('attribute')
+        l_inspiring_users_belong_to_categories = \
+            InspiringUserBelongsToCategory.objects.filter(category__in=l_members_categories).select_related('instagram_user').values('instagram_user')
+
+        l_inspiring_users_list = []
+        l_inspiring_users = InspiringUser.objects.filter(id__in=l_inspiring_users_belong_to_categories)
+
+        for inspiring_user in l_inspiring_users:
+            weight = 0
+            weight_atr = 0
+            weight = InspiringUserBelongsToCategory.objects.filter(category__in=l_members_categories, instagram_user=inspiring_user).count()
+            weight_atr = InspiringUserBelongsToAttribute.objects.filter(attribute__in=l_members_attributes, instagram_user=inspiring_user).count()
+            l_inspiring_users_list.append([inspiring_user, weight + weight_atr])
+
+        l_inspiring_users_list =  sorted(l_inspiring_users_list,key=lambda x: x[1], reverse=True)
+
+        return render(request,
+                      self.template_name,
+                      dict(
+                          inspiring_users=l_inspiring_users_list,
+
+
+
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+        )
         )
