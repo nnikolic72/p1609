@@ -28,7 +28,7 @@ from social_auth.db.django_models import UserSocialAuth
 from attributes.models import Attribute
 from categories.models import Category
 from instagramuser.models import Follower, NewFriendContactedByMember
-from instagramuser.tasks import process_instagram_user
+from instagramuser.tasks import process_instagram_user, process_squaresensor_member
 from libs.instagram.tools import InstagramSession, InstagramUserAdminUtils, update_member_limits_f, BestFollowers, \
     BestPhotos, InstagramComments
 from .forms import MembershipForm
@@ -129,10 +129,12 @@ class MemberDashboardView(TemplateView):
             is_yearly_member = logged_member.is_yearly_member()
             queryset = Member.objects.filter(django_user__username=request.user)
 
-            for q in queryset:
-                q.to_be_processed_for_basic_info = True
-                #q.to_be_processed_for_photos = True
-                q.save()
+            logged_member.to_be_processed_for_basic_info = True
+            logged_member.save()
+            #for q in queryset:
+            #    q.to_be_processed_for_basic_info = True
+            #    #q.to_be_processed_for_photos = True
+            #    q.save()
 
             l_token = logged_member.get_member_token(request)
             #instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
@@ -144,7 +146,7 @@ class MemberDashboardView(TemplateView):
             inspiring_users_id_list = []
             inspiring_users_id_list.extend([logged_member.instagram_user_id])
 
-            process_instagram_user.delay(
+            process_squaresensor_member.delay(
                 requestNone=None,
                 inspiring_users_id_list=inspiring_users_id_list,
                 l_is_admin=False,
