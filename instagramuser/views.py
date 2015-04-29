@@ -1003,8 +1003,11 @@ class SuggestedInspiringUserIndexAllView(TemplateView):
 
         l_members_categories = \
             MemberBelongsToCategory.objects.filter(instagram_user=logged_member).select_related('category').values('category')
+        l_members_categories_len = len(l_members_categories)
         l_members_attributes = \
             MemberBelongsToAttribute.objects.filter(instagram_user=logged_member).select_related('attribute').values('attribute')
+        l_members_attributes_len = len(l_members_attributes)
+        l_members_categories_and_attributes_len = l_members_categories_len + l_members_attributes_len
         l_inspiring_users_belong_to_categories = \
             InspiringUserBelongsToCategory.objects.filter(category__in=l_members_categories).select_related('instagram_user').values('instagram_user')
 
@@ -1016,7 +1019,10 @@ class SuggestedInspiringUserIndexAllView(TemplateView):
             weight_atr = 0
             weight = InspiringUserBelongsToCategory.objects.filter(category__in=l_members_categories, instagram_user=inspiring_user).count()
             weight_atr = InspiringUserBelongsToAttribute.objects.filter(attribute__in=l_members_attributes, instagram_user=inspiring_user).count()
-            l_inspiring_users_list.append([inspiring_user, weight + weight_atr])
+            pct_weight = 0
+            if l_members_categories_and_attributes_len != 0:
+                pct_weight = (weight + weight_atr) / l_members_categories_and_attributes_len * 100
+            l_inspiring_users_list.append([inspiring_user, weight + weight_atr, pct_weight])
 
         l_inspiring_users_list =  sorted(l_inspiring_users_list,key=lambda x: x[1], reverse=True)
 
