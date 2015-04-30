@@ -2084,7 +2084,6 @@ class SmartFeedHelper():
         x_ratelimit_remaining, x_ratelimit = self.instagram_session.get_api_limits()
         l_max_days_reached = False
 
-
         while (l_media_cnt < p_media_to_return) and (l_safety < 1000) and (x_ratelimit_remaining > 100) \
                 and (not l_max_days_reached):
             self.get_recent_media(p_starting_media_id=self.last_media_id)
@@ -2130,7 +2129,6 @@ class SmartFeedHelper():
                     l_squarefollowing_level = None
                 except:
                     raise
-
 
                 if l_squarefollowing:
                     #normalize likes and age, poly values
