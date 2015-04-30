@@ -56,6 +56,15 @@
 {% bootstrap_messages %}
 
 {% block bootstrap3_content %}
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=1565524137020631";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
     {% block navbar %}
         <nav class="navbar navbar-default navbar-fixed-top squaresensor-top-navbar">
             <div class="container-fluid">
@@ -124,6 +133,9 @@
                 <!-- Main content-->
                 {% block content %}
                 {% endblock content %}
+                <div class="col-xs-12" style="padding-top: 20px;">
+                    <div class="well text-center hidden-xs visible-md visible-sm visible-lg"><div class="fb-page" data-href="https://www.facebook.com/squaresensor" data-width="700" data-hide-cover="false" data-show-facepile="false" data-show-posts="false"><div class="fb-xfbml-parse-ignore"><blockquote cite="https://www.facebook.com/squaresensor"><a href="https://www.facebook.com/squaresensor">Squaresensor</a></blockquote></div></div></div>
+                </div>
             </div>
 
             {% if not is_monthly_member and not is_yearly_member %}
@@ -140,8 +152,13 @@
                             </form>
                             <p>{% trans 'Discover the full power of Squaresenor now!' %}</p>
                         </div>
+                        <div class="well text-center visible-xs hidden-md hidden-sm hidden-lg"><div class="fb-page" data-href="https://www.facebook.com/squaresensor" data-width="280" data-hide-cover="false" data-show-facepile="false" data-show-posts="false"><div class="fb-xfbml-parse-ignore"><blockquote cite="https://www.facebook.com/squaresensor"><a href="https://www.facebook.com/squaresensor">Squaresensor</a></blockquote></div></div></div>
                     {% endblock aside %}
                 </div>
+
+
+
+
             {% endif %}
         </div>
     </div>
