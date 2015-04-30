@@ -3,12 +3,33 @@
 {% if l_instagram_followings %}
     <h3 class="text-center">{% trans 'Your Instagram Followings' %} <small>{% trans 'Make a selection' %}</small></h3>
     <div class="container-fluid">
-    {% for instagramfollowing in l_instagram_followings %}
-        {% include 'smartfeed/instagram_following_item.html' %}
-    {% endfor %}
+        {% for instagramfollowing in l_instagram_followings %}
+            {% include 'smartfeed/instagram_following_item.html' %}
+        {% endfor %}
+        {% if not_all_available == True %}
+            <div class="alert alert-warning">
+                <h3>{% trans 'Information' %} <small>{% trans '"Where are my other Instagram Followings?"' %}</small></h3>
+                <ul>
+                    <li>{% trans 'Due to nature of Import process, we are unable to allow you to import all your Instagram Followings in one session.' %}</li>
+                    <li>{% trans 'Please come back in one hour, on this page, and you will be able to continue with importing.' %}</li>
+                    <li>{% trans 'This limit is imposed so your Squaresensor account will meet Instagram accepted use policies. They are very strict about this and we are very strict in following them. Thank you for your understanding!' %}</li>
+                    <li>{% trans 'You can now go check out your (incomplete) SmatFeed ' %}<a href="{% url 'smartfeed:index' %}">{% trans 'here' %}</a>!</li>
+                </ul>
+            </div>
+        {% else %}
+            <div class="alert alert-success">
+                <h3>{% trans 'Information' %} <small>{% trans 'Success!' %}</small></h3>
+                <ul>
+                    <li>{% trans 'This is the end of the list of your current Instagram Followings.' %}</li>
+                    <li>{% trans 'If you are reading this - you have comleted your SmartFollowings configureation and now your SmartFeed is comlete, too.' %}</li>
+                    <li>{% trans 'Remember: when you add new Followings through your Instagram app, you should also add them here, on this page.' %}</li>
+                    <li>{% trans 'You can now go check out your SmatFeed ' %}<a href="{% url 'smartfeed:index' %}">{% trans 'here' %}</a>!</li>
+                </ul>
+            </div>
+        {% endif %}
     </div>
 {% else %}
     <div class="alert alert-info" role="alert">
-    {% trans 'You have no Instagram Followings. Nothing to import.' %}
+        {% trans 'You have no Instagram Followings. Nothing to import.' %}
     </div>
 {% endif %}

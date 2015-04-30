@@ -3,6 +3,7 @@ import logging
 from datetime import (
     datetime, timedelta
 )
+from time import sleep
 from django.conf import settings
 
 from django.core.urlresolvers import reverse
@@ -146,16 +147,14 @@ class MemberDashboardView(TemplateView):
             inspiring_users_id_list = []
             inspiring_users_id_list.extend([logged_member.instagram_user_id])
 
-            process_squaresensor_member.delay(
+            result = process_squaresensor_member.delay(
                 requestNone=None,
                 inspiring_users_id_list=inspiring_users_id_list,
                 l_is_admin=False,
                 l_token=l_token['access_token']
             )
 
-            profile_photo_url = None
-            if logged_member.instagram_profile_picture_URL:
-                profile_photo_url = logged_member.instagram_profile_picture_URL
+
 
             if logged_member.help_first_time_wizard == True and logged_member.help_first_time_wizard_cur_step > 3:
                 logged_member.help_first_time_wizard = False
@@ -184,6 +183,18 @@ class MemberDashboardView(TemplateView):
         else:
             x_limit_pct = 100
         # Limit calculation --------------------------------------------------------------
+        result.wait(timeout=25, interval=0.5)
+        profile_photo_url = None
+
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise
+
+        if logged_member.instagram_profile_picture_URL:
+            profile_photo_url = logged_member.instagram_profile_picture_URL
 
         return render(request,
                       self.template_name,

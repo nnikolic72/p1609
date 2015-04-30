@@ -12,7 +12,7 @@ from libs.instagram.tools import BestFollowings, InstagramSession, BestPhotos
 from members.models import Member
 from .models import SquareFollowing, SquareFollowingMember
 from .tasks import smart_feed_subscribe_task
-from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWINGS
+from squaresensor.settings.base import IMPORT_MAX_INSTAGRAM_FOLLOWINGS, IMPORT_MAX_INSTAGRAM_FOLLOWINGS_IN_ONE_SESSION
 
 __author__ = 'tanja'
 
@@ -64,11 +64,17 @@ def import_instagram_followings(req, p_instagram_user_id):
                 is_inspiring_user = True
             l_instagram_followings_result.append([following, is_inspiring_user])
 
+    l_not_all_available = False
+    l_import_max_followings_in_one_session = len(l_instagram_followings_result)
+    if l_import_max_followings_in_one_session > IMPORT_MAX_INSTAGRAM_FOLLOWINGS_IN_ONE_SESSION:
+        l_import_max_followings_in_one_session = IMPORT_MAX_INSTAGRAM_FOLLOWINGS_IN_ONE_SESSION
+        l_not_all_available = True
 
     html_text = render_to_string('smartfeed/import_instagram_followings.html',
-                                 dict(
-                                     l_instagram_followings=l_instagram_followings_result,
-                                     )
+                     dict(
+                         l_instagram_followings=l_instagram_followings_result[:l_import_max_followings_in_one_session],
+                         not_all_available=l_not_all_available
+                         )
     )
 
     # Limit calculation --------------------------------------------------------------

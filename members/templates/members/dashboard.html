@@ -65,8 +65,9 @@
     </div>
 
     <div class="col-xs-12 col-sm-3">
-
+        {% if logged_member.instagram_profile_picture_URL %}
         <img class="img-responsive img-circle squaresensor-normal-profile-pic squaresensor-image-circular center-block" src="{{ logged_member.instagram_profile_picture_URL }}">
+        {% endif %}
     </div>
     <div class="col-xs-12 col-sm-9">
 
