@@ -75,6 +75,8 @@ BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
 // Starting Celery
 celery -A squaresensor worker -l info
+celery -A -E -B squaresensor worker -l info
+
 // Starting Celery on Heroku as a worker
 worker: celery -A squaresensor worker -l info
 // Celery Debugger:
