@@ -9,6 +9,7 @@ from squaresensor.settings.base import STATIC_URL
 dajaxice_autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^members/', include('members.urls', namespace='members')),
     url(r'^i18n/', include('django.conf.urls.i18n')),  # go to /i18n/setlang/
     url(r'^favicon.ico/$', lambda x: HttpResponseRedirect(STATIC_URL+'ico/favicon.ico')), #google chrome favicon fix
 
@@ -19,7 +20,7 @@ urlpatterns = patterns('',
     url(r'^members/paypal/', include('paypal.standard.ipn.urls')),
 
     url(r'^', include('lander.urls', namespace='lander')),
-    url(r'^members/', include('members.urls', namespace='members')),
+
     url(r'^photos/', include('photos.urls', namespace='photos')),
     url(r'^categories/', include('categories.urls', namespace='categories')),
     url(r'^attributes/', include('attributes.urls', namespace='attributes')),
