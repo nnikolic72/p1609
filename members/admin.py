@@ -126,7 +126,7 @@ class MemberAdmin(admin.ModelAdmin):
 
     # Register your models here.
     list_display = ('django_user', 'instagram_user_name',
-                    'number_of_followers', 'creation_date',
+                    'number_of_followers', 'creation_date', 'last_processed_for_basic_info_date',
                     'to_be_processed_for_basic_info',
                     'to_be_processed_for_friends',
                     'to_be_processed_for_followings',
