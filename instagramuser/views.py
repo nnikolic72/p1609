@@ -1047,3 +1047,94 @@ class SuggestedInspiringUserIndexAllView(TemplateView):
                           attributes=l_attributes,
         )
         )
+
+
+class FindNewInspiringUsersView(TemplateView):
+    """
+    Add new Inspiring user
+    """
+    template_name = 'instagramuser/find-new-inspiring-users.html'
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handle get request - display photos and all controls
+
+        :param request:
+        :type request:
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
+        l_categories = Category.objects.all()
+        l_attributes = Attribute.objects.all()
+        # Common for all members views ===================================================
+        try:
+            logged_member = Member.objects.get(django_user__username=request.user)
+            show_describe_button = logged_member.is_editor(request)
+            is_monthly_member = logged_member.is_monthly_member()
+            is_yearly_member = logged_member.is_yearly_member()
+        except ObjectDoesNotExist:
+            logged_member = None
+        except:
+            raise HttpResponseNotFound
+
+        # Limit calculation --------------------------------------------------------------
+        x_ratelimit_remaining, x_ratelimit = logged_member.get_api_limits()
+
+        x_ratelimit_used = x_ratelimit - x_ratelimit_remaining
+        if x_ratelimit != 0:
+            x_limit_pct = (x_ratelimit_used / x_ratelimit) * 100
+        else:
+            x_limit_pct = 100
+        # END Limit calculation ----------------------------------------------------------
+        # END Common for all members views ===============================================
+
+        l_new_inspiring_users_list = []
+        l_inspiring_users_ids = InspiringUser.objects.all().values('instagram_user_id')
+        l_new_inspiring_users_list_sorted = sorted(Following.objects.all().exclude(instagram_user_id__in=l_inspiring_users_ids),
+                                            key=lambda a: a.followed_by_n_inspiring_users,
+                                            reverse=True
+        )
+
+        l_followed_by_min = float("inf")
+        l_followed_by_max = float("-inf")
+        l_new_inspiring_users_list_help = []
+        for inspiring_users_candidate in l_new_inspiring_users_list_sorted:
+            l_followed_by = inspiring_users_candidate.followed_by_n_inspiring_users
+
+            if l_followed_by > l_followed_by_max:
+                l_followed_by_max = l_followed_by
+
+            if l_followed_by < l_followed_by_min:
+                l_followed_by_min = l_followed_by
+
+            l_new_inspiring_users_list_help.append([inspiring_users_candidate,
+                                               l_followed_by
+            ]
+            )
+
+        l_treshold = l_followed_by_max - ((l_followed_by_max - l_followed_by_min + 1)/3)
+        for inspiring_users_candidate in l_new_inspiring_users_list_help:
+            if inspiring_users_candidate[1] >= l_treshold:
+                l_new_inspiring_users_list.append(inspiring_users_candidate)
+
+
+        return render(request,
+                      self.template_name,
+                      dict(
+                          new_inspiring_users_list=l_new_inspiring_users_list,
+
+                          is_monthly_member=is_monthly_member,
+                          is_yearly_member=is_yearly_member,
+                          logged_member=logged_member,
+                          x_ratelimit_remaining=x_ratelimit_remaining,
+                          x_ratelimit=x_ratelimit,
+                          x_limit_pct=x_limit_pct,
+                          categories=l_categories,
+                          attributes=l_attributes,
+                          show_describe_button=show_describe_button,
+                      )
+        )

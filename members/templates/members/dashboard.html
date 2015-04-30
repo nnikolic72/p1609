@@ -265,6 +265,41 @@
             </form>
         </div>
 
+
+        <div class="col-xs-12 col-sm-4 text-center">
+            <form action="{% url 'instagramuser:find_new_inspiring_users' %}" method="get">
+                <button type="submit"
+                        id="find_new_inspiring_users"
+                        data-loading-text="{% trans 'Finding New Inspiring Artists...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('find_new_inspiring_users');"
+                        class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                    {% trans 'Find New Inspiring Artist' %}
+                </button>
+            </form>
+        </div>
+        <div class="col-xs-12 col-sm-4 text-center">
+            <form action="#" method="get">
+                <button type="submit"
+                        id="index_all_inspiring_artists"
+                        data-loading-text="{% trans 'Inspiring Artists loading...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('index_all_inspiring_artists');"
+                        class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                    {% trans 'Reserved' %}
+                </button>
+            </form>
+        </div>
+        <div class="col-xs-12 col-sm-4 text-center">
+            <form action="#" method="get">
+                <button type="submit"
+                        id="new_friends_processing"
+                        data-loading-text="{% trans 'New Friends Processing...' %} <i class='fa fa-spinner fa-pulse'></i>"
+                        onclick="bootstrap_loading_button('new_friends_processing');"
+                        class="btn btn-md btn-warning btn-block squaresensor-button-with-margin">
+                    {% trans 'Reserved' %}
+                </button>
+            </form>
+        </div>
+
     {% endif %}
 {% endblock content %}
 
