@@ -182,14 +182,14 @@ class SmartFeedConfigureCalendarView(TemplateView):
 
 
         # END Common for all members views ===============================================
-        l_squarefollowing_queryset = SquareFollowing.objects.all()
+        #l_squarefollowing_queryset = SquareFollowing.objects.all()
         l_squarefollowings_count = SquareFollowing.objects.filter(member_id2=logged_member).count()
         if l_squarefollowings_count >= MIN_SQUAREFOLLOWINGS:
 
             l_token = logged_member.get_member_token(request)
             instagram_session = InstagramSession(p_is_admin=False, p_token=l_token['access_token'])
             instagram_session.init_instagram_API()
-            l_squarefollowings_count = SquareFollowing.objects.filter(member_id2=logged_member).count()
+            #l_squarefollowings_count = SquareFollowing.objects.filter(member_id2=logged_member).count()
             if l_squarefollowings_count >= MIN_SQUAREFOLLOWINGS:
                 l_smart_feed_helper = SmartFeedHelper(
                     p_feed_owner_instagram_id=logged_member.instagram_user_id,
@@ -205,8 +205,6 @@ class SmartFeedConfigureCalendarView(TemplateView):
                     p_logged_member=logged_member,
                     p_max_days=30
                 )
-
-
 
                 liked_photos = []
                 for x_media in l_best_media:
