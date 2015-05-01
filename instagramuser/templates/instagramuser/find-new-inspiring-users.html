@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load dajaxice_templatetags %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'Admin - Find New Inspiring Users' %}{% endblock title %}
+{% block page-title %}{% trans 'Admin - Find New Inspiring Users' %}{% endblock page-title %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/instagramuser.add.css" rel="stylesheet">
+{% endblock css %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/instagramuser.js" type="text/javascript" charset="utf-8"></script>
+{% endblock script %}
+
+{% block content %}
+    {{ block.super }}
+    {% if new_inspiring_users_list %}
+        <ul>
+            {% for inspiring_user in new_inspiring_users_list %}
+                <li>{{ inspiring_user.0 }} - Followers: {{ inspiring_user.1 }} - <a href="http://www.instagram.com/{{ inspiring_user.0 }}" class="btn btn-xs btn-default" target="_blank">instagram</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info">{% trans 'There are no new Inspiring users available' %}</div>
+    {% endif %}
+{% endblock content %}
+
+{% block aside %}
+    {{ block.super }}
+{% endblock aside %}
