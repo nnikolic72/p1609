@@ -325,14 +325,16 @@ class Following(InstagramUser):
 
     user_type = models.CharField(editable=False, default='following', max_length=50)
     is_potential_friend = models.BooleanField(default=False, null=False, blank=False)
+
+    @property
     def followed_by_n_inspiring_users(self):
         '''How many goodusers follow this Following'''
         gooduser_count = self.inspiringuser.count()
 
         return gooduser_count
-    #followed_by_n_goodusers.admin_order_field = 'gooduser__count'
-    #followed_by_n_goodusers.boolean = True
-    followed_by_n_inspiring_users.short_description = '# of GoodUsers'
+    # followed_by_n_goodusers.admin_order_field = 'gooduser__count'
+    # followed_by_n_goodusers.boolean = True
+    # followed_by_n_inspiring_users.short_description = '# of GoodUsers'
 
     inspiringuser = models.ManyToManyField('instagramuser.InspiringUser', null=True, blank=True)
     member = models.ManyToManyField('members.Member', null=True, blank=True)
