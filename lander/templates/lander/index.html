@@ -22,8 +22,8 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-3 text-center">
 
-                        <img class="img-responsive center-block hidden-xs visible-sm visible-md visible-lg" src="{{ STATIC_URL }}img/ss-black-small_300.png">
-                        <img class="img-responsive center-block visible-xs hidden-sm hidden-md hidden-lg" src="{{ STATIC_URL }}img/ss-black-small_150.png">
+                    <img class="img-responsive center-block hidden-xs visible-sm visible-md visible-lg" src="{{ STATIC_URL }}img/ss-black-small_300.png">
+                    <img class="img-responsive center-block visible-xs hidden-sm hidden-md hidden-lg" src="{{ STATIC_URL }}img/ss-black-small_150.png">
 
                 </div>
                 <div class="col-xs-12 col-sm-9 text-center">
@@ -54,7 +54,15 @@
                         <br>
                         <p>{% trans 'Your Squaresensor account will be created right after you authenticate with Instagram.' %}</p>
 
-
+                        <div class="well text-center">
+                            <h4>{% trans 'Five minute video tutorial about Squaresensor' %}</h4>
+                            <div class="hidden-xs visible-sm visible-lg visible-md">
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/nIdBPmVtx8w" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                            <div class="visible-xs hidden-sm hidden-lg hidden-md">
+                                <iframe width="300" height="168" src="https://www.youtube.com/embed/nIdBPmVtx8w" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
                     {% else %}
                         <div class="row" style="margin: 20px;">
                             <div class="col-xs-12 col-sm-offset-3 col-sm-6">
@@ -127,8 +135,8 @@
     </div>
 
     <div align="right">
-<script src="//static.getclicky.com/js" type="text/javascript"></script>
-<script type="text/javascript">try{ clicky.init(100839522); }catch(e){}</script>
-<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100839522ns.gif" /></p></noscript>
+        <script src="//static.getclicky.com/js" type="text/javascript"></script>
+        <script type="text/javascript">try{ clicky.init(100839522); }catch(e){}</script>
+        <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100839522ns.gif" /></p></noscript>
     </div>
 {% endblock content %}
